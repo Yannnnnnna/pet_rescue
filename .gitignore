@@ -1,0 +1,14 @@
+# Java 忽略
+target/
+*.class
+.idea/
+*.iml
+
+# Node/前端 忽略
+node_modules/
+dist/
+unpackage/
+.DS_Store
+
+
+pet-middleware/
