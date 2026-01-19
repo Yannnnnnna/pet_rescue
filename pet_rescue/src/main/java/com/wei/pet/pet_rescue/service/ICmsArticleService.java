@@ -1,7 +1,10 @@
 package com.wei.pet.pet_rescue.service;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.wei.pet.pet_rescue.entity.CmsArticle;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.wei.pet.pet_rescue.entity.dto.ArticleFormDTO;
+import com.wei.pet.pet_rescue.entity.dto.ArticleQueryDTO;
 
 /**
  * <p>
@@ -13,4 +16,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface ICmsArticleService extends IService<CmsArticle> {
 
+    boolean saveArticle(ArticleFormDTO dto);
+
+    IPage<CmsArticle> getArticlePage(ArticleQueryDTO query);
 }

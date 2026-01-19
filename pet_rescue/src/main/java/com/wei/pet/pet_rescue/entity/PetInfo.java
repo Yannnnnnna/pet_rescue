@@ -76,4 +76,13 @@ public class PetInfo implements Serializable {
     @TableLogic
     private Integer isDeleted;
 
+    @Schema(description = "省份")
+    private String province;
+
+    @Schema(description = "城市")
+    private String city;
+
+    @Schema(description = "详细地点")
+    private String address;
+
 }
