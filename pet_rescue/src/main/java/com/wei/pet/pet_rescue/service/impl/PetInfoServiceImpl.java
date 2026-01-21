@@ -1,5 +1,6 @@
 package com.wei.pet.pet_rescue.service.impl;
 
+import cn.dev33.satoken.stp.StpUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -9,6 +10,7 @@ import com.wei.pet.pet_rescue.entity.dto.PetQueryDTO;
 import com.wei.pet.pet_rescue.mapper.PetInfoMapper;
 import com.wei.pet.pet_rescue.service.IPetInfoService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -24,6 +26,7 @@ import java.util.Arrays;
  * @since 2026-01-10
  */
 @Service
+@Slf4j
 public class PetInfoServiceImpl extends ServiceImpl<PetInfoMapper, PetInfo> implements IPetInfoService {
     /**
      * 新增宠物
@@ -43,7 +46,9 @@ public class PetInfoServiceImpl extends ServiceImpl<PetInfoMapper, PetInfo> impl
         if (petInfo.getStatus() == null) {
             petInfo.setStatus(0); // 默认为待领养
         }
-
+        // todo：待确定是不是这么获取当前用户的id
+        petInfo.setPublisherId( StpUtil.getLoginIdAsLong());
+        log.info("当前用户ID{}", StpUtil.getLoginIdAsLong());
         return this.save(petInfo);
     }
 

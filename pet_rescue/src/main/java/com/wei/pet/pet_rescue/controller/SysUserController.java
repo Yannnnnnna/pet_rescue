@@ -1,6 +1,7 @@
 package com.wei.pet.pet_rescue.controller;
 
 
+import cn.dev33.satoken.stp.StpUtil;
 import com.wei.pet.pet_rescue.common.Result;
 import com.wei.pet.pet_rescue.entity.dto.AdminLoginDto;
 import com.wei.pet.pet_rescue.entity.dto.WechatLoginDto;
@@ -38,5 +39,11 @@ public class SysUserController {
     public Result<String> miniLogin(@RequestBody @Valid WechatLoginDto dto) {
         String token = sysUserService.loginByWechat(dto);
         return Result.success("登录成功", token);
+    }
+    @Operation(summary ="测试环境登录接口")
+    @PostMapping("/login")
+    public Result<String> devLogin(@RequestParam Long id){
+        StpUtil.login(id);
+        return Result.success("登录成功", StpUtil.getTokenValue());
     }
 }

@@ -84,5 +84,7 @@ public class PetInfo implements Serializable {
 
     @Schema(description = "详细地点")
     private String address;
+    @Schema(description = "发布人ID")
+    private Long publisherId;
 
 }

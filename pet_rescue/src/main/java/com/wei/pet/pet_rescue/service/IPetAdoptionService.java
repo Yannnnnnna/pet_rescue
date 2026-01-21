@@ -2,6 +2,11 @@ package com.wei.pet.pet_rescue.service;
 
 import com.wei.pet.pet_rescue.entity.PetAdoption;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.wei.pet.pet_rescue.entity.dto.AdoptionApplyDTO;
+import com.wei.pet.pet_rescue.entity.dto.AdoptionAuditDTO;
+import com.wei.pet.pet_rescue.entity.vo.AdoptionRecordVO;
+
+import java.util.List;
 
 /**
  * <p>
@@ -13,4 +18,11 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface IPetAdoptionService extends IService<PetAdoption> {
 
+    boolean apply(AdoptionApplyDTO dto);
+
+    boolean audit(AdoptionAuditDTO dto);
+
+    List<AdoptionRecordVO> applyMyPet(Long userId);
+
+    boolean cancel(Long id);
 }

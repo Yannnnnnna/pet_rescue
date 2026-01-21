@@ -9,6 +9,7 @@ import com.wei.pet.pet_rescue.entity.dto.PetQueryDTO;
 import com.wei.pet.pet_rescue.service.IPetInfoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -21,13 +22,14 @@ import org.springframework.web.bind.annotation.*;
  * @author yanna
  * @since 2026-01-10
  */
+@Tag(name = "宠物信息管理")
 @RestController
 @RequestMapping("/pet-info")
 public class PetInfoController {
     @Resource
     private IPetInfoService petInfoService;
 
-    @Operation(summary = "新增宠物", description = "管理员在后台添加流浪动物信息")
+    @Operation(summary = "新增宠物")
     @PostMapping("/add")
     public Result<Boolean> addPet(@RequestBody @Validated PetDTO petForm) {
         boolean success = petInfoService.savePet(petForm);
