@@ -8,6 +8,8 @@ import com.wei.pet.pet_rescue.common.Result;
 import com.wei.pet.pet_rescue.entity.PetAdoption;
 import com.wei.pet.pet_rescue.entity.dto.AdoptionApplyDTO;
 import com.wei.pet.pet_rescue.entity.dto.AdoptionAuditDTO;
+import com.wei.pet.pet_rescue.entity.vo.AdminAdoptionRecordVO;
+import com.wei.pet.pet_rescue.entity.vo.AdoptionDetailVO;
 import com.wei.pet.pet_rescue.entity.vo.AdoptionRecordVO;
 import com.wei.pet.pet_rescue.service.IPetAdoptionService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -95,5 +97,39 @@ public class PetAdoptionController {
         } catch (RuntimeException e) {
             return Result.error(e.getMessage());
         }
+    }
+
+    /**
+     * 获取申请详细信息
+     * @param id
+     * @return
+     */
+    @Operation(summary = "获取申请详情 (用于审核查看)")
+    @GetMapping("/detail/{id}")
+    public Result<AdoptionDetailVO> getDetail(@Parameter(description = "申请ID") @PathVariable Long id) {
+        try {
+            //todo：测试的时候不添加限制
+//            // 确保只有管理员或本人能看详情、
+//            if (id != 1L || !id.equals(StpUtil.getLoginIdAsLong()))
+//            throw new RuntimeException("无权查看");
+
+            return Result.success(adoptionService.getAdoptionDetail(id));
+        } catch (RuntimeException e) {
+            return Result.error(e.getMessage());
+        }
+    }
+
+    // 接口1：全平台领养记录分页查询
+    @Operation(summary = "管理员-全平台领养记录分页")
+    @GetMapping("/admin/list")
+    public Result<IPage<AdminAdoptionRecordVO>> adminList(
+            @RequestParam(defaultValue = "1") Integer pageNum,
+            @RequestParam(defaultValue = "10") Integer pageSize,
+            @RequestParam(required = false) Integer status,
+            @RequestParam(required = false) String petName) {
+
+        Page<AdminAdoptionRecordVO> page = new Page<>(pageNum, pageSize);
+        // 调用 Service -> Mapper 的逻辑
+        return Result.success(adoptionService.getAdminPage(page, status, petName));
     }
 }

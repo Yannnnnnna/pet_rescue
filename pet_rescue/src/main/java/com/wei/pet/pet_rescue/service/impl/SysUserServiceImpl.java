@@ -6,9 +6,11 @@ import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.wei.pet.pet_rescue.entity.SysUser;
-import com.wei.pet.pet_rescue.entity.dto.AdminLoginDto;
-import com.wei.pet.pet_rescue.entity.dto.WechatLoginDto;
+import com.wei.pet.pet_rescue.entity.dto.*;
 import com.wei.pet.pet_rescue.mapper.SysUserMapper;
 import com.wei.pet.pet_rescue.service.ISysUserService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -16,6 +18,7 @@ import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 /**
  * <p>
@@ -105,5 +108,89 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
         StpUtil.login(user.getId());
         log.info("小程序登录成功：{}", user.getOpenid());
         return StpUtil.getTokenValue();
+    }
+
+    /**
+     * 分页查询用户信息
+     * @param query
+     * @return
+     */
+    @Override
+    public IPage<SysUser> getUserPage(UserQueryDTO query) {
+        Page<SysUser> page = new Page<>(query.getPageNum(), query.getPageSize());
+        LambdaQueryWrapper<SysUser> wrapper = new LambdaQueryWrapper<>();
+
+        // 1. 关键字搜索 (用户名/昵称/手机号)
+        if (StringUtils.hasText(query.getKeyword())) {
+            wrapper.and(w -> w.like(SysUser::getUsername, query.getKeyword())
+                    .or()
+                    .like(SysUser::getNickname, query.getKeyword())
+                    .or()
+                    .like(SysUser::getPhone, query.getKeyword()));
+        }
+
+        // 2. 角色筛选
+        wrapper.eq(query.getRole() != null, SysUser::getRole, query.getRole());
+
+        // 4. 排序 (按创建时间倒序)
+        wrapper.orderByDesc(SysUser::getCreateTime);
+
+        // 5. 排除密码字段 (安全起见，不返回加密后的密码)
+        wrapper.select(SysUser.class, info -> !info.getColumn().equals("password"));
+
+        return this.page(page, wrapper);
+    }
+
+    /**
+     * 用户和管理员修改个人信息
+     * @param dto
+     * @return
+     */
+    @Override
+    public boolean updateMyInfo(UserUpdateDTO dto) {
+        Long userId = StpUtil.getLoginIdAsLong();
+
+        SysUser user = new SysUser();
+        user.setId(userId);
+        user.setNickname(dto.getNickname());
+        user.setAvatar(dto.getAvatar());
+        user.setPhone(dto.getPhone());
+
+        return this.updateById(user);
+    }
+
+    /**
+     * 获取个人信息
+     * @return
+     */
+    @Override
+    public SysUser getMyInfo() {
+        Long userId = StpUtil.getLoginIdAsLong();
+        SysUser user = this.getById(userId);
+        user.setPassword(null); // 抹除密码，防止泄露
+        return user;
+    }
+
+    /**
+     * 修改密码
+     * @param dto
+     * @return
+     */
+    @Override
+    public boolean updatePassword(UserPasswordDTO dto) {
+        Long userId = StpUtil.getLoginIdAsLong();
+        SysUser user = this.getById(userId);
+
+        // 1. 校验旧密码 (注意：实际项目中密码通常是 BCrypt 加密的，这里简单演示明文或简单加密)
+        // 如果你的密码是加密存储的，请用 passwordEncoder.matches(dto.getOldPassword(), user.getPassword())
+        if (!user.getPassword().equals(dto.getOldPassword())) {
+            throw new RuntimeException("旧密码错误");
+        }
+
+        // 2. 修改为新密码
+        user.setPassword(dto.getNewPassword());
+        // user.setPassword(passwordEncoder.encode(dto.getNewPassword())); // 建议加密
+
+        return this.updateById(user);
     }
 }

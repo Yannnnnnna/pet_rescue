@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.util.Arrays;
+import java.util.Objects;
 
 /**
  * <p>
@@ -106,6 +107,7 @@ public class PetInfoServiceImpl extends ServiceImpl<PetInfoMapper, PetInfo> impl
 
         wrapper.eq(query.getType() != null, PetInfo::getType, query.getType());
         wrapper.eq(query.getStatus() != null, PetInfo::getStatus, query.getStatus());
+        wrapper.eq(StringUtils.hasText(query.getCity()), PetInfo::getCity, query.getCity());
 
         // 只查未删除的 (MyBatis-Plus配置了逻辑删除会自动加，这里可不写)
         wrapper.orderByDesc(PetInfo::getCreateTime);

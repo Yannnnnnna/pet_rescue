@@ -1,5 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.wei.pet.pet_rescue.mapper.PetAdoptionMapper">
+    <select id="selectAdminPage" resultType="com.wei.pet.pet_rescue.entity.vo.AdminAdoptionRecordVO">
+        SELECT
+        pa.id,
+        pa.create_time,
+        pa.status,
+        pa.real_name AS applicantName,
+        pa.phone AS applicantPhone,
+        pa.user_id AS applicantId,
 
+        p.id AS petId,
+        p.name AS petName,
+        p.cover_img AS petCover,
+
+        owner.id AS ownerId,
+        owner.nickname AS ownerName
+        FROM pet_adoption pa
+        LEFT JOIN pet_info p ON pa.pet_id = p.id
+        LEFT JOIN sys_user owner ON p.publisher_id = owner.id  WHERE pa.is_deleted = 0
+        <if test="status != null">
+            AND pa.status = #{status}
+        </if>
+        <if test="petName != null and petName != ''">
+            AND p.name LIKE CONCAT('%', #{petName}, '%')
+        </if>
+        ORDER BY pa.create_time DESC
+    </select>
 </mapper>

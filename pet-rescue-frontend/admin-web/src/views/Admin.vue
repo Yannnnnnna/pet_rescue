@@ -3,35 +3,76 @@
     <!-- 顶部导航栏 -->
     <el-header class="admin-header">
       <div class="header-left">
-        <h2>后台管理系统</h2>
+        <div class="logo">🐾</div>
+        <h2>萌宠救援后台</h2>
       </div>
       <div class="header-right">
-        <el-button type="danger" @click="handleLogout">退出登录</el-button>
+        <el-dropdown>
+          <span class="el-dropdown-link">
+            管理员 <el-icon class="el-icon--right"><arrow-down /></el-icon>
+          </span>
+          <template #dropdown>
+            <el-dropdown-menu>
+              <el-dropdown-item @click="router.push('/admin/profile')">个人中心</el-dropdown-item>
+              <el-dropdown-item @click="handleLogout">退出登录</el-dropdown-item>
+            </el-dropdown-menu>
+          </template>
+        </el-dropdown>
       </div>
     </el-header>
     
-    <!-- 主体内容 -->
-    <el-main class="admin-main">
-      <el-card>
-        <template #header>
-          <div class="card-header">
-            <span>欢迎来到管理页面</span>
-          </div>
-        </template>
-        <div class="welcome-content">
-          <p>登录成功！这里是管理页面的内容。</p>
-          <p>您可以在这里添加各种管理功能。</p>
-        </div>
-      </el-card>
-    </el-main>
+    <el-container class="main-container">
+      <!-- 侧边栏 -->
+      <el-aside width="220px" class="admin-aside">
+        <el-menu
+          :default-active="activeMenu"
+          class="el-menu-vertical"
+          router
+        >
+          <el-menu-item index="/admin/pet-list">
+            <el-icon><List /></el-icon>
+            <span>宠物信息管理</span>
+          </el-menu-item>
+          <el-menu-item index="/admin/user-list">
+            <el-icon><User /></el-icon>
+            <span>用户管理</span>
+          </el-menu-item>
+          <el-menu-item index="/admin/adoption-list">
+            <el-icon><Checked /></el-icon>
+            <span>全平台领养监管</span>
+          </el-menu-item>
+          <el-menu-item index="/admin/article/list">
+            <el-icon><Document /></el-icon>
+            <span>内容生态管理</span>
+          </el-menu-item>
+          <!-- 预留其他菜单 -->
+        </el-menu>
+      </el-aside>
+      
+      <!-- 主体内容 -->
+      <el-main class="admin-main">
+        <router-view v-slot="{ Component }">
+          <transition name="fade" mode="out-in">
+            <component :is="Component" />
+          </transition>
+        </router-view>
+      </el-main>
+    </el-container>
   </el-container>
 </template>
 
 <script setup>
-import { useRouter } from 'vue-router'
+import { computed } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
 import { ElMessageBox } from 'element-plus'
+import { ArrowDown, List, User, Document, Checked } from '@element-plus/icons-vue'
+import { useUserStore } from '../stores/user'
 
 const router = useRouter()
+const route = useRoute()
+const userStore = useUserStore()
+
+const activeMenu = computed(() => route.path)
 
 const handleLogout = async () => {
   try {
@@ -41,10 +82,7 @@ const handleLogout = async () => {
       type: 'warning'
     })
     
-    // 清除 token
-    localStorage.removeItem('token')
-    
-    // 跳转到登录页
+    userStore.logout()
     router.push('/login')
   } catch {
     // 用户取消退出
@@ -55,35 +93,76 @@ const handleLogout = async () => {
 <style scoped>
 .admin-container {
   height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
 .admin-header {
-  background-color: #409eff;
-  color: white;
+  background-color: #fff;
+  border-bottom: 1px solid #dcdfe6;
+  color: #333;
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 0 20px;
+  height: 60px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  z-index: 10;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.logo {
+  font-size: 24px;
 }
 
 .header-left h2 {
   margin: 0;
-  font-size: 20px;
+  font-size: 18px;
+  font-weight: 600;
+  color: #409eff;
+}
+
+.el-dropdown-link {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  color: #606266;
+}
+
+.main-container {
+  flex: 1;
+  overflow: hidden;
+}
+
+.admin-aside {
+  background-color: #fff;
+  border-right: 1px solid #dcdfe6;
+  overflow-y: auto;
+}
+
+.el-menu-vertical {
+  border-right: none;
 }
 
 .admin-main {
-  background-color: #f5f5f5;
+  background-color: #f5f7fa;
   padding: 20px;
+  overflow-y: auto;
 }
 
-.card-header {
-  font-size: 18px;
-  font-weight: bold;
+/* Transition */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease;
 }
 
-.welcome-content {
-  padding: 20px;
-  line-height: 2;
-  font-size: 16px;
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
 }
 </style>

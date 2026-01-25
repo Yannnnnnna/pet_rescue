@@ -1,10 +1,21 @@
 import axios from 'axios'
 import { ElMessage } from 'element-plus'
+import JSONBig from 'json-bigint'
 
 // 创建 axios 实例
 const request = axios.create({
   baseURL: '/api',
-  timeout: 10000 // 请求超时时间
+  timeout: 10000, // 请求超时时间
+  transformResponse: [function (data) {
+    try {
+      // 如果是字符串，尝试解析
+      // 使用 storeAsString: true 将大数字处理为字符串，避免精度丢失和 BigInt 序列化问题
+      return JSONBig({ storeAsString: true }).parse(data)
+    } catch (err) {
+      // 解析失败则返回原数据
+      return data
+    }
+  }]
 })
 
 // 请求拦截器

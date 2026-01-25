@@ -1,9 +1,12 @@
 package com.wei.pet.pet_rescue.entity.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
+
+import java.time.LocalDateTime;
 
 /**
  * @author wyr on 2026/1/19
@@ -38,4 +41,19 @@ public class ArticleFormDTO {
 
     @Schema(description = "文章内容 (富文本HTML) 或 壁纸描述", example = "<p>正文内容...</p>")
     private String content;
+
+
+    @Schema(description = "活动开始时间 (类型为活动时必填)")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    private LocalDateTime activityStartTime;
+
+    @Schema(description = "活动结束时间 (类型为活动时必填)")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    private LocalDateTime activityEndTime;
+
+    @Schema(description = "活动地点 (类型为活动时必填)")
+    private String activityAddress;
+
+    @Schema(description = "壁纸高清大图 (类型为壁纸时必填)")
+    private String wallpaperUrl;
 }

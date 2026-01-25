@@ -73,4 +73,18 @@ public class CmsArticle implements Serializable {
     @TableLogic
     private Integer isDeleted;
 
+    // === 新增字段 ===
+
+    @Schema(description = "活动开始时间")
+    private LocalDateTime activityStartTime;
+
+    @Schema(description = "活动结束时间")
+    private LocalDateTime activityEndTime;
+
+    @Schema(description = "活动地点")
+    private String activityAddress;
+
+    @Schema(description = "壁纸高清大图链接")
+    private String wallpaperUrl;
+
 }

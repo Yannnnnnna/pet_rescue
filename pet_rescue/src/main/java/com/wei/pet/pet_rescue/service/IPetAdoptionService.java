@@ -1,9 +1,13 @@
 package com.wei.pet.pet_rescue.service;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.wei.pet.pet_rescue.entity.PetAdoption;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.wei.pet.pet_rescue.entity.dto.AdoptionApplyDTO;
 import com.wei.pet.pet_rescue.entity.dto.AdoptionAuditDTO;
+import com.wei.pet.pet_rescue.entity.vo.AdminAdoptionRecordVO;
+import com.wei.pet.pet_rescue.entity.vo.AdoptionDetailVO;
 import com.wei.pet.pet_rescue.entity.vo.AdoptionRecordVO;
 
 import java.util.List;
@@ -25,4 +29,8 @@ public interface IPetAdoptionService extends IService<PetAdoption> {
     List<AdoptionRecordVO> applyMyPet(Long userId);
 
     boolean cancel(Long id);
+
+    AdoptionDetailVO getAdoptionDetail(Long id);
+
+    IPage<AdminAdoptionRecordVO> getAdminPage(Page<AdminAdoptionRecordVO> page, Integer status, String petName);
 }

@@ -5,6 +5,7 @@ import com.wei.pet.pet_rescue.entity.PetConsultation;
 import com.wei.pet.pet_rescue.entity.PetInfo;
 import com.wei.pet.pet_rescue.entity.dto.ConsultationAskDTO;
 import com.wei.pet.pet_rescue.entity.dto.ConsultationReplyDTO;
+import com.wei.pet.pet_rescue.entity.vo.ConsultationSummaryVO;
 import com.wei.pet.pet_rescue.entity.vo.ConsultationVO;
 import com.wei.pet.pet_rescue.mapper.PetConsultationMapper;
 import com.wei.pet.pet_rescue.service.IPetConsultationService;
@@ -92,5 +93,30 @@ public class PetConsultationServiceImpl extends ServiceImpl<PetConsultationMappe
 
     public List<ConsultationVO> getMyAskedList() {
         return baseMapper.selectAsked(StpUtil.getLoginIdAsLong());
+    }
+
+    /**
+     * 获取宠物和
+     * @param petId
+     * @param applicantId
+     * @return
+     */
+    @Override
+    public List<PetConsultation> getPetConsultation(Long petId, Long applicantId) {
+        return this.lambdaQuery()
+                .eq(PetConsultation::getPetId, petId)
+                .eq(PetConsultation::getAskUserId, applicantId)
+                .orderByAsc(PetConsultation::getCreateTime) // 按时间正序，还原聊天场景
+                .list();
+    }
+
+    /**
+     * 查询当前宠物的聊天记录
+     * @param petId
+     * @return
+     */
+    @Override
+    public List<ConsultationSummaryVO> getPetConsultationSummary(Long petId) {
+        return baseMapper.selectConsultationSummary(petId);
     }
 }

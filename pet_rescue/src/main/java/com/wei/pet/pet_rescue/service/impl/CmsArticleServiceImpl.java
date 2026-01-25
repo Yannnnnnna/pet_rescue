@@ -62,7 +62,7 @@ public class CmsArticleServiceImpl extends ServiceImpl<CmsArticleMapper, CmsArti
 
         // 关键：如果要查“百科”，前端传 type=0；查“壁纸”，前端传 type=3
         wrapper.eq(query.getType() != null, CmsArticle::getType, query.getType());
-        wrapper.eq(StringUtils.hasText(query.getCategory()), CmsArticle::getCategory, query.getCategory());
+        wrapper.like(StringUtils.hasText(query.getCategory()), CmsArticle::getCategory, query.getCategory());
 
         // 按创建时间倒序
         wrapper.orderByDesc(CmsArticle::getCreateTime);

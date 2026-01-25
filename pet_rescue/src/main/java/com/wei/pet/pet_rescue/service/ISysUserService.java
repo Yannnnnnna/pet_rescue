@@ -1,9 +1,9 @@
 package com.wei.pet.pet_rescue.service;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.wei.pet.pet_rescue.entity.SysUser;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.wei.pet.pet_rescue.entity.dto.AdminLoginDto;
-import com.wei.pet.pet_rescue.entity.dto.WechatLoginDto;
+import com.wei.pet.pet_rescue.entity.dto.*;
 
 /**
  * <p>
@@ -16,4 +16,12 @@ import com.wei.pet.pet_rescue.entity.dto.WechatLoginDto;
 public interface ISysUserService extends IService<SysUser> {
     String loginAdmin(AdminLoginDto dto);
     String loginByWechat(WechatLoginDto dto);
+
+    IPage<SysUser> getUserPage(UserQueryDTO query);
+
+    boolean updateMyInfo(UserUpdateDTO dto);
+
+    SysUser getMyInfo();
+
+    boolean updatePassword(UserPasswordDTO dto);
 }

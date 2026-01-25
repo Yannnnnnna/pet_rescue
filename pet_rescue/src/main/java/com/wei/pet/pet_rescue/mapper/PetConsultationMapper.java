@@ -2,6 +2,7 @@ package com.wei.pet.pet_rescue.mapper;
 
 import com.wei.pet.pet_rescue.entity.PetConsultation;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.wei.pet.pet_rescue.entity.vo.ConsultationSummaryVO;
 import com.wei.pet.pet_rescue.entity.vo.ConsultationVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
@@ -35,4 +36,6 @@ public interface PetConsultationMapper extends BaseMapper<PetConsultation> {
             "WHERE c.ask_user_id = #{userId} " +
             "ORDER BY c.create_time DESC")
     List<ConsultationVO> selectAsked(Long userId);
+
+    List<ConsultationSummaryVO> selectConsultationSummary(Long petId);
 }

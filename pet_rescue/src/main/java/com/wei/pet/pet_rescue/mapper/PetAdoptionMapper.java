@@ -1,8 +1,12 @@
 package com.wei.pet.pet_rescue.mapper;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.wei.pet.pet_rescue.entity.PetAdoption;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.wei.pet.pet_rescue.entity.vo.AdminAdoptionRecordVO;
 import com.wei.pet.pet_rescue.entity.vo.AdoptionRecordVO;
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
@@ -34,4 +38,6 @@ public interface PetAdoptionMapper extends BaseMapper<PetAdoption> {
             "WHERE p.publisher_id = #{publisherId} " +
             "ORDER BY a.create_time DESC")
     List<AdoptionRecordVO> selectReceivedApplications(Long userId);
+
+    IPage<AdminAdoptionRecordVO> selectAdminPage(Page<?> page, @Param("status") Integer status, @Param("petName") String petName);
 }

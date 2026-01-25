@@ -1,12 +1,19 @@
 package com.wei.pet.pet_rescue.service.impl;
 
 import cn.dev33.satoken.stp.StpUtil;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.wei.pet.pet_rescue.entity.PetAdoption;
 import com.wei.pet.pet_rescue.entity.PetInfo;
+import com.wei.pet.pet_rescue.entity.SysUser;
 import com.wei.pet.pet_rescue.entity.dto.AdoptionApplyDTO;
 import com.wei.pet.pet_rescue.entity.dto.AdoptionAuditDTO;
+import com.wei.pet.pet_rescue.entity.vo.AdminAdoptionRecordVO;
+import com.wei.pet.pet_rescue.entity.vo.AdoptionDetailVO;
 import com.wei.pet.pet_rescue.entity.vo.AdoptionRecordVO;
 import com.wei.pet.pet_rescue.mapper.PetAdoptionMapper;
+import com.wei.pet.pet_rescue.mapper.PetInfoMapper;
+import com.wei.pet.pet_rescue.mapper.SysUserMapper;
 import com.wei.pet.pet_rescue.service.IPetAdoptionService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.wei.pet.pet_rescue.service.IPetInfoService;
@@ -30,6 +37,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class PetAdoptionServiceImpl extends ServiceImpl<PetAdoptionMapper, PetAdoption> implements IPetAdoptionService {
     private final IPetInfoService petInfoService;
+    private final SysUserMapper userMapper;
+
 
     /**
      * 1. 提交申请
@@ -167,5 +176,48 @@ public class PetAdoptionServiceImpl extends ServiceImpl<PetAdoptionMapper, PetAd
         // 4. 执行更新
         adoption.setStatus(3); // 设置为 3-已取消
         return this.updateById(adoption);
+    }
+
+    @Override
+    public AdoptionDetailVO getAdoptionDetail(Long id) {
+        // 1. 查询申请记录是否存在
+        PetAdoption adoption = this.getById(id);
+        if (adoption == null) {
+            throw new RuntimeException("申请记录不存在");
+        }
+
+        // 2. 初始化 VO 并复制基础属性 (利用BeanUtil简化代码)
+        AdoptionDetailVO vo = new AdoptionDetailVO();
+        BeanUtils.copyProperties(adoption, vo);
+
+        // 3. 补全：申请人账号信息 (SysUser)
+        SysUser user = userMapper.selectById(adoption.getUserId());
+        if (user != null) {
+            vo.setUserNickname(user.getNickname());
+            vo.setUserAvatar(user.getAvatar());
+        }
+
+        // 4. 补全：宠物信息 (PetInfo)
+        // 假设你的宠物实体叫 PetInfo
+        PetInfo pet = petInfoService.getById(adoption.getPetId());
+        if (pet != null) {
+            vo.setPetName(pet.getName());
+            vo.setPetCover(pet.getCoverImg());
+        }
+
+        return vo;
+
+    }
+
+    /**
+     * 分页查询领养申请信息
+     * @param page
+     * @param status
+     * @param petName
+     * @return
+     */
+    @Override
+    public IPage<AdminAdoptionRecordVO> getAdminPage(Page<AdminAdoptionRecordVO> page, Integer status, String petName) {
+        return baseMapper.selectAdminPage(page, status, petName);
     }
 }

@@ -4,6 +4,7 @@ import com.wei.pet.pet_rescue.entity.PetConsultation;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.wei.pet.pet_rescue.entity.dto.ConsultationAskDTO;
 import com.wei.pet.pet_rescue.entity.dto.ConsultationReplyDTO;
+import com.wei.pet.pet_rescue.entity.vo.ConsultationSummaryVO;
 import com.wei.pet.pet_rescue.entity.vo.ConsultationVO;
 
 import java.util.List;
@@ -25,4 +26,8 @@ public interface IPetConsultationService extends IService<PetConsultation> {
     List<ConsultationVO> getMyReceivedList();
 
     List<ConsultationVO> getMyAskedList();
+
+    List<PetConsultation> getPetConsultation(Long petId, Long applicantId);
+
+    List<ConsultationSummaryVO> getPetConsultationSummary(Long petId);
 }

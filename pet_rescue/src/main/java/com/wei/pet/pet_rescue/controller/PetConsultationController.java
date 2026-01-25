@@ -2,11 +2,14 @@ package com.wei.pet.pet_rescue.controller;
 
 
 import com.wei.pet.pet_rescue.common.Result;
+import com.wei.pet.pet_rescue.entity.PetConsultation;
 import com.wei.pet.pet_rescue.entity.dto.ConsultationAskDTO;
 import com.wei.pet.pet_rescue.entity.dto.ConsultationReplyDTO;
+import com.wei.pet.pet_rescue.entity.vo.ConsultationSummaryVO;
 import com.wei.pet.pet_rescue.entity.vo.ConsultationVO;
 import com.wei.pet.pet_rescue.service.IPetConsultationService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
@@ -52,5 +55,22 @@ public class PetConsultationController {
     @GetMapping("/my/asked")
     public Result<List<ConsultationVO>> getMyAsked() {
         return Result.success(consultationService.getMyAskedList());
+    }
+
+    @Operation(summary = "管理员-获取特定宠物的沟通记录")
+    @GetMapping("/admin/history")
+    public Result<List<PetConsultation>> getHistoryForAdmin(
+            @Parameter(description = "宠物ID") @RequestParam Long petId,
+            @Parameter(description = "申请人ID(提问者)") @RequestParam Long applicantId) {
+
+        List<PetConsultation> list = consultationService.getPetConsultation(petId, applicantId);
+
+        return Result.success(list);
+    }
+
+    @Operation(summary = "管理员-获取某只宠物的所有咨询用户列表")
+    @GetMapping("/admin/summary")
+    public Result<List<ConsultationSummaryVO>> getPetConsultationSummary(@RequestParam Long petId) {
+        return Result.success(consultationService.getPetConsultationSummary(petId));
     }
 }
