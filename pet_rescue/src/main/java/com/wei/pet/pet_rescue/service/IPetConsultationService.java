@@ -4,6 +4,8 @@ import com.wei.pet.pet_rescue.entity.PetConsultation;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.wei.pet.pet_rescue.entity.dto.ConsultationAskDTO;
 import com.wei.pet.pet_rescue.entity.dto.ConsultationReplyDTO;
+import com.wei.pet.pet_rescue.entity.dto.ReturnVisitDTO;
+import com.wei.pet.pet_rescue.entity.vo.ChatSessionVO;
 import com.wei.pet.pet_rescue.entity.vo.ConsultationSummaryVO;
 import com.wei.pet.pet_rescue.entity.vo.ConsultationVO;
 
@@ -23,11 +25,13 @@ public interface IPetConsultationService extends IService<PetConsultation> {
 
     boolean reply(ConsultationReplyDTO dto);
 
-    List<ConsultationVO> getMyReceivedList();
+    List<ChatSessionVO> getMyReceivedList();
 
-    List<ConsultationVO> getMyAskedList();
+    List<ChatSessionVO> getMyAskedList();
 
-    List<PetConsultation> getPetConsultation(Long petId, Long applicantId);
+    List<ConsultationVO> getPetConsultation(Long petId, Long applicantId);
 
     List<ConsultationSummaryVO> getPetConsultationSummary(Long petId);
+
+    boolean startReturnVisit(ReturnVisitDTO dto);
 }

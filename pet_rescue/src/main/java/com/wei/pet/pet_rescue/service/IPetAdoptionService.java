@@ -9,6 +9,7 @@ import com.wei.pet.pet_rescue.entity.dto.AdoptionAuditDTO;
 import com.wei.pet.pet_rescue.entity.vo.AdminAdoptionRecordVO;
 import com.wei.pet.pet_rescue.entity.vo.AdoptionDetailVO;
 import com.wei.pet.pet_rescue.entity.vo.AdoptionRecordVO;
+import com.wei.pet.pet_rescue.entity.vo.UserInfoVO;
 
 import java.util.List;
 
@@ -33,4 +34,6 @@ public interface IPetAdoptionService extends IService<PetAdoption> {
     AdoptionDetailVO getAdoptionDetail(Long id);
 
     IPage<AdminAdoptionRecordVO> getAdminPage(Page<AdminAdoptionRecordVO> page, Integer status, String petName);
+
+    UserInfoVO getByPetId(Long petId);
 }

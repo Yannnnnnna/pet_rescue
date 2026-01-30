@@ -1,9 +1,11 @@
 package com.wei.pet.pet_rescue.controller;
 
 
+import cn.dev33.satoken.stp.StpUtil;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.wei.pet.pet_rescue.common.Result;
 import com.wei.pet.pet_rescue.entity.PetInfo;
+import com.wei.pet.pet_rescue.entity.dto.AdoptPetsDTO;
 import com.wei.pet.pet_rescue.entity.dto.PetDTO;
 import com.wei.pet.pet_rescue.entity.dto.PetQueryDTO;
 import com.wei.pet.pet_rescue.service.IPetInfoService;
@@ -13,6 +15,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * <p>
@@ -69,5 +73,26 @@ public class PetInfoController {
         IPage<PetInfo> page = petInfoService.getPetPage(query);
         return Result.success(page);
     }
+    @Operation(summary = "查询我发布的宠物")
+    @PostMapping("/myPets")
+    public Result<List<PetInfo>> getMyPets(){
+        Long id = StpUtil.getLoginIdAsLong();
+        List<PetInfo> pets = petInfoService.getMyPets(id);
+        return Result.success(pets);
+    }
 
+    @Operation(summary ="查询我沟通过的宠物")
+    @GetMapping("/myChattedPets")
+    public Result<List<PetInfo>> getMyChattedPets() {
+        Long id = StpUtil.getLoginIdAsLong();
+        List<PetInfo> pets = petInfoService.getMyChattedPets(id);
+        return Result.success(pets);
+    }
+    @Operation(summary = "我领养的宠物")
+    @GetMapping("/my-adopted-pets")
+    public Result<List<AdoptPetsDTO>> getAdoptPets(){
+        Long id = StpUtil.getLoginIdAsLong();
+        List<AdoptPetsDTO> pets = petInfoService.getAdoptedPets(id);
+        return Result.success(pets);
+    }
 }

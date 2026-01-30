@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -64,4 +65,7 @@ public class PetDTO {
 
     @Schema(description = "详细地点", example = "花溪校区北门")
     private String address;
+
+    @Schema(description = "发布时间")
+    private LocalDateTime createTime;
 }

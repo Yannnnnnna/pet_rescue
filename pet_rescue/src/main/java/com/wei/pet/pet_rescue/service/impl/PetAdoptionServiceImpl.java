@@ -1,8 +1,10 @@
 package com.wei.pet.pet_rescue.service.impl;
 
 import cn.dev33.satoken.stp.StpUtil;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.wei.pet.pet_rescue.common.Result;
 import com.wei.pet.pet_rescue.entity.PetAdoption;
 import com.wei.pet.pet_rescue.entity.PetInfo;
 import com.wei.pet.pet_rescue.entity.SysUser;
@@ -11,6 +13,7 @@ import com.wei.pet.pet_rescue.entity.dto.AdoptionAuditDTO;
 import com.wei.pet.pet_rescue.entity.vo.AdminAdoptionRecordVO;
 import com.wei.pet.pet_rescue.entity.vo.AdoptionDetailVO;
 import com.wei.pet.pet_rescue.entity.vo.AdoptionRecordVO;
+import com.wei.pet.pet_rescue.entity.vo.UserInfoVO;
 import com.wei.pet.pet_rescue.mapper.PetAdoptionMapper;
 import com.wei.pet.pet_rescue.mapper.PetInfoMapper;
 import com.wei.pet.pet_rescue.mapper.SysUserMapper;
@@ -219,5 +222,24 @@ public class PetAdoptionServiceImpl extends ServiceImpl<PetAdoptionMapper, PetAd
     @Override
     public IPage<AdminAdoptionRecordVO> getAdminPage(Page<AdminAdoptionRecordVO> page, Integer status, String petName) {
         return baseMapper.selectAdminPage(page, status, petName);
+    }
+
+    @Override
+    public UserInfoVO getByPetId(Long petId) {
+        // 构造查询条件
+        LambdaQueryWrapper<PetAdoption> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(PetAdoption::getPetId, petId)
+                .eq(PetAdoption::getStatus, 1); // 关键：只查询状态为 1 (通过) 的记录
+
+        // 查询数据库
+        PetAdoption adoptionInfo = this.getOne(queryWrapper);
+
+        if (adoptionInfo == null) {
+            throw new RuntimeException("该宠物暂无成功领养记录");
+        }
+        SysUser user = userMapper.selectById(adoptionInfo.getUserId());
+        UserInfoVO userInfoVO = new UserInfoVO();
+        BeanUtils.copyProperties(user, userInfoVO);
+        return userInfoVO;
     }
 }

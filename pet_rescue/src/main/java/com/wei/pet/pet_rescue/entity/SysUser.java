@@ -64,4 +64,5 @@ public class SysUser implements Serializable {
     @TableLogic
     private Integer isDeleted;
 
+
 }

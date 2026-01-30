@@ -2,6 +2,7 @@ package com.wei.pet.pet_rescue.controller;
 
 
 import cn.dev33.satoken.stp.StpUtil;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.wei.pet.pet_rescue.common.Result;
@@ -11,6 +12,7 @@ import com.wei.pet.pet_rescue.entity.dto.AdoptionAuditDTO;
 import com.wei.pet.pet_rescue.entity.vo.AdminAdoptionRecordVO;
 import com.wei.pet.pet_rescue.entity.vo.AdoptionDetailVO;
 import com.wei.pet.pet_rescue.entity.vo.AdoptionRecordVO;
+import com.wei.pet.pet_rescue.entity.vo.UserInfoVO;
 import com.wei.pet.pet_rescue.service.IPetAdoptionService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -132,4 +134,20 @@ public class PetAdoptionController {
         // 调用 Service -> Mapper 的逻辑
         return Result.success(adoptionService.getAdminPage(page, status, petName));
     }
+
+    /**
+     * 获取某只宠物的成功领养人信息（用于回访）
+     * @param petId 宠物ID
+     * @return 领养申请记录（包含联系人、电话、地址）
+     */
+    @Operation(summary = "获取某只宠物的成功领养人信息（用于回访）")
+    @GetMapping("/adopter/{petId}")
+    public Result<UserInfoVO> getAdopterInfo(@PathVariable Long petId) {
+
+        UserInfoVO userInfoVO = adoptionService.getByPetId(petId);
+        return Result.success(userInfoVO);
+    }
+
+
+
 }

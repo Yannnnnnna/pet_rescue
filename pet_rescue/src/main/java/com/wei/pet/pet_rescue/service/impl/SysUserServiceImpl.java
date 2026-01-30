@@ -7,15 +7,18 @@ import cn.hutool.http.HttpUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.wei.pet.pet_rescue.entity.SysUser;
 import com.wei.pet.pet_rescue.entity.dto.*;
+import com.wei.pet.pet_rescue.entity.vo.UserInfoVO;
 import com.wei.pet.pet_rescue.mapper.SysUserMapper;
 import com.wei.pet.pet_rescue.service.ISysUserService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -164,11 +167,17 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
      * @return
      */
     @Override
-    public SysUser getMyInfo() {
+    public UserInfoVO getMyInfo() {
         Long userId = StpUtil.getLoginIdAsLong();
         SysUser user = this.getById(userId);
-        user.setPassword(null); // 抹除密码，防止泄露
-        return user;
+        UserInfoVO vo = new UserInfoVO();
+        BeanUtils.copyProperties(user, vo);
+        if (user.getPassword() == null){
+            vo.setHasPassword(false);
+        }else {
+            vo.setHasPassword(true);
+        }
+        return vo;
     }
 
     /**
@@ -181,16 +190,70 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
         Long userId = StpUtil.getLoginIdAsLong();
         SysUser user = this.getById(userId);
 
-        // 1. 校验旧密码 (注意：实际项目中密码通常是 BCrypt 加密的，这里简单演示明文或简单加密)
-        // 如果你的密码是加密存储的，请用 passwordEncoder.matches(dto.getOldPassword(), user.getPassword())
-        if (!user.getPassword().equals(dto.getOldPassword())) {
-            throw new RuntimeException("旧密码错误");
+        // 检查数据库中当前用户是否已设置过密码
+        // 使用 Hutool 的 StrUtil.isNotBlank，或者 StringUtils.hasText
+        boolean hasExistingPassword = user.getPassword() != null && !user.getPassword().isEmpty();
+
+        if (hasExistingPassword) {
+            // --- 场景A：已有密码（修改密码逻辑）---
+
+            // 1. 必须传入旧密码
+            if (dto.getOldPassword() == null || dto.getOldPassword().isEmpty()) {
+                throw new RuntimeException("请输入旧密码以验证身份");
+            }
+
+            // 2. 校验旧密码是否正确
+            // 如果是明文（不推荐）：
+            if (!user.getPassword().equals(dto.getOldPassword())) {
+                throw new RuntimeException("旧密码错误");
+            }
+            // 如果是加密（推荐）：
+            // if (!BCrypt.checkpw(dto.getOldPassword(), user.getPassword())) { ... }
+        } else {
+            // --- 场景B：无密码（初始化密码逻辑）---
+            // 这种情况下，直接跳过旧密码校验，允许用户直接设置新密码
+            // 也可以在这里加一个日志，记录用户“初始化了密码”
+            log.info("用户初始化密码");
         }
 
-        // 2. 修改为新密码
+        // 3. 设置新密码
         user.setPassword(dto.getNewPassword());
-        // user.setPassword(passwordEncoder.encode(dto.getNewPassword())); // 建议加密
+        // user.setPassword(BCrypt.hashpw(dto.getNewPassword())); // 强烈建议加密存储
 
         return this.updateById(user);
+    }
+
+    /**
+     * 通过手机号登录
+     * @param phone
+     * @param password
+     * @return
+     */
+    @Override
+    public String loginByPhone(String phone, String password) {
+        // 1. 根据手机号查询用户
+        // 使用 LambdaQueryWrapper，SysUser::getPhone 会自动映射为数据库的 phone 字段
+        // 这里的 .one() 表示只查一条，如果数据库有逻辑删除配置，MyBatis-Plus 会自动过滤 is_deleted=1 的数据
+        SysUser user = this.getOne(new LambdaQueryWrapper<SysUser>()
+                .eq(SysUser::getPhone, phone));
+
+        // 2. 校验用户是否存在
+        if (user == null) {
+            throw new RuntimeException("账号不存在或已注销");
+        }
+
+        // 3. 校验密码
+        // 注意：一定要判空，防止还没设置过密码的用户尝试登录
+        if (user.getPassword() == null || !user.getPassword().equals(password)) {
+            // 如果你是加密存储（如BCrypt），请用：
+            // if (!BCrypt.checkpw(password, user.getPassword())) { ... }
+            throw new RuntimeException("手机号或密码错误");
+        }
+
+        // 4. 校验通过，执行登录
+        StpUtil.login(user.getId());
+
+        // 5. 返回 Token
+        return StpUtil.getTokenValue();
     }
 }

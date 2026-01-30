@@ -12,7 +12,6 @@ import lombok.Data;
 public class UserPasswordDTO {
 
     @Schema(description = "旧密码", requiredMode = Schema.RequiredMode.REQUIRED)
-    @NotBlank(message = "旧密码不能为空")
     private String oldPassword;
 
     @Schema(description = "新密码", requiredMode = Schema.RequiredMode.REQUIRED)

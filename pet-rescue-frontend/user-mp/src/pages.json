@@ -5,7 +5,32 @@
 			"^u-(.*)": "uview-plus/components/u-$1/u-$1.vue"
 		}
 	},
-	"pages": [ 
+	"pages": [
+		{
+			"path": "pages/index/index",
+			"style": {
+				"navigationStyle": "custom",
+				"navigationBarTitleText": "首页"
+			}
+		},
+		{
+			"path": "pages/message/message",
+			"style": {
+				"navigationBarTitleText": "消息"
+			}
+		},
+		{
+			"path": "pages/ai/ai",
+			"style": {
+				"navigationBarTitleText": "AI助手"
+			}
+		},
+		{
+			"path": "pages/profile/profile",
+			"style": {
+				"navigationBarTitleText": "个人中心"
+			}
+		},
 		{
 			"path": "pages/login/login",
 			"style": {
@@ -13,13 +38,94 @@
 			}
 		},
 		{
-			"path": "pages/index/index",
+			"path": "pages/pet/my-list",
 			"style": {
-				"navigationBarTitleText": "宠物救助"
+				"navigationBarTitleText": "宠物列表"
 			}
-			
+		},
+		{
+			"path": "pages/pet/my-adopted",
+			"style": {
+				"navigationBarTitleText": "我的爱宠",
+				"navigationBarBackgroundColor": "#fce4ec",
+				"backgroundColor": "#fce4ec"
+			}
+		},
+		{
+			"path": "pages/adoption/my-history",
+			"style": {
+				"navigationBarTitleText": "申请记录"
+			}
+		},
+		{
+			"path": "pages/pet/detail",
+			"style": {
+				"navigationBarTitleText": "宠物详情"
+			}
+		},
+		{
+			"path": "pages/pet/edit",
+			"style": {
+				"navigationBarTitleText": "修改宠物信息"
+			}
+		},
+		{
+			"path": "pages/message/chat-history",
+			"style": {
+				"navigationBarTitleText": "咨询记录"
+			}
+		},
+		{
+			"path": "pages/message/consultation-list",
+			"style": {
+				"navigationBarTitleText": "咨询记录列表"
+			}
+		},
+		{
+			"path": "pages/adoption/audit-list",
+			"style": {
+				"navigationBarTitleText": "待办审核"
+			}
+		},
+		{
+			"path": "pages/adoption/audit-detail",
+			"style": {
+				"navigationBarTitleText": "申请详情"
+			}
 		}
 	],
+	"tabBar": {
+		"color": "#999999",
+		"selectedColor": "#1aad19",
+		"backgroundColor": "#ffffff",
+		"borderStyle": "black",
+		"list": [
+			{
+				"pagePath": "pages/index/index",
+				"text": "首页",
+				"iconPath": "/static/tabbar/home.png",
+				"selectedIconPath": "/static/tabbar/home-active.png"
+			},
+			{
+				"pagePath": "pages/message/message",
+				"text": "消息",
+				"iconPath": "/static/tabbar/message.png",
+				"selectedIconPath": "/static/tabbar/message-active.png"
+			},
+			{
+				"pagePath": "pages/ai/ai",
+				"text": "AI",
+				"iconPath": "/static/tabbar/ai.png",
+				"selectedIconPath": "/static/tabbar/ai-active.png"
+			},
+			{
+				"pagePath": "pages/profile/profile",
+				"text": "我的",
+				"iconPath": "/static/tabbar/profile.png",
+				"selectedIconPath": "/static/tabbar/profile-active.png"
+			}
+		]
+	},
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
 		"navigationBarTitleText": "宠物救助",

@@ -32,6 +32,25 @@ export const miniLogin = (code, config = {}) => {
   )
 }
 
+/**
+ * 手机号密码登录
+ * @param {Object} data 登录信息
+ * @param {string} data.phone 手机号
+ * @param {string} data.password 密码
+ */
+export const phoneLogin = (data) => {
+  return request.post('/sys-user/phoneLogin', data)
+}
+
+/**
+ * 退出登录
+ */
+export const logout = () => {
+  return request.post('/sys-user/logout')
+}
+
 export default {
-  miniLogin
+  miniLogin,
+  phoneLogin,
+  logout
 }

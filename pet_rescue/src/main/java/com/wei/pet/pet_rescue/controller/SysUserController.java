@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.wei.pet.pet_rescue.common.Result;
 import com.wei.pet.pet_rescue.entity.SysUser;
 import com.wei.pet.pet_rescue.entity.dto.*;
+import com.wei.pet.pet_rescue.entity.vo.UserInfoVO;
 import com.wei.pet.pet_rescue.service.ISysUserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -42,13 +43,34 @@ public class SysUserController {
         String token = sysUserService.loginByWechat(dto);
         return Result.success("登录成功", token);
     }
+
+    @Operation(summary = "手机号密码登录")
+    @PostMapping("/phoneLogin")
+    public Result<String> phoneLogin(@RequestBody LoginPhoneDTO dto) {
+        // 简单的校验
+        if (dto.getPhone() == null || dto.getPassword() == null) {
+            return Result.error("账号或密码不能为空");
+        }
+
+        String token = sysUserService.loginByPhone(dto.getPhone(), dto.getPassword());
+        return Result.success("登录成功", token);
+    }
+
     @Operation(summary ="测试环境登录接口")
     @PostMapping("/login")
     public Result<String> devLogin(@RequestParam Long id){
         StpUtil.login(id);
         return Result.success("登录成功", StpUtil.getTokenValue());
     }
+    @Operation(summary = "退出登录")
+    @PostMapping("/logout") // 建议用 POST，符合 RESTful 规范（这是一个动作）
+    public Result<String> logout() {
+        // 1. Sa-Token 核心命令：注销当前登录
+        // 它会自动从 Header 中读取 Token，并将其标记为无效
+        StpUtil.logout();
 
+        return Result.success("退出成功");
+    }
     // ================== Web端管理相关 ==================
 
     @Operation(summary = "分页查询用户列表", description = "支持按角色、状态、关键字筛选")
@@ -79,7 +101,7 @@ public class SysUserController {
 
     @Operation(summary = "获取我的个人信息")
     @GetMapping("/my/info")
-    public Result<SysUser> getMyInfo() {
+    public Result<UserInfoVO> getMyInfo() {
         return Result.success(sysUserService.getMyInfo());
     }
 

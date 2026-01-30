@@ -12,38 +12,66 @@ const requestInterceptor = (config) => {
 	const token = uni.getStorageSync('token')
 	if (token) {
 		config.header = config.header || {}
-		config.header.Authorization = `Bearer ${token}`
+		// 根据Swagger文档，使用 satoken 作为请求头，且不需要 Bearer 前缀
+		config.header.satoken = token
 	}
-	
+
 	// 设置默认 header
 	config.header = {
 		'Content-Type': 'application/json',
 		...config.header
 	}
-	
+
 	return config
 }
 
 // 响应拦截器
 const responseInterceptor = (response) => {
 	const { statusCode, data } = response
-	
+
 	// HTTP 状态码处理
 	if (statusCode >= 200 && statusCode < 300) {
 		// 可以根据后端返回的数据结构进行调整
 		// 假设后端返回格式为 { code: 200, data: {}, message: '' }
 		if (data.code === 200 || data.code === 0) {
 			return Promise.resolve(data)
+		} else if (data.code === 401) {
+			// 401未登录，清除token并跳转到登录页
+			uni.removeStorageSync('token')
+			uni.showToast({
+				title: data.msg || '请先登录',
+				icon: 'none'
+			})
+			// 延迟跳转，让提示显示出来
+			setTimeout(() => {
+				uni.reLaunch({
+					url: '/pages/login/login'
+				})
+			}, 500)
+			return Promise.reject(new Error(data.msg || '未登录'))
 		} else {
 			// 业务错误
 			uni.showToast({
-				title: data.message || '请求失败',
+				title: data.msg || data.message || '请求失败',
 				icon: 'none'
 			})
-			return Promise.reject(new Error(data.message || '请求失败'))
+			return Promise.reject(new Error(data.msg || data.message || '请求失败'))
 		}
+	} else if (statusCode === 401) {
+		// HTTP 401 未授权
+		uni.removeStorageSync('token')
+		uni.showToast({
+			title: '登录已过期，请重新登录',
+			icon: 'none'
+		})
+		setTimeout(() => {
+			uni.reLaunch({
+				url: '/pages/login/login'
+			})
+		}, 500)
+		return Promise.reject(new Error('未登录'))
 	} else {
-		// HTTP 错误
+		// 其他HTTP错误
 		uni.showToast({
 			title: `请求失败: ${statusCode}`,
 			icon: 'none'
@@ -55,7 +83,7 @@ const responseInterceptor = (response) => {
 // 错误处理
 const errorHandler = (error) => {
 	console.error('Request Error:', error)
-	
+
 	// 网络错误
 	if (error.errMsg && error.errMsg.includes('fail')) {
 		uni.showToast({
@@ -63,16 +91,20 @@ const errorHandler = (error) => {
 			icon: 'none'
 		})
 	}
-	
+
 	return Promise.reject(error)
 }
 
 // 核心请求方法
+import JSONBig from 'json-bigint'
+// 配置 json-bigint 将大整数解析为字符串
+const JSONBigString = JSONBig({ storeAsString: true })
+
 const request = (config) => {
 	// 处理 config 参数，支持 axios 风格的传参
 	let url = ''
 	let options = {}
-	
+
 	if (typeof config === 'string') {
 		// request(url, config) 或 request(url)
 		url = config
@@ -83,7 +115,7 @@ const request = (config) => {
 		options = { ...config }
 		delete options.url
 	}
-	
+
 	// 处理 GET 请求的 params（查询字符串）
 	if (options.method === 'GET' || !options.method) {
 		const params = options.params || {}
@@ -94,7 +126,7 @@ const request = (config) => {
 			url += (url.includes('?') ? '&' : '?') + queryString
 		}
 	}
-	
+
 	// 处理完整 URL
 	if (!url.startsWith('http://') && !url.startsWith('https://')) {
 		// 简单的字符串拼接，避免使用 path 或 url 模块
@@ -102,7 +134,7 @@ const request = (config) => {
 		const path = url.startsWith('/') ? url : '/' + url
 		url = prefix + path
 	}
-	
+
 	// 请求拦截
 	const finalConfig = requestInterceptor({
 		url,
@@ -112,11 +144,32 @@ const request = (config) => {
 		timeout: options.timeout || 10000,
 		...options
 	})
-	
+
 	return new Promise((resolve, reject) => {
 		uni.request({
 			...finalConfig,
+			// 强制返回文本，防止 uni.request 自动 JSON.parse 导致精度丢失
+			dataType: 'text',
 			success: (res) => {
+				// 手动解析 JSON，使用 json-bigint 处理大整数
+				try {
+					if (typeof res.data === 'string') {
+						// 移除可能存在的 BOM 头
+						const dataStr = res.data.trim()
+						if (dataStr) {
+							res.data = JSONBigString.parse(dataStr)
+						}
+					}
+				} catch (e) {
+					console.error('JSONBig parse error', e)
+					// 如果解析失败，尝试回退到普通 JSON.parse (虽然不太可能，但作为兜底)
+					try {
+						res.data = JSON.parse(res.data)
+					} catch (e2) {
+						// 实在解析不了，就保持原样（可能是非 JSON 响应）
+					}
+				}
+
 				responseInterceptor(res)
 					.then(resolve)
 					.catch(reject)
@@ -173,19 +226,19 @@ const http = {
 	put: createRequestMethod('put'),
 	delete: createRequestMethod('delete'),
 	patch: createRequestMethod('patch'),
-	
+
 	// 支持 axios 的别名方法
 	head: createRequestMethod('head'),
 	options: createRequestMethod('options'),
-	
+
 	// 创建实例（类似 axios.create）
 	create(config) {
 		const instance = { ...http }
 		const originalRequest = instance.request
-		
+
 		instance.request = (configOrUrl, requestConfig) => {
 			let mergedConfig = {}
-			
+
 			if (typeof configOrUrl === 'string') {
 				mergedConfig = {
 					...config,
@@ -198,10 +251,10 @@ const http = {
 					...configOrUrl
 				}
 			}
-			
+
 			return originalRequest(mergedConfig)
 		}
-		
+
 		// 重新绑定方法
 		['get', 'post', 'put', 'delete', 'patch', 'head', 'options'].forEach(method => {
 			instance[method] = (url, data, requestConfig = {}) => {
@@ -214,10 +267,10 @@ const http = {
 				})
 			}
 		})
-		
+
 		return instance
 	},
-	
+
 	// 设置默认配置
 	defaults: {
 		baseURL: baseURL,
@@ -226,7 +279,7 @@ const http = {
 			'Content-Type': 'application/json'
 		}
 	},
-	
+
 	// 拦截器（类似 axios 的拦截器）
 	interceptors: {
 		request: {

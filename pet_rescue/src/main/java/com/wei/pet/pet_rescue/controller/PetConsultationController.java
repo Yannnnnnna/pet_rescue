@@ -5,6 +5,8 @@ import com.wei.pet.pet_rescue.common.Result;
 import com.wei.pet.pet_rescue.entity.PetConsultation;
 import com.wei.pet.pet_rescue.entity.dto.ConsultationAskDTO;
 import com.wei.pet.pet_rescue.entity.dto.ConsultationReplyDTO;
+import com.wei.pet.pet_rescue.entity.dto.ReturnVisitDTO;
+import com.wei.pet.pet_rescue.entity.vo.ChatSessionVO;
 import com.wei.pet.pet_rescue.entity.vo.ConsultationSummaryVO;
 import com.wei.pet.pet_rescue.entity.vo.ConsultationVO;
 import com.wei.pet.pet_rescue.service.IPetConsultationService;
@@ -47,23 +49,23 @@ public class PetConsultationController {
 
     @Operation(summary = "查询我收到的提问 (送养人视角)")
     @GetMapping("/my/received")
-    public Result<List<ConsultationVO>> getMyReceived() {
+    public Result<List<ChatSessionVO>> getMyReceived() {
         return Result.success(consultationService.getMyReceivedList());
     }
 
     @Operation(summary = "查询我发起的提问 (领养人视角)")
     @GetMapping("/my/asked")
-    public Result<List<ConsultationVO>> getMyAsked() {
+    public Result<List<ChatSessionVO>> getMyAsked() {
         return Result.success(consultationService.getMyAskedList());
     }
 
     @Operation(summary = "管理员-获取特定宠物的沟通记录")
     @GetMapping("/admin/history")
-    public Result<List<PetConsultation>> getHistoryForAdmin(
+    public Result<List<ConsultationVO>> getHistoryForAdmin(
             @Parameter(description = "宠物ID") @RequestParam Long petId,
             @Parameter(description = "申请人ID(提问者)") @RequestParam Long applicantId) {
 
-        List<PetConsultation> list = consultationService.getPetConsultation(petId, applicantId);
+        List<ConsultationVO> list = consultationService.getPetConsultation(petId, applicantId);
 
         return Result.success(list);
     }
@@ -72,5 +74,11 @@ public class PetConsultationController {
     @GetMapping("/admin/summary")
     public Result<List<ConsultationSummaryVO>> getPetConsultationSummary(@RequestParam Long petId) {
         return Result.success(consultationService.getPetConsultationSummary(petId));
+    }
+
+    @Operation(summary = "发起回访 (送养人)")
+    @PostMapping("/return-visit")
+    public Result<Boolean> startReturnVisit(@RequestBody @Validated ReturnVisitDTO dto) {
+        return Result.success(consultationService.startReturnVisit(dto));
     }
 }
