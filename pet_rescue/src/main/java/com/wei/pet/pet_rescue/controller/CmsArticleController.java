@@ -52,13 +52,9 @@ public class CmsArticleController {
     @Operation(summary = "获取详情", description = "阅读文章或查看大图")
     @GetMapping("/{id}")
     public Result<CmsArticle> getDetail(@PathVariable Long id) {
-        CmsArticle article = cmsArticleService.getById(id);
+        CmsArticle article = cmsArticleService.getDetail(id);
 
-        // 增加阅读量 (简单的 +1 操作，高并发下需优化，毕设这样写没问题)
-        if (article != null) {
-            article.setViewCount(article.getViewCount() + 1);
-            cmsArticleService.updateById(article);
-        }
+
         return Result.success(article);
     }
 }

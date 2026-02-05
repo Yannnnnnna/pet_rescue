@@ -106,9 +106,8 @@ public class PetInfoServiceImpl extends ServiceImpl<PetInfoMapper, PetInfo> impl
         }
         return dto;
     }
-
     /**
-     * 分页查询
+     * 分页查询宠物列表
      * @param query
      * @return
      */
@@ -117,16 +116,25 @@ public class PetInfoServiceImpl extends ServiceImpl<PetInfoMapper, PetInfo> impl
         Page<PetInfo> page = new Page<>(query.getPageNum(), query.getPageSize());
         LambdaQueryWrapper<PetInfo> wrapper = new LambdaQueryWrapper<>();
 
-        // 动态拼接查询条件
-        wrapper.like(StringUtils.hasText(query.getKeyword()), PetInfo::getName, query.getKeyword())
-                .or()
-                .like(StringUtils.hasText(query.getKeyword()), PetInfo::getBreed, query.getKeyword());
+        if (query.getStatus() != null) {
+            wrapper.eq(PetInfo::getStatus, query.getStatus());
+        } else {
+            wrapper.eq(PetInfo::getStatus, 0); // 默认只查待领养
+        }
 
+        // 必须加 if 判断！只有 keyword 不为空时，才拼接 AND (...)
+        String keyword = query.getKeyword();
+        if (StringUtils.hasText(keyword)) {
+            wrapper.and(w -> w.like(PetInfo::getName, keyword)
+                    .or()
+                    .like(PetInfo::getBreed, keyword));
+        }
+
+        // 3. 其他动态条件
         wrapper.eq(query.getType() != null, PetInfo::getType, query.getType());
-        wrapper.eq(query.getStatus() != null, PetInfo::getStatus, query.getStatus());
         wrapper.eq(StringUtils.hasText(query.getCity()), PetInfo::getCity, query.getCity());
 
-        // 只查未删除的 (MyBatis-Plus配置了逻辑删除会自动加，这里可不写)
+        // 4. 排序
         wrapper.orderByDesc(PetInfo::getCreateTime);
 
         return this.page(page, wrapper);

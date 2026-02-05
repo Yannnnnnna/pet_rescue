@@ -1,14 +1,16 @@
 <template>
   <view class="container">
     <!-- 1. 顶部导航栏 -->
-    <view class="header-bar">
-      <view class="location">
-        <u-icon name="map-fill" size="18" color="#333"></u-icon>
-        <text class="city-name">{{ currentCity }}</text>
-      </view>
+    <view class="header-bar" :style="{ paddingTop: statusBarHeight + 'px' }">
+      <picker mode="multiSelector" :range="range" range-key="name" :value="multiIndex" @change="handlePickerChange" @columnchange="handleColumnChange" class="location-picker">
+        <view class="location">
+          <u-icon name="map-fill" size="18" color="#333"></u-icon>
+          <text class="city-name">{{ currentCity }}</text>
+        </view>
+      </picker>
       <view class="search-box" @click="handleSearch">
         <u-icon name="search" size="20" color="#999"></u-icon>
-        <text class="placeholder">搜索品种、名字或救助站...</text>
+        <text class="placeholder">搜索品种或名字</text>
       </view>
       <view class="msg-icon" @click="handleMessage">
         <u-icon name="bell" size="24" color="#333"></u-icon>
@@ -39,11 +41,11 @@
         </view>
         <text class="label">养宠百科</text>
       </view>
-      <view class="grid-item" @click="handleCloudAdopt">
+      <view class="grid-item" @click="handlePublish">
         <view class="icon-box cloud-bg">
-           <u-icon name="star-fill" color="#fff" size="28"></u-icon>
+           <u-icon name="plus" color="#fff" size="28"></u-icon>
         </view>
-        <text class="label">云养计划</text>
+        <text class="label">发布</text>
       </view>
       <view class="grid-item" @click="handleProcess">
         <view class="icon-box process-bg">
@@ -51,12 +53,24 @@
         </view>
         <text class="label">领养流程</text>
       </view>
+      <view class="grid-item" @click="handleWallpaper">
+        <view class="icon-box wallpaper-bg">
+           <u-icon name="image-fill" color="#fff" size="28"></u-icon>
+        </view>
+        <text class="label">壁纸</text>
+      </view>
+      <view class="grid-item" @click="handleNews">
+        <view class="icon-box news-bg">
+           <u-icon name="chat-fill" color="#fff" size="28"></u-icon>
+        </view>
+        <text class="label">资讯中心</text>
+      </view>
     </view>
 
     <!-- 4. 宠物列表 -->
     <view class="pet-section">
       <!-- Tab 切换 -->
-      <view class="sticky-tabs">
+      <view class="sticky-tabs" :style="{ top: headerStyleTop }">
         <u-tabs 
           :list="tabList" 
           :current="currentTab" 
@@ -115,6 +129,10 @@
         </view>
       </view>
       
+      <!-- 空状态 -->
+      <u-empty v-if="petList.length === 0 && loadStatus !== 'loading'" mode="list" icon="http://cdn.uviewui.com/uview/empty/list.png">
+      </u-empty>
+
       <u-loadmore :status="loadStatus" marginTop="30"></u-loadmore>
     </view>
 
@@ -129,14 +147,39 @@
 
 <script setup>
 import { ref, onMounted, computed } from 'vue'
-import { onLoad, onReachBottom } from '@dcloudio/uni-app'
+import { onLoad, onReachBottom, onShow } from '@dcloudio/uni-app'
+import { getPetList } from '@/api/pet'
+import { getMyInfo } from '@/api/user'
+import { cityData } from '@/utils/cityData'
 
 // 状态定义
-const currentCity = ref('重庆')
+const currentCity = ref('重庆市') // 默认为重庆市
+const filterCity = ref('重庆市') // 用于API筛选的城市名
 const hasNewMsg = ref(true)
 const statusBarHeight = ref(20) // 默认值，防止闪烁
 
-// 计算吸顶高度
+// 城市选择器相关
+const multiIndex = ref([21, 0]) // 默认选中重庆 (index 21 in cityData roughly, but let's init properly)
+const range = ref([cityData, cityData[21].cities]) // Init with Chongqing's cities
+
+// 初始化城市选择器位置
+const initCityPicker = () => {
+  // 查找当前城市的索引
+  const pIndex = cityData.findIndex(p => p.name === '重庆市')
+  if (pIndex > -1) {
+    multiIndex.value[0] = pIndex
+    range.value[1] = cityData[pIndex].cities
+    // 重庆市的 cities 只有一项
+    multiIndex.value[1] = 0
+  } else {
+    // Fallback to Beijing
+    multiIndex.value = [0, 0]
+    range.value[1] = cityData[0].cities
+  }
+}
+
+
+// 计算吸顶高度 (header高度约 104rpx + statusBarHeight)
 const headerStyleTop = computed(() => {
   return `calc(104rpx + ${statusBarHeight.value}px)`
 })
@@ -161,52 +204,128 @@ const petList = ref([])
 const leftList = ref([])
 const rightList = ref([])
 const loadStatus = ref('loadmore')
+const pageNum = ref(1)
+const pageSize = ref(10)
 
 onLoad(() => {
   // 获取状态栏高度
   const systemInfo = uni.getSystemInfoSync()
   statusBarHeight.value = systemInfo.statusBarHeight || 20
 
-  // 模拟加载初始数据
-  mockLoadData()
+  initCityPicker()
+
+  // 加载初始数据
+  loadData(true)
 })
 
 onReachBottom(() => {
   if (loadStatus.value === 'nomore') return
   loadStatus.value = 'loading'
-  setTimeout(() => {
-    mockLoadData(true)
-  }, 1000)
+  pageNum.value++
+  loadData()
 })
 
-// 模拟数据加载
-const mockLoadData = (append = false) => {
-  const newItems = Array.from({ length: 6 }).map((_, i) => ({
-    id: Date.now() + i,
-    name: ['咪咪', '旺财', '小白', '奥利奥'][Math.floor(Math.random()*4)],
-    coverImg: `https://images.unsplash.com/photo-${['1529778873929-fa8732783943', '1573865526739-10659fec78a5', '1495360019614-50fc7926073c'][Math.floor(Math.random()*3)]}?q=80&w=800&auto=format&fit=crop`,
-    sex: Math.random() > 0.5 ? 1 : 0,
-    age: '2岁',
-    breed: '中华田园',
-    city: '重庆'
-  }))
-  
-  if (append) {
-    petList.value = [...petList.value, ...newItems]
-  } else {
-    petList.value = newItems
+// 数据加载
+const loadData = async (reset = false) => {
+  if (reset) {
+    pageNum.value = 1
+    petList.value = []
+    leftList.value = []
+    rightList.value = []
+    loadStatus.value = 'loading'
   }
-  
-  // 简单的左右分栏逻辑
-  leftList.value = petList.value.filter((_, i) => i % 2 === 0)
-  rightList.value = petList.value.filter((_, i) => i % 2 !== 0)
-  
-  loadStatus.value = petList.value.length > 20 ? 'nomore' : 'loadmore'
+
+  try {
+    // 映射 Tab 到 API type
+    // Tab: 0-推荐, 1-猫, 2-狗, 3-异宠
+    // API: 0-猫, 1-狗, 2-鸟, 3-异宠, 4-其他
+    let type = null
+    if (currentTab.value === 1) type = 0 // 猫
+    else if (currentTab.value === 2) type = 1 // 狗
+    else if (currentTab.value === 3) type = 3 // 异宠
+    
+    const params = {
+      pageNum: pageNum.value,
+      pageSize: pageSize.value,
+      type: type,
+      status: 0 // 只看待领养
+    }
+
+    // 只有点击“离我最近”才按照城市筛选
+    if (filterType.value === 'nearest') {
+      params.city = filterCity.value
+    }
+
+    const res = await getPetList(params)
+    const newItems = res.data.records || []
+    
+    if (reset) {
+      petList.value = newItems
+    } else {
+      petList.value = [...petList.value, ...newItems]
+    }
+    
+    // 瀑布流逻辑
+    leftList.value = petList.value.filter((_, i) => i % 2 === 0)
+    rightList.value = petList.value.filter((_, i) => i % 2 !== 0)
+    
+    if (newItems.length < pageSize.value) {
+      loadStatus.value = 'nomore'
+    } else {
+      loadStatus.value = 'loadmore'
+    }
+  } catch (error) {
+    console.error('加载宠物列表失败', error)
+    loadStatus.value = 'loadmore'
+  }
 }
 
 // 事件处理
+const handleColumnChange = (e) => {
+  // 列发生改变
+  if (e.detail.column === 0) {
+    const pIndex = e.detail.value
+    // 更新第二列数据
+    range.value[1] = cityData[pIndex].cities
+    // 重置第二列选中
+    multiIndex.value[0] = pIndex
+    multiIndex.value[1] = 0
+  }
+}
+
+const handlePickerChange = (e) => {
+  // 确认选择
+  const pIndex = e.detail.value[0]
+  const cIndex = e.detail.value[1]
+  
+  const provinceObj = range.value[0][pIndex]
+  // 确保 city 存在 (防止第二列未更新导致索引越界)
+  const cityList = range.value[1]
+  const cityObj = cityList[cIndex] || cityList[0]
+  
+  const province = provinceObj.name
+  const city = cityObj.name
+  
+  const municipalities = ['北京市', '天津市', '上海市', '重庆市']
+  
+  if (municipalities.includes(province)) {
+    // 直辖市
+    currentCity.value = province
+    filterCity.value = province
+  } else {
+    // 省+市
+    currentCity.value = `${province} ${city}`
+    filterCity.value = city
+  }
+
+  // 如果当前是“离我最近”模式，切换城市后需要重新加载
+  if (filterType.value === 'nearest') {
+    loadData(true)
+  }
+}
+
 const handleSearch = () => {
-  uni.showToast({ title: '搜索功能开发中', icon: 'none' })
+  uni.navigateTo({ url: '/pages/search/search' })
 }
 
 const handleMessage = () => {
@@ -222,26 +341,65 @@ const handleAISelect = () => {
 }
 
 const handleWiki = () => {
-  uni.showToast({ title: '养宠百科即将上线', icon: 'none' })
+  uni.navigateTo({ url: '/pages/wiki/index' })
 }
 
-const handleCloudAdopt = () => {
-  uni.showToast({ title: '云养计划即将上线', icon: 'none' })
+const handlePublish = async () => {
+  // 检查是否绑定手机号
+  try {
+    const res = await getMyInfo()
+    if (res.data && res.data.phone) {
+      // 已绑定，跳转发布页
+      uni.navigateTo({
+        url: '/pages/pet/publish'
+      })
+    } else {
+      // 未绑定
+      uni.showModal({
+        title: '提示',
+        content: '发布送养信息需要绑定手机号，是否前往绑定？',
+        success: (res) => {
+          if (res.confirm) {
+            // 跳转到个人中心
+            uni.switchTab({
+              url: '/pages/profile/profile'
+            })
+          }
+        }
+      })
+    }
+  } catch (error) {
+    console.error('获取用户信息失败', error)
+    uni.showToast({
+      title: '请先登录',
+      icon: 'none'
+    })
+    setTimeout(() => {
+        uni.reLaunch({ url: '/pages/login/login' })
+    }, 1000)
+  }
 }
 
 const handleProcess = () => {
   uni.showToast({ title: '领养流程即将上线', icon: 'none' })
 }
 
+const handleWallpaper = () => {
+  uni.navigateTo({ url: '/pages/cms/wallpaper' })
+}
+
+const handleNews = () => {
+  uni.navigateTo({ url: '/pages/cms/news' })
+}
+
 const handleTabChange = (item) => {
   currentTab.value = item.index
-  // TODO: 重新加载对应分类数据
-  mockLoadData(false)
+  loadData(true)
 }
 
 const changeFilter = (type) => {
   filterType.value = type
-  // TODO: 重新加载筛选数据
+  loadData(true)
 }
 
 const goDetail = (item) => {
@@ -273,10 +431,13 @@ const handleAIAssistant = () => {
   top: 0;
   z-index: 100;
   
+  .location-picker {
+    margin-right: 20rpx;
+  }
+
   .location {
     display: flex;
     align-items: center;
-    margin-right: 20rpx;
     
     .city-name {
       font-size: 30rpx;
@@ -361,6 +522,8 @@ const handleAIAssistant = () => {
       
       &.ai-bg { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
       &.wiki-bg { background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%); }
+      &.wallpaper-bg { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
+      &.news-bg { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
       &.cloud-bg { background: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%); }
       &.process-bg { background: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%); }
     }
@@ -377,7 +540,6 @@ const handleAIAssistant = () => {
 .pet-section {
   .sticky-tabs {
     position: sticky;
-    top: 100rpx; // 假设header高度
     z-index: 99;
     background: #f6f7f9;
   }

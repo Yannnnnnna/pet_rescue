@@ -355,7 +355,7 @@ const handleMyAdoptedPets = () => {
 
 // 我的收藏
 const handleMyFavorites = () => {
-  uni.navigateTo({ url: '/pages/pet/my-list?type=favorites' })
+  uni.navigateTo({ url: '/pages/pet/my-favorite' })
 }
 
 // 我发布的宠物

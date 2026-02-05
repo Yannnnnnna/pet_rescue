@@ -1,15 +1,20 @@
 package com.wei.pet.pet_rescue.service.impl;
 
+import cn.dev33.satoken.stp.StpUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.wei.pet.pet_rescue.entity.CmsArticle;
+import com.wei.pet.pet_rescue.entity.CmsArticleLike;
 import com.wei.pet.pet_rescue.entity.dto.ArticleFormDTO;
 import com.wei.pet.pet_rescue.entity.dto.ArticleQueryDTO;
 import com.wei.pet.pet_rescue.mapper.CmsArticleMapper;
+import com.wei.pet.pet_rescue.service.ICmsArticleLikeService;
 import com.wei.pet.pet_rescue.service.ICmsArticleService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -22,7 +27,12 @@ import org.springframework.util.StringUtils;
  * @since 2026-01-10
  */
 @Service
+
 public class CmsArticleServiceImpl extends ServiceImpl<CmsArticleMapper, CmsArticle> implements ICmsArticleService {
+    @Autowired
+    @Lazy
+    private ICmsArticleLikeService likeService;
+
     /**
      * 保存文章
      * @param dto
@@ -68,5 +78,34 @@ public class CmsArticleServiceImpl extends ServiceImpl<CmsArticleMapper, CmsArti
         wrapper.orderByDesc(CmsArticle::getCreateTime);
 
         return this.page(page, wrapper);
+    }
+
+    /**
+     * 获取文章详细
+     * @param id
+     * @return
+     */
+    @Override
+    public CmsArticle getDetail(Long id) {
+        CmsArticle article = this.getById(id);
+        // 增加阅读量 (简单的 +1 操作，高并发下需优化，毕设这样写没问题)
+        if (article != null) {
+            article.setViewCount(article.getViewCount() + 1);
+            this.updateById(article);
+        }
+        // 2. 查用户是否点赞
+        // (如果没登录，直接设为 false)
+        boolean isLiked = false;
+        Long userId = StpUtil.getLoginIdAsLong();
+        if (userId != null) {
+            long count = likeService.lambdaQuery()
+                    .eq(CmsArticleLike::getArticleId, article.getId())
+                    .eq(CmsArticleLike::getUserId, userId)
+                    .count();
+            isLiked = count > 0;
+        }
+        article.setIsLiked(isLiked);
+        article.setLikeCount(article.getLikeCount() == null ? 0 : article.getLikeCount());
+        return article;
     }
 }

@@ -2,9 +2,10 @@
 	"easycom": {
 		"autoscan": true,
 		"custom": {
-			"^u-(.*)": "uview-plus/components/u-$1/u-$1.vue"
+		"^u-(.*)": "uview-plus/components/u-$1/u-$1.vue",
+		"^up-(.*)": "uview-plus/components/u-$1/u-$1.vue"
 		}
-	},
+  	},
 	"pages": [
 		{
 			"path": "pages/index/index",
@@ -64,6 +65,12 @@
 			}
 		},
 		{
+			"path": "pages/pet/publish",
+			"style": {
+				"navigationBarTitleText": "发布送养"
+			}
+		},
+		{
 			"path": "pages/pet/edit",
 			"style": {
 				"navigationBarTitleText": "修改宠物信息"
@@ -91,6 +98,56 @@
 			"path": "pages/adoption/audit-detail",
 			"style": {
 				"navigationBarTitleText": "申请详情"
+			}
+		},
+		{
+			"path": "pages/search/search",
+			"style": {
+				"navigationBarTitleText": "搜索宠物"
+			}
+		},
+		{
+			"path": "pages/adoption/apply",
+			"style": {
+				"navigationBarTitleText": "领养申请"
+			}
+		},
+		{
+			"path": "pages/pet/my-favorite",
+			"style": {
+				"navigationBarTitleText": "我的收藏"
+			}
+		},
+		{
+			"path": "pages/wiki/index",
+			"style": {
+				"navigationBarTitleText": "养宠百科",
+				"navigationBarBackgroundColor": "#19be6b",
+				"navigationBarTextStyle": "white"
+			}
+		},
+		{
+			"path": "pages/wiki/detail",
+			"style": {
+				"navigationBarTitleText": "文章详情",
+				"navigationBarBackgroundColor": "#ffffff",
+				"navigationBarTextStyle": "black"
+			}
+		},
+		{
+			"path": "pages/cms/wallpaper",
+			"style": {
+				"navigationBarTitleText": "精选壁纸",
+				"navigationBarBackgroundColor": "#19be6b",
+				"navigationBarTextStyle": "white"
+			}
+		},
+		{
+			"path": "pages/cms/news",
+			"style": {
+				"navigationBarTitleText": "资讯中心",
+				"navigationBarBackgroundColor": "#19be6b",
+				"navigationBarTextStyle": "white"
 			}
 		}
 	],

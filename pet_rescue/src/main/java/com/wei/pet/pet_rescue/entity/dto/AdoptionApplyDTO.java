@@ -40,4 +40,8 @@ public class AdoptionApplyDTO {
 
     @Schema(description = "养宠经验", example = "养过一只橘猫")
     private String experience;
+
+    @NotBlank(message = "领养理由不能为空") // 可以加校验注解
+    @Schema(description = "领养理由", example = "我非常喜欢宠物，想给它一个温暖的家")
+    private String reason;
 }

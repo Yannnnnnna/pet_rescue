@@ -1,10 +1,8 @@
 package com.wei.pet.pet_rescue.entity;
 
-import com.baomidou.mybatisplus.annotation.TableLogic;
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.*;
+
 import java.time.LocalDateTime;
-import com.baomidou.mybatisplus.annotation.TableId;
 import java.io.Serializable;
 
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -86,5 +84,12 @@ public class CmsArticle implements Serializable {
 
     @Schema(description = "壁纸高清大图链接")
     private String wallpaperUrl;
+
+    @Schema(description = "点赞数")
+    private Integer likeCount;
+
+    @Schema(description = "是否已经点赞")
+    @TableField(exist = false)
+    private Boolean isLiked;   // 当前用户是否已点赞 (查询 cms_article_like 表是否存在记录)
 
 }

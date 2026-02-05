@@ -14,7 +14,16 @@
     <view class="info-card">
       <view class="header-row">
         <text class="name">{{ pet.name }}</text>
-        <u-tag :text="getStatusText(pet.status)" :type="getStatusType(pet.status)" size="mini"></u-tag>
+        <view class="right-actions">
+           <u-icon 
+             :name="isFavorited ? 'star-fill' : 'star'" 
+             :color="isFavorited ? '#ff9c00' : '#999'" 
+             size="24" 
+             @click="toggleFav"
+             style="margin-right: 20rpx;"
+           ></u-icon>
+           <u-tag :text="getStatusText(pet.status)" :type="getStatusType(pet.status)" size="mini"></u-tag>
+        </view>
       </view>
       
       <view class="tags-row">
@@ -84,7 +93,7 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
-import { getPetDetail, deletePet } from '@/api/pet'
+import { getPetDetail, deletePet, toggleFavorite, checkFavorite } from '@/api/pet'
 import { getAdopterInfo } from '@/api/adoption'
 import { getMyInfo } from '@/api/user'
 
@@ -92,6 +101,7 @@ const petId = ref(null)
 const pet = ref(null)
 const currentUserId = ref(null)
 const urlIsOwner = ref(false)
+const isFavorited = ref(false)
 
 onLoad((options) => {
   if (options.id) {
@@ -100,8 +110,32 @@ onLoad((options) => {
       urlIsOwner.value = true
     }
     fetchInfoAndDetail()
+    checkFavStatus()
   }
 })
+
+const checkFavStatus = async () => {
+  try {
+    const res = await checkFavorite(petId.value)
+    if (res.data) {
+      isFavorited.value = res.data
+    }
+  } catch (e) {
+    console.error(e)
+  }
+}
+
+const toggleFav = async () => {
+  try {
+    const res = await toggleFavorite({ petId: petId.value })
+    if (res.code === 200) {
+      isFavorited.value = !isFavorited.value
+      uni.showToast({ title: isFavorited.value ? '已收藏' : '已取消收藏', icon: 'none' })
+    }
+  } catch (e) {
+    console.error(e)
+  }
+}
 
 const fetchInfoAndDetail = async () => {
    // 获取当前用户信息以便判断是否是送养人
@@ -198,7 +232,9 @@ const handleConsult = () => {
 }
 
 const handleApply = () => {
-  uni.showToast({ title: '申请功能开发中...', icon: 'none' })
+  uni.navigateTo({
+    url: `/pages/adoption/apply?petId=${petId.value}`
+  })
 }
 
 const handleEdit = () => {

@@ -19,4 +19,6 @@ public interface ICmsArticleService extends IService<CmsArticle> {
     boolean saveArticle(ArticleFormDTO dto);
 
     IPage<CmsArticle> getArticlePage(ArticleQueryDTO query);
+
+    CmsArticle getDetail(Long id);
 }

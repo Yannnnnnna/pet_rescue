@@ -24,3 +24,8 @@ export const getAdoptionApplicationDetail = (id) => {
 export const auditAdoptionApplication = (data) => {
     return request.post('/pet-adoption/audit', data)
 }
+
+// 提交领养申请
+export const applyForAdoption = (data) => {
+    return request.post('/pet-adoption/apply', data)
+}

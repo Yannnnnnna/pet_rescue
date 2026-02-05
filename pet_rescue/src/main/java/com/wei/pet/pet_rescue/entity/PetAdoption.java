@@ -72,5 +72,6 @@ public class PetAdoption implements Serializable {
     @TableLogic
     private Integer isDeleted;
 
-
+    @Schema(description = "领养理由")
+    private String reason;
 }
