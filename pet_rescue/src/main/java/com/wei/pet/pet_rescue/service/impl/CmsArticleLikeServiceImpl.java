@@ -2,10 +2,9 @@ package com.wei.pet.pet_rescue.service.impl;
 
 import cn.dev33.satoken.stp.StpUtil;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
-import com.wei.pet.pet_rescue.common.Result;
 import com.wei.pet.pet_rescue.entity.CmsArticle;
 import com.wei.pet.pet_rescue.entity.CmsArticleLike;
-import com.wei.pet.pet_rescue.entity.dto.CmsArticleFavoriteDTO;
+import com.wei.pet.pet_rescue.entity.dto.article.CmsArticleFavoriteDTO;
 import com.wei.pet.pet_rescue.mapper.CmsArticleLikeMapper;
 import com.wei.pet.pet_rescue.service.ICmsArticleLikeService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;

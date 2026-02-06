@@ -4,7 +4,7 @@ import cn.dev33.satoken.stp.StpUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.wei.pet.pet_rescue.entity.CmsArticle;
 import com.wei.pet.pet_rescue.entity.CmsArticleFavorite;
-import com.wei.pet.pet_rescue.entity.dto.CmsArticleFavoriteDTO;
+import com.wei.pet.pet_rescue.entity.dto.article.CmsArticleFavoriteDTO;
 import com.wei.pet.pet_rescue.mapper.CmsArticleFavoriteMapper;
 import com.wei.pet.pet_rescue.service.ICmsArticleFavoriteService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;

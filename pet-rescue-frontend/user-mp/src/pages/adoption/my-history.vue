@@ -30,35 +30,12 @@
       </u-list-item>
     </u-list>
     <u-empty v-else mode="list" icon="http://cdn.uviewui.com/uview/empty/list.png" text="暂无申请记录"></u-empty>
-
-    <!-- 申请详情弹窗 -->
-    <u-popup :show="showDetailPopup" @close="showDetailPopup = false" mode="center" :round="10" :closeable="true">
-      <view class="detail-popup">
-        <view class="popup-title">申请详情</view>
-        <view class="info-item" v-if="currentApply">
-           <view class="row"><text class="label">申请人：</text>{{ currentApply.realName }}</view>
-           <view class="row"><text class="label">电话：</text>{{ currentApply.phone }}</view>
-           <view class="row"><text class="label">养宠经验：</text>{{ currentApply.experience }}</view>
-           <view class="row"><text class="label">住房情况：</text>{{ currentApply.housingCondition }}</view>
-           <view class="row"><text class="label">工作状况：</text>{{ currentApply.jobStatus }}</view>
-           <view class="row"><text class="label">居住地址：</text>{{ currentApply.address }}</view>
-           <view class="row status-row">
-             <text class="label">状态：</text>
-             <u-tag :text="getStatusText(currentApply.status)" :type="getStatusType(currentApply.status)" size="mini"></u-tag>
-           </view>
-           <view class="row reject-row" v-if="currentApply.status === 2">
-             <text class="label">驳回原因：</text>
-             <text class="reject-text">{{ currentApply.adminRemark }}</text>
-           </view>
-        </view>
-      </view>
-    </u-popup>
   </view>
 </template>
 
 <script setup>
 import { ref } from 'vue'
-import { onLoad } from '@dcloudio/uni-app'
+import { onLoad, onShow } from '@dcloudio/uni-app'
 import { getMyAdoptionApplications } from '@/api/adoption'
 
 const dataList = ref([])
@@ -66,20 +43,24 @@ const pageNum = ref(1)
 const pageSize = ref(10)
 const total = ref(0)
 
-const showDetailPopup = ref(false)
-const currentApply = ref(null)
-
 onLoad(() => {
   fetchData()
 })
 
+onShow(() => {
+  // 每次显示页面时刷新第一页数据，以获取最新状态
+  pageNum.value = 1
+  fetchData()
+})
+
 const handleItemClick = (item) => {
-  currentApply.value = item
-  showDetailPopup.value = true
+  uni.navigateTo({
+    url: `/pages/adoption/application-detail?id=${item.id}`
+  })
 }
 
 const fetchData = async () => {
-  uni.showLoading({ title: '加载中' })
+  if (pageNum.value === 1) uni.showLoading({ title: '加载中' })
   try {
     const res = await getMyAdoptionApplications({
       pageNum: pageNum.value,
@@ -173,40 +154,6 @@ const getStatusType = (status) => {
   .reject-reason {
     font-size: 26rpx;
     color: #ff4d4f;
-  }
-}
-
-.detail-popup {
-  width: 600rpx;
-  padding: 40rpx;
-  background: #fff;
-  border-radius: 20rpx;
-  
-  .popup-title {
-    font-size: 32rpx;
-    font-weight: bold;
-    text-align: center;
-    margin-bottom: 30rpx;
-  }
-  
-  .info-item {
-    .row {
-      margin-bottom: 20rpx;
-      font-size: 28rpx;
-      color: #333;
-      display: flex;
-      
-      .label {
-        color: #666;
-        width: 150rpx;
-      }
-      
-      &.reject-row {
-        flex-direction: column;
-        .label { margin-bottom: 10rpx; }
-        .reject-text { color: #ff4d4f; }
-      }
-    }
   }
 }
 </style>

@@ -23,7 +23,16 @@
 		{
 			"path": "pages/ai/ai",
 			"style": {
-				"navigationBarTitleText": "AI助手"
+				"navigationBarTitleText": "AI助手",
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "pages/ai/chat",
+			"style": {
+				"navigationBarTitleText": "AI对话",
+				"navigationBarBackgroundColor": "#ffffff",
+				"backgroundColor": "#f8f9fa"
 			}
 		},
 		{
@@ -56,6 +65,12 @@
 			"path": "pages/adoption/my-history",
 			"style": {
 				"navigationBarTitleText": "申请记录"
+			}
+		},
+		{
+			"path": "pages/adoption/application-detail",
+			"style": {
+				"navigationBarTitleText": "申请详情"
 			}
 		},
 		{

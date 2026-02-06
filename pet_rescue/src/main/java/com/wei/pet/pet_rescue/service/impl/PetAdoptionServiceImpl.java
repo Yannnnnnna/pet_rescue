@@ -4,25 +4,22 @@ import cn.dev33.satoken.stp.StpUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.wei.pet.pet_rescue.common.Result;
 import com.wei.pet.pet_rescue.entity.PetAdoption;
 import com.wei.pet.pet_rescue.entity.PetInfo;
 import com.wei.pet.pet_rescue.entity.SysUser;
-import com.wei.pet.pet_rescue.entity.dto.AdoptionApplyDTO;
-import com.wei.pet.pet_rescue.entity.dto.AdoptionAuditDTO;
+import com.wei.pet.pet_rescue.entity.dto.adopt.AdoptionApplyDTO;
+import com.wei.pet.pet_rescue.entity.dto.adopt.AdoptionAuditDTO;
 import com.wei.pet.pet_rescue.entity.vo.AdminAdoptionRecordVO;
 import com.wei.pet.pet_rescue.entity.vo.AdoptionDetailVO;
 import com.wei.pet.pet_rescue.entity.vo.AdoptionRecordVO;
 import com.wei.pet.pet_rescue.entity.vo.UserInfoVO;
 import com.wei.pet.pet_rescue.mapper.PetAdoptionMapper;
-import com.wei.pet.pet_rescue.mapper.PetInfoMapper;
 import com.wei.pet.pet_rescue.mapper.SysUserMapper;
 import com.wei.pet.pet_rescue.service.IPetAdoptionService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.wei.pet.pet_rescue.service.IPetInfoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -78,7 +75,7 @@ public class PetAdoptionServiceImpl extends ServiceImpl<PetAdoptionMapper, PetAd
         PetAdoption adoption = new PetAdoption();
         BeanUtils.copyProperties(dto, adoption);
         adoption.setUserId(userId);
-        adoption.setStatus(1); // 设置为申请中
+        adoption.setStatus(0); // 设置为申请中
         return this.save(adoption);
     }
 

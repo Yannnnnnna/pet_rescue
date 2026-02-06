@@ -3,7 +3,7 @@ package com.wei.pet.pet_rescue.service;
 import com.wei.pet.pet_rescue.entity.PetFavorite;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.wei.pet.pet_rescue.entity.PetInfo;
-import com.wei.pet.pet_rescue.entity.dto.PetFavoriteDTO;
+import com.wei.pet.pet_rescue.entity.dto.pet.PetFavoriteDTO;
 
 import java.util.List;
 

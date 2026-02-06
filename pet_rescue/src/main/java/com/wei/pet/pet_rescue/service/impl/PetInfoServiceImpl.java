@@ -1,19 +1,15 @@
 package com.wei.pet.pet_rescue.service.impl;
 
 import cn.dev33.satoken.stp.StpUtil;
-import cn.hutool.system.UserInfo;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.wei.pet.pet_rescue.entity.PetAdoption;
-import com.wei.pet.pet_rescue.entity.PetConsultation;
 import com.wei.pet.pet_rescue.entity.PetInfo;
 import com.wei.pet.pet_rescue.entity.SysUser;
-import com.wei.pet.pet_rescue.entity.dto.AdoptPetsDTO;
-import com.wei.pet.pet_rescue.entity.dto.PetDTO;
-import com.wei.pet.pet_rescue.entity.dto.PetQueryDTO;
-import com.wei.pet.pet_rescue.mapper.PetAdoptionMapper;
+import com.wei.pet.pet_rescue.entity.dto.adopt.AdoptPetsDTO;
+import com.wei.pet.pet_rescue.entity.dto.pet.PetDTO;
+import com.wei.pet.pet_rescue.entity.dto.pet.PetQueryDTO;
 import com.wei.pet.pet_rescue.mapper.PetInfoMapper;
 import com.wei.pet.pet_rescue.service.IPetAdoptionService;
 import com.wei.pet.pet_rescue.service.IPetInfoService;

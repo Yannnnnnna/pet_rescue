@@ -3,8 +3,8 @@ package com.wei.pet.pet_rescue.service;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.wei.pet.pet_rescue.entity.CmsArticle;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.wei.pet.pet_rescue.entity.dto.ArticleFormDTO;
-import com.wei.pet.pet_rescue.entity.dto.ArticleQueryDTO;
+import com.wei.pet.pet_rescue.entity.dto.article.ArticleFormDTO;
+import com.wei.pet.pet_rescue.entity.dto.article.ArticleQueryDTO;
 
 /**
  * <p>

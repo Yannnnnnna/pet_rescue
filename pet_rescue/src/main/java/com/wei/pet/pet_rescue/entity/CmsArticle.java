@@ -92,4 +92,6 @@ public class CmsArticle implements Serializable {
     @TableField(exist = false)
     private Boolean isLiked;   // 当前用户是否已点赞 (查询 cms_article_like 表是否存在记录)
 
+    @Schema(description = "AI摘要")
+    private String aiSummary;
 }

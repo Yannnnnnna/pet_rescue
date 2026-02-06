@@ -2,7 +2,7 @@ package com.wei.pet.pet_rescue.service;
 
 import com.wei.pet.pet_rescue.entity.CmsArticleLike;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.wei.pet.pet_rescue.entity.dto.CmsArticleFavoriteDTO;
+import com.wei.pet.pet_rescue.entity.dto.article.CmsArticleFavoriteDTO;
 
 /**
  * <p>

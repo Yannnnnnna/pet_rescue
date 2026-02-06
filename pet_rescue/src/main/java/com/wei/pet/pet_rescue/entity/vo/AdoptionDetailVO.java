@@ -63,4 +63,7 @@ public class AdoptionDetailVO {
 
     @Schema(description = "工作状况")
     private String jobStatus;
+
+    @Schema(description = "领养理由")
+    private String reason;
 }

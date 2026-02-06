@@ -136,11 +136,115 @@
       <u-loadmore :status="loadStatus" marginTop="30"></u-loadmore>
     </view>
 
-    <!-- 5. AI 悬浮球 -->
-    <view class="ai-float-btn" @click="handleAIAssistant">
-      <image src="/static/ai-robot.png" class="ai-icon" mode="aspectFit"></image>
-      <view class="pulse-ring"></view>
+    <!-- 5. AI 悬浮对话框 -->
+    <view class="ai-float-dialog" @click="handleAIAssistant">
+      <view class="dialog-content">
+        <text class="dialog-text">AI 帮我选宠</text>
+        <view class="dialog-arrow"></view>
+      </view>
+      <view class="avatar-wrapper">
+        <image src="/static/ai-robot.png" class="ai-avatar-img" mode="aspectFit"></image>
+        <view class="online-dot"></view>
+      </view>
     </view>
+    
+    <!-- AI 推荐弹窗 -->
+    <u-popup :show="showRecommendPopup" mode="center" round="16" :closeable="true" @close="closeRecommendPopup" :customStyle="{width: '600rpx'}">
+      <view class="recommend-popup">
+        <view class="popup-title">AI 智能选宠</view>
+        
+        <!-- 表单阶段 -->
+        <view v-if="step === 1" class="form-content">
+          <view class="form-item">
+            <text class="label">🏠 居住环境</text>
+            <view class="tags-group">
+              <view 
+                class="tag-item" 
+                :class="{ active: recommendForm.housing === item }"
+                v-for="item in ['公寓', '整租', '合租', '自有住房']" 
+                :key="item"
+                @click="recommendForm.housing = item"
+              >{{ item }}</view>
+            </view>
+          </view>
+          
+          <view class="form-item">
+            <text class="label">⏰ 闲暇时间</text>
+            <view class="tags-group">
+              <view 
+                class="tag-item" 
+                :class="{ active: recommendForm.time === item }"
+                v-for="item in ['充裕', '工作忙', '周末有空', '不固定']" 
+                :key="item"
+                @click="recommendForm.time = item"
+              >{{ item }}</view>
+            </view>
+          </view>
+          
+          <view class="form-item">
+            <text class="label">🎓 养宠经验</text>
+            <view class="tags-group">
+              <view 
+                class="tag-item" 
+                :class="{ active: recommendForm.experience === item }"
+                v-for="item in ['新手', '有经验', '资深']" 
+                :key="item"
+                @click="recommendForm.experience = item"
+              >{{ item }}</view>
+            </view>
+          </view>
+          
+          <view class="form-item">
+            <text class="label">❤️ 性格偏好</text>
+            <view class="tags-group">
+              <view 
+                class="tag-item" 
+                :class="{ active: recommendForm.preference === item }"
+                v-for="item in ['粘人', '独立', '活泼', '安静']" 
+                :key="item"
+                @click="recommendForm.preference = item"
+              >{{ item }}</view>
+            </view>
+          </view>
+          
+          <view class="form-item row-between">
+            <text class="label">🧠 深度思考 (更精准)</text>
+            <u-switch v-model="recommendForm.enableThinking" activeColor="#19be6b" size="20"></u-switch>
+          </view>
+          
+          <button class="submit-btn" @click="submitRecommend">开始分析</button>
+        </view>
+        
+        <!-- 加载阶段 -->
+        <view v-if="step === 2" class="loading-content">
+          <u-loading-icon mode="circle" size="40" color="#19be6b"></u-loading-icon>
+          <text class="loading-text">AI 正在分析您的画像...</text>
+          <text class="loading-sub">可能需要几秒钟，请耐心等待</text>
+        </view>
+        
+        <!-- 结果阶段 -->
+        <view v-if="step === 3" class="result-content">
+          <scroll-view scroll-y class="result-scroll">
+            <view class="analysis-box">
+              <text class="section-title">📊 分析建议</text>
+              <text class="analysis-text">{{ recommendResult.analysis }}</text>
+            </view>
+            
+            <view class="recommend-list">
+              <text class="section-title">🌟 推荐宠物</text>
+              <view class="rec-item" v-for="(item, index) in recommendResult.recommendations" :key="index">
+                <view class="rec-header">
+                  <text class="rec-index">{{ index + 1 }}</text>
+                  <text class="rec-name">{{ item.petName }}</text>
+                </view>
+                <text class="rec-reason">{{ item.reason }}</text>
+              </view>
+            </view>
+          </scroll-view>
+          <button class="retry-btn" @click="step = 1">重新测评</button>
+        </view>
+      </view>
+    </u-popup>
     
   </view>
 </template>
@@ -150,6 +254,7 @@ import { ref, onMounted, computed } from 'vue'
 import { onLoad, onReachBottom, onShow } from '@dcloudio/uni-app'
 import { getPetList } from '@/api/pet'
 import { getMyInfo } from '@/api/user'
+import { getAiRecommend } from '@/api/ai'
 import { cityData } from '@/utils/cityData'
 
 // 状态定义
@@ -409,7 +514,56 @@ const goDetail = (item) => {
 }
 
 const handleAIAssistant = () => {
-  uni.switchTab({ url: '/pages/ai/ai' })
+  // uni.switchTab({ url: '/pages/ai/ai' })
+  showRecommendPopup.value = true
+  step.value = 1
+}
+
+// AI 推荐相关
+const showRecommendPopup = ref(false)
+const step = ref(1)
+const recommendForm = ref({
+  housing: '',
+  time: '',
+  experience: '',
+  preference: '',
+  enableThinking: false
+})
+const recommendResult = ref({})
+
+const closeRecommendPopup = () => {
+  showRecommendPopup.value = false
+}
+
+const submitRecommend = async () => {
+  if (!recommendForm.value.housing || !recommendForm.value.time || !recommendForm.value.experience || !recommendForm.value.preference) {
+    uni.showToast({ title: '请完整选择您的偏好', icon: 'none' })
+    return
+  }
+  
+  step.value = 2
+  try {
+    const res = await getAiRecommend(recommendForm.value)
+    if (res.code === 200 || res.code === 0) {
+      // 解析 JSON 字符串
+      try {
+        const data = JSON.parse(res.data)
+        recommendResult.value = data
+        step.value = 3
+      } catch (e) {
+        console.error('解析推荐结果失败', e)
+        uni.showToast({ title: '结果解析失败', icon: 'none' })
+        step.value = 1
+      }
+    } else {
+      uni.showToast({ title: res.msg || '分析失败', icon: 'none' })
+      step.value = 1
+    }
+  } catch (error) {
+    console.error('推荐请求失败', error)
+    uni.showToast({ title: '网络请求失败', icon: 'none' })
+    step.value = 1
+  }
 }
 
 </script>
@@ -634,45 +788,262 @@ const handleAIAssistant = () => {
   }
 }
 
-/* AI 悬浮球 */
-.ai-float-btn {
+/* AI 悬浮对话框 */
+.ai-float-dialog {
   position: fixed;
   right: 30rpx;
-  bottom: 120rpx; // 高于 tabbar
-  width: 100rpx;
-  height: 100rpx;
+  bottom: 120rpx;
   z-index: 999;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
   
-  .ai-icon {
-    width: 100%;
-    height: 100%;
-    border-radius: 50%;
-    box-shadow: 0 8rpx 32rpx rgba(25, 190, 107, 0.4);
-    background: #fff;
+  .dialog-content {
+    background: linear-gradient(135deg, #19be6b, #28d07e);
+    padding: 12rpx 24rpx;
+    border-radius: 32rpx 32rpx 4rpx 32rpx;
+    box-shadow: 0 4rpx 16rpx rgba(25, 190, 107, 0.3);
+    margin-bottom: 10rpx;
+    position: relative;
+    animation: float 3s ease-in-out infinite;
+    
+    .dialog-text {
+      color: #fff;
+      font-size: 26rpx;
+      font-weight: bold;
+    }
+    
+    .dialog-arrow {
+      position: absolute;
+      bottom: -10rpx;
+      right: 30rpx;
+      width: 0;
+      height: 0;
+      border-left: 10rpx solid transparent;
+      border-right: 10rpx solid transparent;
+      border-top: 12rpx solid #28d07e;
+    }
   }
   
-  .pulse-ring {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 100%;
-    height: 100%;
+  .avatar-wrapper {
+    width: 90rpx;
+    height: 90rpx;
+    background: #fff;
     border-radius: 50%;
-    border: 4rpx solid #19be6b;
-    opacity: 0;
-    animation: pulse 2s infinite;
+    padding: 10rpx;
+    box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.1);
+    position: relative;
+    margin-right: 10rpx;
+    
+    .ai-avatar-img {
+      width: 100%;
+      height: 100%;
+    }
+    
+    .online-dot {
+      position: absolute;
+      bottom: 4rpx;
+      right: 4rpx;
+      width: 20rpx;
+      height: 20rpx;
+      background: #19be6b;
+      border: 4rpx solid #fff;
+      border-radius: 50%;
+    }
   }
 }
 
-@keyframes pulse {
-  0% {
-    transform: translate(-50%, -50%) scale(1);
-    opacity: 0.6;
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
   }
-  100% {
-    transform: translate(-50%, -50%) scale(1.5);
-    opacity: 0;
+  50% {
+    transform: translateY(-10rpx);
+  }
+}
+
+/* 推荐弹窗样式 */
+.recommend-popup {
+  padding: 40rpx 30rpx;
+  background: #fff;
+  border-radius: 24rpx;
+  
+  .popup-title {
+    font-size: 36rpx;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 40rpx;
+    color: #333;
+  }
+  
+  /* 表单阶段 */
+  .form-content {
+    .form-item {
+      margin-bottom: 30rpx;
+      
+      .label {
+        display: block;
+        font-size: 28rpx;
+        font-weight: bold;
+        color: #333;
+        margin-bottom: 20rpx;
+      }
+      
+      .tags-group {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20rpx;
+        
+        .tag-item {
+          padding: 12rpx 24rpx;
+          background: #f5f5f5;
+          border-radius: 32rpx;
+          font-size: 26rpx;
+          color: #666;
+          border: 2rpx solid transparent;
+          transition: all 0.3s;
+          
+          &.active {
+            background: rgba(25, 190, 107, 0.1);
+            color: #19be6b;
+            border-color: #19be6b;
+            font-weight: bold;
+          }
+        }
+      }
+      
+      &.row-between {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 40rpx;
+        
+        .label {
+          margin-bottom: 0;
+        }
+      }
+    }
+    
+    .submit-btn {
+      width: 100%;
+      height: 88rpx;
+      line-height: 88rpx;
+      background: linear-gradient(90deg, #19be6b, #28d07e);
+      color: #fff;
+      font-size: 32rpx;
+      font-weight: bold;
+      border-radius: 44rpx;
+      margin-top: 20rpx;
+      
+      &:active {
+        opacity: 0.9;
+      }
+    }
+  }
+  
+  /* 加载阶段 */
+  .loading-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60rpx 0;
+    
+    .loading-text {
+      margin-top: 30rpx;
+      font-size: 30rpx;
+      color: #333;
+      font-weight: bold;
+    }
+    
+    .loading-sub {
+      margin-top: 10rpx;
+      font-size: 24rpx;
+      color: #999;
+    }
+  }
+  
+  /* 结果阶段 */
+  .result-content {
+    .result-scroll {
+      max-height: 800rpx; // 限制高度，超出滚动
+    }
+    
+    .section-title {
+      display: block;
+      font-size: 30rpx;
+      font-weight: bold;
+      color: #333;
+      margin-bottom: 20rpx;
+      padding-left: 16rpx;
+      border-left: 8rpx solid #19be6b;
+    }
+    
+    .analysis-box {
+      background: #f9f9f9;
+      padding: 24rpx;
+      border-radius: 16rpx;
+      margin-bottom: 40rpx;
+      
+      .analysis-text {
+        font-size: 28rpx;
+        color: #555;
+        line-height: 1.6;
+      }
+    }
+    
+    .recommend-list {
+      margin-bottom: 40rpx;
+      
+      .rec-item {
+        background: #fff;
+        border: 2rpx solid #eee;
+        border-radius: 16rpx;
+        padding: 24rpx;
+        margin-bottom: 20rpx;
+        box-shadow: 0 4rpx 12rpx rgba(0,0,0,0.02);
+        
+        .rec-header {
+          display: flex;
+          align-items: center;
+          margin-bottom: 12rpx;
+          
+          .rec-index {
+            width: 36rpx;
+            height: 36rpx;
+            line-height: 36rpx;
+            text-align: center;
+            background: #19be6b;
+            color: #fff;
+            font-size: 22rpx;
+            border-radius: 50%;
+            margin-right: 16rpx;
+          }
+          
+          .rec-name {
+            font-size: 30rpx;
+            font-weight: bold;
+            color: #333;
+          }
+        }
+        
+        .rec-reason {
+          font-size: 26rpx;
+          color: #666;
+          line-height: 1.5;
+        }
+      }
+    }
+    
+    .retry-btn {
+      width: 100%;
+      height: 80rpx;
+      line-height: 80rpx;
+      background: #f5f5f5;
+      color: #666;
+      font-size: 28rpx;
+      border-radius: 40rpx;
+    }
   }
 }
 </style>

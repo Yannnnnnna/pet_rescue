@@ -29,3 +29,8 @@ export const auditAdoptionApplication = (data) => {
 export const applyForAdoption = (data) => {
     return request.post('/pet-adoption/apply', data)
 }
+
+// 申请人取消申请
+export const cancelAdoptionApplication = (id) => {
+    return request.post(`/pet-adoption/cancel/${id}`)
+}

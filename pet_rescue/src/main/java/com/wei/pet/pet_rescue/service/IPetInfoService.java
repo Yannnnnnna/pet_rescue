@@ -3,9 +3,9 @@ package com.wei.pet.pet_rescue.service;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.wei.pet.pet_rescue.entity.PetInfo;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.wei.pet.pet_rescue.entity.dto.AdoptPetsDTO;
-import com.wei.pet.pet_rescue.entity.dto.PetDTO;
-import com.wei.pet.pet_rescue.entity.dto.PetQueryDTO;
+import com.wei.pet.pet_rescue.entity.dto.adopt.AdoptPetsDTO;
+import com.wei.pet.pet_rescue.entity.dto.pet.PetDTO;
+import com.wei.pet.pet_rescue.entity.dto.pet.PetQueryDTO;
 
 import java.util.List;
 

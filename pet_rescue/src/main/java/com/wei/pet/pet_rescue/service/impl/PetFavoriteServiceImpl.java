@@ -1,10 +1,9 @@
 package com.wei.pet.pet_rescue.service.impl;
 
 import cn.dev33.satoken.stp.StpUtil;
-import com.wei.pet.pet_rescue.common.Result;
 import com.wei.pet.pet_rescue.entity.PetFavorite;
 import com.wei.pet.pet_rescue.entity.PetInfo;
-import com.wei.pet.pet_rescue.entity.dto.PetFavoriteDTO;
+import com.wei.pet.pet_rescue.entity.dto.pet.PetFavoriteDTO;
 import com.wei.pet.pet_rescue.mapper.PetFavoriteMapper;
 import com.wei.pet.pet_rescue.service.IPetFavoriteService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;

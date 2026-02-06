@@ -2,9 +2,9 @@ package com.wei.pet.pet_rescue.service;
 
 import com.wei.pet.pet_rescue.entity.PetConsultation;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.wei.pet.pet_rescue.entity.dto.ConsultationAskDTO;
-import com.wei.pet.pet_rescue.entity.dto.ConsultationReplyDTO;
-import com.wei.pet.pet_rescue.entity.dto.ReturnVisitDTO;
+import com.wei.pet.pet_rescue.entity.dto.consult.ConsultationAskDTO;
+import com.wei.pet.pet_rescue.entity.dto.consult.ConsultationReplyDTO;
+import com.wei.pet.pet_rescue.entity.dto.consult.ReturnVisitDTO;
 import com.wei.pet.pet_rescue.entity.vo.ChatSessionVO;
 import com.wei.pet.pet_rescue.entity.vo.ConsultationSummaryVO;
 import com.wei.pet.pet_rescue.entity.vo.ConsultationVO;

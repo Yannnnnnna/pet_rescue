@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>AI流式测试</title>
+    <style>
+        body { max-width: 600px; margin: 50px auto; font-family: sans-serif; padding: 20px; }
+        #result {
+            border: 1px solid #ddd;
+            padding: 20px;
+            min-height: 100px;
+            white-space: pre-wrap; /* 保留换行 */
+            background: #f9f9f9;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+        .cursor { display: inline-block; width: 5px; height: 15px; background: #000; animation: blink 1s infinite; }
+        @keyframes blink { 50% { opacity: 0; } }
+    </style>
+</head>
+<body>
+<h2>🔮 AI 流式对话测试</h2>
+<input type="text" id="question" value="猫咪感冒了怎么办" style="width: 70%; padding: 10px;">
+<button onclick="startChat()" style="padding: 10px 20px;">发送</button>
+
+<div id="result"></div>
+
+<script>
+    function startChat() {
+        const q = document.getElementById('question').value;
+        const resultDiv = document.getElementById('result');
+        resultDiv.innerHTML = ''; // 清空上一条
+        resultDiv.innerHTML = '<span id="text"></span><span class="cursor"></span>';
+        const textSpan = document.getElementById('text');
+
+        // 核心代码：使用 EventSource 连接后端
+        // 注意：这里地址要填你 Spring Boot 的实际地址
+        const eventSource = new EventSource(`http://localhost:8080/ai-chat/test?q=${encodeURIComponent(q)}`);
+
+        // 监听消息
+        eventSource.onmessage = function(event) {
+            console.log("收到数据:", event.data);
+            // 追加文字
+            textSpan.innerText += event.data;
+        };
+
+        // 监听错误 (连接结束也会触发 error)
+        eventSource.onerror = function(event) {
+            console.log("连接结束或报错");
+            eventSource.close(); // 关闭连接
+            document.querySelector('.cursor').style.display = 'none'; // 隐藏光标
+        };
+    }
+</script>
+</body>
+</html>
