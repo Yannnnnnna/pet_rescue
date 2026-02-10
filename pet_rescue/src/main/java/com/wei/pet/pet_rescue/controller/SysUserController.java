@@ -1,11 +1,13 @@
 package com.wei.pet.pet_rescue.controller;
 
 
+import cn.dev33.satoken.annotation.SaCheckRole;
 import cn.dev33.satoken.stp.StpUtil;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.wei.pet.pet_rescue.common.Result;
 import com.wei.pet.pet_rescue.entity.SysUser;
 import com.wei.pet.pet_rescue.entity.dto.user.*;
+import com.wei.pet.pet_rescue.entity.vo.AdminDashboardVO;
 import com.wei.pet.pet_rescue.entity.vo.UserInfoVO;
 import com.wei.pet.pet_rescue.service.ISysUserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -118,5 +120,12 @@ public class SysUserController {
         } catch (RuntimeException e) {
             return Result.error(e.getMessage());
         }
+    }
+
+    @GetMapping("/dashboard")
+    @Operation(summary = "获取首页统计数据")
+    @SaCheckRole("admin") // 只有管理员能访问
+    public Result<AdminDashboardVO> getDashboard() {
+        return Result.success(sysUserService.getDashboardData());
     }
 }

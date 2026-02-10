@@ -28,8 +28,8 @@ public class UserInfoVO {
     @Schema(description = "手机号")
     private String phone;
 
-    @Schema(description = "积分")
-    private Integer score;
+    @Schema(description = "小鱼干数量")
+    private Integer coin;
 
 
     @Schema(description = "是否已设置密码")

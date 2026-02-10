@@ -54,3 +54,8 @@ export const getPetList = (data) => {
 export const addPet = (data) => {
     return request.post('/pet-info/add', data)
 }
+
+// 投喂小鱼干
+export const feedPet = (data) => {
+    return request.post('/pet-feed-record/feed', data)
+}

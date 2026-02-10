@@ -15,8 +15,14 @@ const router = createRouter({
       name: 'Admin',
       component: () => import('../views/Admin.vue'),
       meta: { requiresAuth: true },
-      redirect: '/admin/pet-list',
+      redirect: '/admin/dashboard',
       children: [
+        {
+          path: 'dashboard',
+          name: 'Dashboard',
+          component: () => import('../views/Dashboard.vue'),
+          meta: { title: '控制台' }
+        },
         {
           path: 'pet-list',
           name: 'PetList',
@@ -73,8 +79,6 @@ router.beforeEach((to, from, next) => {
   
   if (to.meta.requiresAuth && !token) {
     next('/login')
-  } else if (to.meta.requiresGuest && token) {
-    next('/admin')
   } else {
     next()
   }

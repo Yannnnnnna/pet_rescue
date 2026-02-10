@@ -7,6 +7,7 @@ import com.wei.pet.pet_rescue.common.Result;
 import com.wei.pet.pet_rescue.entity.PetInfo;
 import com.wei.pet.pet_rescue.entity.dto.adopt.AdoptPetsDTO;
 import com.wei.pet.pet_rescue.entity.dto.pet.PetDTO;
+import com.wei.pet.pet_rescue.entity.dto.pet.PetFeedDTO;
 import com.wei.pet.pet_rescue.entity.dto.pet.PetQueryDTO;
 import com.wei.pet.pet_rescue.service.IPetInfoService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -95,4 +96,5 @@ public class PetInfoController {
         List<AdoptPetsDTO> pets = petInfoService.getAdoptedPets(id);
         return Result.success(pets);
     }
+
 }

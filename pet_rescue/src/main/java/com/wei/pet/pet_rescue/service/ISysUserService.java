@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.wei.pet.pet_rescue.entity.SysUser;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.wei.pet.pet_rescue.entity.dto.user.*;
+import com.wei.pet.pet_rescue.entity.vo.AdminDashboardVO;
 import com.wei.pet.pet_rescue.entity.vo.UserInfoVO;
 
 /**
@@ -27,4 +28,6 @@ public interface ISysUserService extends IService<SysUser> {
     boolean updatePassword(UserPasswordDTO dto);
 
     String loginByPhone(String phone, String password);
+
+    AdminDashboardVO getDashboardData();
 }

@@ -109,12 +109,12 @@ public class PetAdoptionController {
     @GetMapping("/detail/{id}")
     public Result<AdoptionDetailVO> getDetail(@Parameter(description = "申请ID") @PathVariable Long id) {
         try {
-            //todo：测试的时候不添加限制
-//            // 确保只有管理员或本人能看详情、
-//            if (id != 1L || !id.equals(StpUtil.getLoginIdAsLong()))
-//            throw new RuntimeException("无权查看");
-
-            return Result.success(adoptionService.getAdoptionDetail(id));
+            Long userId = StpUtil.getLoginIdAsLong();
+            // 确保只有管理员或本人能看详情、
+            if (userId == 1L || id.equals(userId)){
+                return Result.success(adoptionService.getAdoptionDetail(id));
+            }
+            throw new RuntimeException("无权查看");
         } catch (RuntimeException e) {
             return Result.error(e.getMessage());
         }

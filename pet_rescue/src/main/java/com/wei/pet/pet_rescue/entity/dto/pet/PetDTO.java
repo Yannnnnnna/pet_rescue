@@ -68,4 +68,7 @@ public class PetDTO {
 
     @Schema(description = "发布时间")
     private LocalDateTime createTime;
+
+    @Schema(description = "投喂小鱼干数量")
+    private Integer lovePoint;
 }

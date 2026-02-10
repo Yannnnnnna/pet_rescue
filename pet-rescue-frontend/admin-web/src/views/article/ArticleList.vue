@@ -111,7 +111,7 @@
         <div v-if="currentArticle.type === 2" class="activity-info">
           <div class="info-item">
             <strong>活动时间：</strong>
-            {{ currentArticle.activityStartTime }} 至 {{ currentArticle.activityEndTime }}
+            {{ formatTime(currentArticle.activityStartTime) }} 至 {{ formatTime(currentArticle.activityEndTime) }}
           </div>
           <div class="info-item">
             <strong>活动地点：</strong>
@@ -184,14 +184,7 @@ const queryParams = reactive({
 
 const formatTime = (time) => {
   if (!time) return ''
-  const date = new Date(time)
-  const y = date.getFullYear()
-  const m = String(date.getMonth() + 1).padStart(2, '0')
-  const d = String(date.getDate()).padStart(2, '0')
-  const h = String(date.getHours()).padStart(2, '0')
-  const min = String(date.getMinutes()).padStart(2, '0')
-  const s = String(date.getSeconds()).padStart(2, '0')
-  return `${y}-${m}-${d} ${h}:${min}:${s}`
+  return time.replace('T', ' ')
 }
 
 const getTypeLabel = (type) => {

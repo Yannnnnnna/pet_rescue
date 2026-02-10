@@ -1,17 +1,25 @@
 package com.wei.pet.pet_rescue.service.impl;
 
 import cn.dev33.satoken.stp.StpUtil;
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.RandomUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.wei.pet.pet_rescue.entity.PetAdoption;
+import com.wei.pet.pet_rescue.entity.PetInfo;
 import com.wei.pet.pet_rescue.entity.SysUser;
 import com.wei.pet.pet_rescue.entity.dto.user.*;
+import com.wei.pet.pet_rescue.entity.vo.AdminDashboardVO;
 import com.wei.pet.pet_rescue.entity.vo.UserInfoVO;
+import com.wei.pet.pet_rescue.mapper.PetAdoptionMapper;
+import com.wei.pet.pet_rescue.mapper.PetInfoMapper;
 import com.wei.pet.pet_rescue.mapper.SysUserMapper;
 import com.wei.pet.pet_rescue.service.ISysUserService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -21,6 +29,16 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 
 /**
  * <p>
@@ -32,10 +50,15 @@ import org.springframework.util.StringUtils;
  */
 @Slf4j
 @Service
+
 public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> implements ISysUserService {
     // 注入 Mapper
     @Resource
     private SysUserMapper sysUserMapper;
+    @Resource
+    private PetInfoMapper petInfoMapper;
+    @Resource
+    private PetAdoptionMapper petAdoptionMapper;
 
     // 定义常量
     @Value("${wechat.app-id}")
@@ -106,9 +129,16 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
             sysUserMapper.insert(user); // 插入数据库
         }
 
-        // 4. 直接登录
         StpUtil.login(user.getId());
-        log.info("小程序登录成功：{}", user.getOpenid());
+
+        // 5. 每天登录奖励10积分
+        if (!user.getLastLoginTime().toLocalDate().isEqual(LocalDateTime.now().toLocalDate())) {
+            user.setCoin(user.getCoin() + 10);
+            // 顺便更新最后登录时间
+            user.setLastLoginTime(LocalDateTime.now());
+            this.updateById(user);
+        }
+        log.info("小程序登录成功：{} 时间{}", user.getOpenid(), user.getLastLoginTime());
         return StpUtil.getTokenValue();
     }
 
@@ -252,7 +282,123 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
         // 4. 校验通过，执行登录
         StpUtil.login(user.getId());
 
+        // 5. 每天登录奖励10积分
+        if (!user.getLastLoginTime().toLocalDate().isEqual(LocalDateTime.now().toLocalDate())) {
+            user.setCoin(user.getCoin() + 10);
+            // 顺便更新最后登录时间
+            user.setLastLoginTime(LocalDateTime.now());
+            this.updateById(user);
+        }
+
         // 5. 返回 Token
         return StpUtil.getTokenValue();
+    }
+    /**
+     * 获取管理员后台仪表盘数据
+     * @return
+     */
+    @Override
+    public AdminDashboardVO getDashboardData() {
+        AdminDashboardVO vo = new AdminDashboardVO();
+
+        // 1. 统计救助总数 (查询 pet_info 表总数)
+        Long totalRescue = petInfoMapper.selectCount(null);
+        vo.setTotalRescueCount(totalRescue);
+
+        // 2. 统计已领养数 (查询 status = 2 的记录)
+        Long adopted = petInfoMapper.selectCount(new LambdaQueryWrapper<PetInfo>()
+                .eq(PetInfo::getStatus, 2)); // 假设 2 是已领养
+        vo.setTotalAdoptionCount(adopted);
+
+        // 3. 计算领养率 (避免除以0异常)
+        if (totalRescue > 0) {
+            // (adopted / total) * 100
+            BigDecimal rate = new BigDecimal(adopted)
+                    .divide(new BigDecimal(totalRescue), 4, RoundingMode.HALF_UP)
+                    .multiply(new BigDecimal(100));
+            vo.setAdoptionRate(rate);
+        } else {
+            vo.setAdoptionRate(BigDecimal.ZERO);
+        }
+
+        // 4. 统计待审核申请 (pet_adoption 表 status = 0)
+        Long pending = petAdoptionMapper.selectCount(new LambdaQueryWrapper<PetAdoption>()
+                .eq(PetAdoption::getStatus, 0));
+        vo.setPendingAuditCount(pending);
+
+        // 5. 热门品种统计 (用于画饼图)
+        // SQL 逻辑: SELECT breed as name, COUNT(*) as value FROM pet_info GROUP BY breed ORDER BY value DESC LIMIT 6
+        QueryWrapper<PetInfo> breedWrapper = new QueryWrapper<>();
+        breedWrapper.select("breed as name", "count(*) as value")
+                .groupBy("breed")
+                .orderByDesc("value")
+                .last("LIMIT 6"); // 只取前6名
+
+        List<Map<String, Object>> breedStats = petInfoMapper.selectMaps(breedWrapper);
+        vo.setBreedDistribution(breedStats);
+
+        // === 6. 生成近7天趋势图数据 (双折线) ===
+
+        // 6.1 生成 X 轴 (共用的日期列表)
+        List<String> dateList = new ArrayList<>();
+        LocalDate today = LocalDate.now();
+        for (int i = 6; i >= 0; i--) {
+            dateList.add(today.minusDays(i).toString());
+        }
+        vo.setDates(dateList);
+
+        // 6.2 获取【救助趋势】数据 (查 pet_info 表)
+        // 逻辑：统计 create_time
+        QueryWrapper<PetInfo> rescueWrapper = new QueryWrapper<>();
+        rescueWrapper.select("DATE_FORMAT(create_time, '%Y-%m-%d') as date", "count(*) as count")
+                .ge("create_time", today.minusDays(6).atStartOfDay())
+                .groupBy("date");
+
+        // 调用通用方法
+        List<Integer> rescueData = getDailyCounts(petInfoMapper, rescueWrapper, dateList);
+        vo.setDailyRescueData(rescueData);
+
+
+        // 6.3 获取【领养申请趋势】数据 (查 pet_adoption 表)
+        // 逻辑：统计 create_time (代表新增的领养申请)
+        QueryWrapper<PetAdoption> adoptionWrapper = new QueryWrapper<>();
+        adoptionWrapper.select("DATE_FORMAT(create_time, '%Y-%m-%d') as date", "count(*) as count")
+                .ge("create_time", today.minusDays(6).atStartOfDay())
+                .groupBy("date");
+
+        // 调用通用方法
+        List<Integer> adoptionData = getDailyCounts(petAdoptionMapper, adoptionWrapper, dateList);
+        vo.setDailyAdoptionData(adoptionData);
+
+        return vo;
+    }
+
+    /**
+     * 提取出来的私有通用方法：负责查库、转Map、补零
+     * @param mapper 传入 Mapper (可能是 PetInfoMapper 或 PetAdoptionMapper)
+     * @param wrapper 传入构造好的查询条件
+     * @param dateList 传入完整的日期列表 (X轴)
+     * @return 对齐后的 Y 轴数据列表
+     */
+    private <T> List<Integer> getDailyCounts(BaseMapper<T> mapper, QueryWrapper<T> wrapper, List<String> dateList) {
+        // 1. 执行查询
+        List<Map<String, Object>> queryResult = mapper.selectMaps(wrapper);
+
+        // 2. 转为 Map<日期, 数量> 方便查找
+        Map<String, Integer> dataMap = new HashMap<>();
+        if (queryResult != null) {
+            for (Map<String, Object> map : queryResult) {
+                String dateKey = (String) map.get("date");
+                Number countVal = (Number) map.get("count");
+                dataMap.put(dateKey, countVal.intValue());
+            }
+        }
+
+        // 3. 补零对齐
+        List<Integer> resultList = new ArrayList<>();
+        for (String date : dateList) {
+            resultList.add(dataMap.getOrDefault(date, 0));
+        }
+        return resultList;
     }
 }

@@ -50,6 +50,10 @@
                 <text class="pet-name">{{ item.name }}</text>
                 <u-tag :text="item.sex === 1 ? '公' : '母'" :type="item.sex === 1 ? 'primary' : 'error'" size="mini" plain shape="circle"></u-tag>
               </view>
+              <view class="love-row" style="display: flex; align-items: center; margin-bottom: 8rpx;">
+                 <u-icon name="gift-fill" color="#ff9c00" size="12"></u-icon>
+                 <text style="font-size: 24rpx; color: #ff9c00; margin-left: 4rpx;">{{ item.lovePoint || 0 }}</text>
+              </view>
               <view class="tags-row">
                 <text class="breed">{{ item.breed }}</text>
                 <text class="age">{{ item.age }}</text>

@@ -28,9 +28,9 @@
             <text class="phone-text">{{ userInfo.phone || '点击完善个人信息' }}</text>
           </view>
 
-          <view class="score-pill">
+          <view class="coin-pill">
             <u-icon name="gift-fill" color="#ff9c00" size="16"></u-icon>
-            <text class="score-val">{{ userInfo.score || 0 }} 积分</text>
+            <text class="coin-val">{{ userInfo.coin || 0 }} 小鱼干</text>
           </view>
         </view>
 
@@ -176,7 +176,7 @@ const userInfo = ref({
   nickname: '',
   avatar: '',
   phone: '',
-  score: 0,
+  coin: 0,
   hasPassword: false
 })
 
@@ -487,7 +487,7 @@ onMounted(() => {
   }
 }
 
-.score-pill {
+.coin-pill {
   background: #fff7e6;
   padding: 8rpx 20rpx;
   border-radius: 30rpx;
@@ -495,7 +495,7 @@ onMounted(() => {
   align-items: center;
   gap: 8rpx;
   
-  .score-val {
+  .coin-val {
     font-size: 24rpx;
     color: #ff9c00;
     font-weight: 600;

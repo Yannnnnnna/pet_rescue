@@ -26,3 +26,15 @@ export const auditAdoption = (data) => {
     data
   })
 }
+
+// AI 匹配分析
+export const analyzeMatch = (data) => {
+  return request({
+    url: '/ai/match/analyze',
+    method: 'post',
+    data,
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  })
+}

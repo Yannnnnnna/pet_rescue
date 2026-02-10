@@ -47,6 +47,25 @@
           class="pet-feature-tag"
         ></u-tag>
       </view>
+
+      <!-- 投喂互动区 -->
+      <view class="interaction-area">
+        <view class="love-stats">
+          <u-icon name="gift-fill" color="#ff9c00" size="24"></u-icon>
+          <text class="count">{{ pet.lovePoint || 0 }}</text>
+          <text class="label">小鱼干</text>
+        </view>
+        <u-button 
+           size="mini" 
+           shape="circle" 
+           color="linear-gradient(to right, #ff9c00, #ffc107)"
+           @click="handleFeed"
+           customStyle="margin: 0; padding: 0 30rpx; height: 60rpx;"
+        >
+          <u-icon name="gift" color="#fff" size="16" style="margin-right: 6rpx;"></u-icon>
+          投喂
+        </u-button>
+      </view>
       
       <view class="location-row">
         <u-icon name="map" color="#999" size="16"></u-icon>
@@ -87,13 +106,47 @@
         <u-button shape="circle" type="primary" text="申请领养" @click="handleApply" :disabled="pet.status !== 0"></u-button>
       </view>
     </view>
+    
+    <!-- 投喂数量选择弹窗 -->
+    <u-popup :show="showFeedPopup" @close="showFeedPopup = false" mode="bottom" round="16">
+      <view class="feed-popup">
+        <view class="popup-title">选择投喂数量</view>
+        <view class="feed-options">
+          <view 
+            class="option-item" 
+            v-for="num in feedOptions" 
+            :key="num"
+            :class="{ active: feedCount === num }"
+            @click="feedCount = num"
+          >
+            <text class="num">{{ num }}</text>
+            <text class="unit">个</text>
+          </view>
+        </view>
+        <view class="popup-btn">
+          <u-button 
+            shape="circle" 
+            color="linear-gradient(to right, #ff9c00, #ffc107)" 
+            @click="confirmFeed"
+          >
+            确认投喂
+          </u-button>
+        </view>
+      </view>
+    </u-popup>
+
+    <!-- 投喂动画 -->
+    <view class="feeding-anim" :class="{ active: isFeedingAnim }">
+       <u-icon name="gift-fill" color="#ff9c00" size="60"></u-icon>
+       <text class="plus-one">+{{ feedCount }}</text>
+    </view>
   </view>
 </template>
 
 <script setup>
 import { ref, computed } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
-import { getPetDetail, deletePet, toggleFavorite, checkFavorite } from '@/api/pet'
+import { getPetDetail, deletePet, toggleFavorite, checkFavorite, feedPet } from '@/api/pet'
 import { getAdopterInfo } from '@/api/adoption'
 import { getMyInfo } from '@/api/user'
 
@@ -102,6 +155,10 @@ const pet = ref(null)
 const currentUserId = ref(null)
 const urlIsOwner = ref(false)
 const isFavorited = ref(false)
+const isFeedingAnim = ref(false)
+const showFeedPopup = ref(false)
+const feedCount = ref(1)
+const feedOptions = [1, 5, 10, 20]
 
 onLoad((options) => {
   if (options.id) {
@@ -215,6 +272,38 @@ const displayAddress = computed(() => {
   // 使用 Set 去重
   return [...new Set(parts)].join('')
 })
+
+const handleFeed = () => {
+  showFeedPopup.value = true
+}
+
+const confirmFeed = async () => {
+  showFeedPopup.value = false
+  if (isFeedingAnim.value) return
+  
+  try {
+    const res = await feedPet({ 
+      petId: petId.value,
+      feedCount: feedCount.value 
+    })
+    if (res.code === 200) {
+      // 更新数量
+      if (pet.value) {
+        pet.value.lovePoint = (pet.value.lovePoint || 0) + feedCount.value
+      }
+      
+      // 触发动画
+      isFeedingAnim.value = true
+      setTimeout(() => {
+        isFeedingAnim.value = false
+      }, 1500)
+      
+      uni.showToast({ title: `投喂成功 +${feedCount.value}`, icon: 'none' })
+    }
+  } catch (e) {
+    console.error(e)
+  }
+}
 
 const handleConsult = () => {
     // 判断是否是送养人(自己)
@@ -417,6 +506,122 @@ const handleDelete = () => {
     u-button {
       flex: 1;
     }
+  }
+}
+
+.interaction-area {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #fff9e6;
+  padding: 20rpx;
+  border-radius: 16rpx;
+  margin-bottom: 20rpx;
+  
+  .love-stats {
+    display: flex;
+    align-items: center;
+    gap: 8rpx;
+    
+    .count {
+      font-size: 36rpx;
+      font-weight: bold;
+      color: #ff9c00;
+    }
+    
+    .label {
+      font-size: 24rpx;
+      color: #ff9c00;
+    }
+  }
+}
+
+.feeding-anim {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  opacity: 0;
+  z-index: 999;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  pointer-events: none;
+  
+  &.active {
+    animation: feed-pop 1.5s ease-out forwards;
+  }
+  
+  .plus-one {
+    color: #ff9c00;
+    font-size: 40rpx;
+    font-weight: bold;
+    margin-top: 10rpx;
+    text-shadow: 0 2rpx 4rpx rgba(0,0,0,0.1);
+  }
+}
+
+@keyframes feed-pop {
+  0% { transform: translate(-50%, -50%) scale(0.5); opacity: 0; }
+  20% { transform: translate(-50%, -50%) scale(1.2); opacity: 1; }
+  50% { transform: translate(-50%, -150%) scale(1); opacity: 1; }
+  100% { transform: translate(-50%, -250%) scale(0.8); opacity: 0; }
+}
+
+.feed-popup {
+  padding: 30rpx;
+  background: #fff;
+  
+  .popup-title {
+    font-size: 32rpx;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 40rpx;
+    color: #333;
+  }
+  
+  .feed-options {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 50rpx;
+    padding: 0 20rpx;
+    
+    .option-item {
+      width: 120rpx;
+      height: 120rpx;
+      border-radius: 20rpx;
+      background: #f5f5f5;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      border: 2rpx solid transparent;
+      transition: all 0.3s;
+      
+      .num {
+        font-size: 36rpx;
+        font-weight: bold;
+        color: #333;
+        margin-bottom: 4rpx;
+      }
+      
+      .unit {
+        font-size: 24rpx;
+        color: #999;
+      }
+      
+      &.active {
+        background: #fff9e6;
+        border-color: #ff9c00;
+        
+        .num { color: #ff9c00; }
+        .unit { color: #ff9c00; }
+      }
+    }
+  }
+  
+  .popup-btn {
+    padding: 0 20rpx 20rpx;
   }
 }
 </style>

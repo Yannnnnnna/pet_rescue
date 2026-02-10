@@ -60,7 +60,7 @@ public class PetInfoServiceImpl extends ServiceImpl<PetInfoMapper, PetInfo> impl
         if (petInfo.getStatus() == null) {
             petInfo.setStatus(0); // 默认为待领养
         }
-        // todo：待确定是不是这么获取当前用户的id
+
         petInfo.setPublisherId( StpUtil.getLoginIdAsLong());
         log.info("当前用户ID{}", StpUtil.getLoginIdAsLong());
         return this.save(petInfo);
@@ -100,6 +100,9 @@ public class PetInfoServiceImpl extends ServiceImpl<PetInfoMapper, PetInfo> impl
         if (StringUtils.hasText(pet.getDetailImgs())) {
             dto.setDetailImgList(Arrays.asList(pet.getDetailImgs().split(",")));
         }
+        // 浏览量增加1
+        pet.setViewCount(pet.getViewCount() + 1); // 浏览量加1
+        this.updateById(pet);
         return dto;
     }
     /**
@@ -114,8 +117,6 @@ public class PetInfoServiceImpl extends ServiceImpl<PetInfoMapper, PetInfo> impl
 
         if (query.getStatus() != null) {
             wrapper.eq(PetInfo::getStatus, query.getStatus());
-        } else {
-            wrapper.eq(PetInfo::getStatus, 0); // 默认只查待领养
         }
 
         // 必须加 if 判断！只有 keyword 不为空时，才拼接 AND (...)

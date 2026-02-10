@@ -5,6 +5,7 @@ import com.wei.pet.pet_rescue.entity.PetInfo;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.wei.pet.pet_rescue.entity.dto.adopt.AdoptPetsDTO;
 import com.wei.pet.pet_rescue.entity.dto.pet.PetDTO;
+import com.wei.pet.pet_rescue.entity.dto.pet.PetFeedDTO;
 import com.wei.pet.pet_rescue.entity.dto.pet.PetQueryDTO;
 
 import java.util.List;
@@ -32,4 +33,5 @@ public interface IPetInfoService extends IService<PetInfo> {
     List<PetInfo> getMyChattedPets(Long id);
 
     List<AdoptPetsDTO> getAdoptedPets(Long id);
+
 }

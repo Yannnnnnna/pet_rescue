@@ -153,6 +153,32 @@
           </div>
         </div>
         
+        <!-- AI Analysis Block -->
+        <div class="ai-block">
+          <h4>
+            <el-icon><MagicStick /></el-icon>
+            AI 智能匹配分析
+          </h4>
+          <div v-loading="aiLoading" class="ai-content">
+            <div v-if="aiAnalysis" class="ai-result">
+               <div class="score-circle">
+                 <el-progress 
+                   type="dashboard" 
+                   :percentage="aiAnalysis.matchScore" 
+                   :color="getScoreColor"
+                 />
+                 <span class="score-label">匹配度</span>
+               </div>
+               <div class="analysis-text">
+                 {{ aiAnalysis.analysisResult }}
+               </div>
+            </div>
+            <div v-else-if="!aiLoading" class="ai-empty">
+              暂无分析数据
+            </div>
+          </div>
+        </div>
+
         <el-divider />
 
         <!-- Form Block -->
@@ -198,8 +224,9 @@
 import { ref, reactive, onMounted } from 'vue'
 import { Search, Refresh } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
-import { getAdoptionList, getAdoptionDetail, auditAdoption } from '../../api/adoption'
+import { getAdoptionList, getAdoptionDetail, auditAdoption, analyzeMatch } from '../../api/adoption'
 import { getMyInfo } from '../../api/user'
+import { MagicStick } from '@element-plus/icons-vue'
 
 const currentAdminId = ref(null)
 const loading = ref(false)
@@ -209,6 +236,8 @@ const drawerVisible = ref(false)
 const detailData = ref(null)
 const currentDrawerOwnerId = ref(null)
 const currentDrawerOwnerName = ref('')
+const aiAnalysis = ref(null)
+const aiLoading = ref(false)
 
 const queryParams = reactive({
   pageNum: 1,
@@ -275,6 +304,12 @@ const handleCurrentChange = (val) => {
   fetchData()
 }
 
+const getScoreColor = (percentage) => {
+  if (percentage < 60) return '#F56C6C'
+  if (percentage < 80) return '#E6A23C'
+  return '#67C23A'
+}
+
 // 状态 Tag 样式
 const getStatusTagType = (status) => {
   const map = {
@@ -305,6 +340,7 @@ const formatTime = (timeStr) => {
 const openDrawer = async (row) => {
   currentDrawerOwnerId.value = row.ownerId
   currentDrawerOwnerName.value = row.ownerName
+  aiAnalysis.value = null // 重置 AI 分析结果
   
   try {
     const res = await getAdoptionDetail(row.id)
@@ -315,9 +351,33 @@ const openDrawer = async (row) => {
       // Reset audit form
       auditForm.status = 1
       auditForm.remark = ''
+
+      // 自动触发 AI 分析
+      fetchAiAnalysis(res.data)
     }
   } catch (error) {
     console.error(error)
+  }
+}
+
+const fetchAiAnalysis = async (data) => {
+  if (!data) return
+  aiLoading.value = true
+  try {
+    const res = await analyzeMatch({
+      petId: data.petId,
+      adoptId: data.id,
+      userId: data.userId,
+      style: 'strict', // 管理端默认为严格风格
+      refresh: false
+    })
+    if (res.code === 200) {
+      aiAnalysis.value = res.data
+    }
+  } catch (error) {
+    console.error('AI Analysis failed:', error)
+  } finally {
+    aiLoading.value = false
   }
 }
 
@@ -421,6 +481,47 @@ const submitAudit = async () => {
 }
 .user-item .value {
   font-weight: bold;
+}
+.ai-block {
+  margin-top: 20px;
+}
+.ai-block h4 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #409EFF;
+}
+.ai-result {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+  background: #f0f9eb;
+  padding: 15px;
+  border-radius: 8px;
+}
+.score-circle {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 120px;
+}
+.score-label {
+  margin-top: -10px;
+  font-size: 12px;
+  color: #606266;
+}
+.analysis-text {
+  flex: 1;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #303133;
+  white-space: pre-wrap;
+  text-align: justify;
+}
+.ai-empty {
+  text-align: center;
+  color: #909399;
+  padding: 20px;
 }
 .form-block h4, .action-block h4 {
   margin-bottom: 15px;

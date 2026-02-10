@@ -53,7 +53,7 @@ public class SysUser implements Serializable {
     private String phone;
 
     @Schema(description = "积分(用于云养互动)")
-    private Integer score;
+    private Integer coin;
     @Schema(description = "创建时间")
     private LocalDateTime createTime;
 
@@ -64,5 +64,7 @@ public class SysUser implements Serializable {
     @TableLogic
     private Integer isDeleted;
 
+    @Schema(description = "最后登录时间")
+    private LocalDateTime lastLoginTime;
 
 }

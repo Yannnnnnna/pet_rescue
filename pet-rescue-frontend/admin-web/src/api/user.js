@@ -37,3 +37,10 @@ export const updatePassword = (data) => {
     data
   })
 }
+
+export const getDashboardData = () => {
+  return request({
+    url: '/sys-user/dashboard',
+    method: 'get'
+  })
+}

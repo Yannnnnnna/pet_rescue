@@ -905,8 +905,7 @@ const scrollToBottom = () => {
 // 格式化时间
 const formatTime = (timeStr) => {
   if (!timeStr) return ''
-  const date = new Date(timeStr)
-  return date.toLocaleString()
+  return timeStr.replace('T', ' ')
 }
 
 // 辅助函数

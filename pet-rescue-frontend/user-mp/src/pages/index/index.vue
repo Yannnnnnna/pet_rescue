@@ -97,6 +97,10 @@
                  <text class="name">{{ item.name }}</text>
                  <u-tag :text="item.sex === 1 ? '公' : '母'" :type="item.sex === 1 ? 'primary' : 'error'" size="mini" plain shape="circle"></u-tag>
               </view>
+              <view class="love-point-row">
+                 <u-icon name="gift-fill" color="#ff9c00" size="14"></u-icon>
+                 <text class="count">{{ item.lovePoint || 0 }}</text>
+              </view>
               <view class="tags">
                 <text class="tag">{{ item.age }}</text>
                 <text class="tag">{{ item.breed }}</text>
@@ -115,6 +119,10 @@
               <view class="name-row">
                  <text class="name">{{ item.name }}</text>
                  <u-tag :text="item.sex === 1 ? '公' : '母'" :type="item.sex === 1 ? 'primary' : 'error'" size="mini" plain shape="circle"></u-tag>
+              </view>
+              <view class="love-point-row">
+                 <u-icon name="gift-fill" color="#ff9c00" size="14"></u-icon>
+                 <text class="count">{{ item.lovePoint || 0 }}</text>
               </view>
               <view class="tags">
                 <text class="tag">{{ item.age }}</text>
@@ -746,17 +754,30 @@ const submitRecommend = async () => {
         padding: 16rpx;
         
         .name-row {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          margin-bottom: 12rpx;
-          
-          .name {
-            font-size: 30rpx;
-            font-weight: bold;
-            color: #333;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8rpx;
+            
+            .name {
+              font-size: 30rpx;
+              font-weight: bold;
+              color: #333;
+            }
           }
-        }
+
+          .love-point-row {
+            display: flex;
+            align-items: center;
+            gap: 4rpx;
+            margin-bottom: 12rpx;
+            
+            .count {
+              font-size: 24rpx;
+              color: #ff9c00;
+              font-weight: 500;
+            }
+          }
         
         .tags {
           margin-bottom: 16rpx;
