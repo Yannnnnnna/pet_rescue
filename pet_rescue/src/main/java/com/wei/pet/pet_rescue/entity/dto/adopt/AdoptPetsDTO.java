@@ -43,4 +43,13 @@ public class AdoptPetsDTO {
 
     @Schema(description = "送养人头像")
     private String publisherAvatar;
+
+
+    @Schema(description = "电子签名图片URL")
+    private String signatureImg;
+
+    @Schema(description = "签署时间")
+    private LocalDateTime signTime;
+
+
 }

@@ -9,6 +9,7 @@ import com.wei.pet.pet_rescue.entity.PetInfo;
 import com.wei.pet.pet_rescue.entity.SysUser;
 import com.wei.pet.pet_rescue.entity.dto.adopt.AdoptionApplyDTO;
 import com.wei.pet.pet_rescue.entity.dto.adopt.AdoptionAuditDTO;
+import com.wei.pet.pet_rescue.entity.dto.adopt.SignRequestDTO;
 import com.wei.pet.pet_rescue.entity.vo.AdminAdoptionRecordVO;
 import com.wei.pet.pet_rescue.entity.vo.AdoptionDetailVO;
 import com.wei.pet.pet_rescue.entity.vo.AdoptionRecordVO;
@@ -23,6 +24,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -198,7 +200,6 @@ public class PetAdoptionServiceImpl extends ServiceImpl<PetAdoptionMapper, PetAd
         }
 
         // 4. 补全：宠物信息 (PetInfo)
-        // 假设你的宠物实体叫 PetInfo
         PetInfo pet = petInfoService.getById(adoption.getPetId());
         if (pet != null) {
             vo.setPetName(pet.getName());
@@ -238,5 +239,40 @@ public class PetAdoptionServiceImpl extends ServiceImpl<PetAdoptionMapper, PetAd
         UserInfoVO userInfoVO = new UserInfoVO();
         BeanUtils.copyProperties(user, userInfoVO);
         return userInfoVO;
+    }
+
+    /**
+     * 签署领养协议
+     * @param req
+     * @return
+     */
+    @Override
+    public boolean signAgreement(SignRequestDTO req) {
+        // 1. 获取当前用户
+        Long userId = StpUtil.getLoginIdAsLong();
+
+        // 2. 查申请单
+        PetAdoption adoption = this.getById(req.getAdoptionId());
+        if (adoption == null) throw new RuntimeException("申请不存在");
+
+        // 3. 校验权限和状态
+        if (!adoption.getUserId().equals(userId)) {
+            throw new RuntimeException("只能签署自己的申请");
+        }
+        // 只有状态为 1 (审核通过) 的才能签协议
+        if (adoption.getStatus() != 1) {
+            throw new RuntimeException("当前状态无法签署协议");
+        }
+
+        // 4. 更新状态
+        adoption.setSignatureImg(req.getSignatureImg());
+        adoption.setSignTime(LocalDateTime.now());
+        adoption.setAgreementStatus(1); // 已签署
+
+        // 5. 把 status 改成 4 (领养完成)
+         adoption.setStatus(4);
+
+        return this.updateById(adoption);
+
     }
 }

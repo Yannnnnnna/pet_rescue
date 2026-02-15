@@ -26,7 +26,7 @@
                 <view class="avatar-box">
                   <image :src="pet.cover" mode="aspectFill" class="pet-avatar"></image>
                   <view class="gender-badge" :class="pet.sex === 1 ? 'male' : 'female'">
-                    <u-icon :name="pet.sex === 1 ? 'man' : 'woman'" color="#fff" size="16"></u-icon>
+                    <u-icon :name="pet.sex === 1 ? 'nan' : 'nv'" custom-prefix="custom-icon" color="#fff" size="16"></u-icon>
                   </view>
                 </view>
 
@@ -51,13 +51,40 @@
                 </view>
                 
                 <view class="vaccine-status">
-                   <u-icon name="checkmark-circle-fill" :color="pet.isVaccinated ? '#19be6b' : '#909399'" size="18"></u-icon>
+                   <u-icon name="duigou" custom-prefix="custom-icon" :color="pet.isVaccinated ? '#19be6b' : '#909399'" size="18"></u-icon>
                    <text :class="{ active: pet.isVaccinated }">{{ pet.isVaccinated ? '已完成疫苗接种' : '疫苗接种状态未知' }}</text>
                 </view>
               </view>
 
               <!-- 溯源区域 -->
               <view class="roots-section">
+                <!-- 发布日记与查看历史 -->
+                <view class="diary-action-box">
+                  <view class="action-btn-group">
+                    <u-button 
+                      text="发布日记" 
+                      icon="bianji" 
+                      custom-prefix="custom-icon"
+                      iconColor="#fff"
+                      color="linear-gradient(to right, #ff9c00, #ffb347)" 
+                      shape="circle"
+                      customStyle="box-shadow: 0 8rpx 16rpx rgba(255, 156, 0, 0.2); height: 80rpx; flex: 1;"
+                      @click="handlePublish(pet)"
+                    ></u-button>
+                    
+                    <u-button 
+                      text="成长记录" 
+                      icon="lishi" 
+                      custom-prefix="custom-icon"
+                      iconColor="#ff9c00"
+                      color="#fff" 
+                      shape="circle"
+                      customStyle="box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.05); height: 80rpx; color: #ff9c00; border: 1px solid #ff9c00; flex: 1; margin-left: 20rpx;"
+                      @click="handleViewHistory(pet)"
+                    ></u-button>
+                  </view>
+                </view>
+
                 <view class="guardian-row">
                   <view class="guardian-info">
                     <text class="section-label">守护天使 (送养人)</text>
@@ -67,21 +94,21 @@
                     </view>
                   </view>
                   <button class="contact-btn" @click="handleContact(pet)">
-                    <u-icon name="chat" color="#fff" size="20"></u-icon>
+                    <u-icon name="xiaoxi" custom-prefix="custom-icon" color="#fff" size="20"></u-icon>
                     <text>联系TA</text>
                   </button>
                 </view>
                 
                 <view class="archive-links">
                   <view class="link-item" @click="viewApplication(pet)">
-                    <u-icon name="file-text" color="#606266" size="20"></u-icon>
+                    <u-icon name="shenqing" custom-prefix="custom-icon" color="#606266" size="20"></u-icon>
                     <text>查看申请表快照</text>
-                    <u-icon name="arrow-right" color="#ccc" size="14"></u-icon>
+                    <u-icon name="gengduo" custom-prefix="custom-icon" color="#ccc" size="14"></u-icon>
                   </view>
                   <view class="link-item" @click="viewAgreement(pet)">
-                    <u-icon name="order" color="#606266" size="20"></u-icon>
+                    <u-icon name="xieyi" custom-prefix="custom-icon" color="#606266" size="20"></u-icon>
                     <text>电子领养协议</text>
-                    <u-icon name="arrow-right" color="#ccc" size="14"></u-icon>
+                    <u-icon name="gengduo" custom-prefix="custom-icon" color="#ccc" size="14"></u-icon>
                   </view>
                 </view>
               </view>
@@ -97,19 +124,36 @@
 
 <script setup>
 import { ref, computed } from 'vue'
-import { onLoad } from '@dcloudio/uni-app'
+import { onLoad, onShow } from '@dcloudio/uni-app'
 import { getMyAdoptedPets } from '@/api/pet'
+import { getMyAdoptionApplications } from '@/api/adoption'
 import dayjs from 'dayjs'
 
 const petList = ref([])
 const loading = ref(true)
-const navHeight = ref(44) // 默认值，实际应该获取系统状态栏高度
+const navHeight = ref(44)
 
 onLoad(() => {
   const sysInfo = uni.getSystemInfoSync()
   navHeight.value = sysInfo.statusBarHeight + 44
   fetchData()
 })
+
+// 无需预先加载所有日记，点击查看历史时再去加载
+// onShow(() => {
+// })
+
+const handlePublish = (pet) => {
+  uni.navigateTo({
+    url: `/pages/post/publish?petId=${pet.id}&petName=${pet.name}`
+  })
+}
+
+const handleViewHistory = (pet) => {
+  uni.navigateTo({
+    url: `/pages/pet/diary-list?petId=${pet.id}`
+  })
+}
 
 const fetchData = async () => {
   try {
@@ -159,13 +203,47 @@ const handleContact = (pet) => {
   }
 }
 
-const viewApplication = (pet) => {
-   // 跳转到申请详情
-   uni.navigateTo({ url: '/pages/adoption/my-history' })
+const viewApplication = async (pet) => {
+  uni.showLoading({ title: '加载中' })
+  try {
+    const res = await getMyAdoptionApplications({ petId: pet.id })
+    let apps = res.data
+    if (apps && apps.records) {
+      apps = apps.records
+    }
+    if (apps && Array.isArray(apps)) {
+      const passedApp = apps.find(app => 
+        String(app.petId) === String(pet.id) && 
+        (app.status === 1 || app.status === 4)
+      )
+      if (passedApp) {
+        uni.hideLoading()
+        uni.navigateTo({ 
+          url: `/pages/adoption/application-detail?id=${passedApp.id}` 
+        })
+      } else {
+        uni.hideLoading()
+        uni.showToast({ title: '未找到申请记录', icon: 'none' })
+      }
+    } else {
+      uni.hideLoading()
+      uni.showToast({ title: '未找到申请记录', icon: 'none' })
+    }
+  } catch (e) {
+    uni.hideLoading()
+    console.error(e)
+    uni.showToast({ title: '获取申请记录失败', icon: 'none' })
+  }
 }
 
 const viewAgreement = (pet) => {
-  uni.showToast({ title: '暂无电子协议', icon: 'none' })
+  getApp().globalData.agreementData = {
+    signatureImg: pet.signatureImg,
+    signTime: pet.signTime
+  }
+  uni.navigateTo({
+    url: `/pages/adoption/sign-agreement?petId=${pet.id}&mode=view`
+  })
 }
 </script>
 
@@ -287,15 +365,16 @@ const viewAgreement = (pet) => {
 }
 
 .info-primary {
-  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   margin-bottom: 40rpx;
   
   .pet-name {
-    display: block;
-    font-size: 44rpx;
+    font-size: 40rpx;
     font-weight: 700;
     color: #333;
-    margin-bottom: 8rpx;
+    margin-bottom: 10rpx;
   }
   
   .pet-breed {
@@ -306,6 +385,16 @@ const viewAgreement = (pet) => {
     border-radius: 20rpx;
   }
 }
+
+.diary-action-box {
+    margin-bottom: 30rpx;
+    
+    .action-btn-group {
+      display: flex;
+      justify-content: space-between;
+      gap: 20rpx;
+    }
+  }
 
 .milestone-section {
   display: flex;

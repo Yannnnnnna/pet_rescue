@@ -173,7 +173,7 @@ public class PetInfoServiceImpl extends ServiceImpl<PetInfoMapper, PetInfo> impl
         // 注意：这里查的是 pet_adoption 表
         List<PetAdoption> adoptions = petAdoptionService.lambdaQuery()
                 .eq(PetAdoption::getUserId, id)
-                .eq(PetAdoption::getStatus, 1) // 重点：只查审核通过的
+                .eq(PetAdoption::getStatus, 4) // 重点：只查签署协议的
                 .orderByDesc(PetAdoption::getUpdateTime) // 按领养时间倒序
                 .list();
 
@@ -213,6 +213,8 @@ public class PetInfoServiceImpl extends ServiceImpl<PetInfoMapper, PetInfo> impl
             if (adoption != null) {
                 // 使用 updateTime 作为领养成功的时刻
                 dto.setAdoptionTime(adoption.getUpdateTime());
+                dto.setSignatureImg(adoption.getSignatureImg());
+                dto.setSignTime(adoption.getSignTime());
             }
 
             // 6.3 填充送养人信息

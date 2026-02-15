@@ -6,6 +6,7 @@ import com.wei.pet.pet_rescue.entity.PetAdoption;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.wei.pet.pet_rescue.entity.dto.adopt.AdoptionApplyDTO;
 import com.wei.pet.pet_rescue.entity.dto.adopt.AdoptionAuditDTO;
+import com.wei.pet.pet_rescue.entity.dto.adopt.SignRequestDTO;
 import com.wei.pet.pet_rescue.entity.vo.AdminAdoptionRecordVO;
 import com.wei.pet.pet_rescue.entity.vo.AdoptionDetailVO;
 import com.wei.pet.pet_rescue.entity.vo.AdoptionRecordVO;
@@ -36,4 +37,6 @@ public interface IPetAdoptionService extends IService<PetAdoption> {
     IPage<AdminAdoptionRecordVO> getAdminPage(Page<AdminAdoptionRecordVO> page, Integer status, String petName);
 
     UserInfoVO getByPetId(Long petId);
+
+    boolean signAgreement(SignRequestDTO req);
 }

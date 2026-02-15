@@ -41,10 +41,30 @@
             <el-icon><Checked /></el-icon>
             <span>全平台领养监管</span>
           </el-menu-item>
-          <el-menu-item index="/admin/article/list">
-            <el-icon><Document /></el-icon>
-            <span>内容生态管理</span>
-          </el-menu-item>
+          <el-sub-menu index="/admin/content">
+            <template #title>
+              <el-icon><Document /></el-icon>
+              <span>内容生态管理</span>
+            </template>
+            <el-menu-item index="/admin/article/list">
+              <el-icon><EditPen /></el-icon>
+              <span>文章管理</span>
+            </el-menu-item>
+            <el-menu-item index="/admin/content/banner">
+              <el-icon><Picture /></el-icon>
+              <span>轮播图管理</span>
+            </el-menu-item>
+          </el-sub-menu>
+          <el-sub-menu index="/admin/community">
+            <template #title>
+              <el-icon><ChatDotRound /></el-icon>
+              <span>社区管理</span>
+            </template>
+            <el-menu-item index="/admin/community/diary-audit">
+              <el-icon><EditPen /></el-icon>
+              <span>领养日记审核</span>
+            </el-menu-item>
+          </el-sub-menu>
           <!-- 预留其他菜单 -->
         </el-menu>
       </el-aside>
@@ -65,7 +85,7 @@
 import { computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { ElMessageBox } from 'element-plus'
-import { ArrowDown, List, User, Document, Checked } from '@element-plus/icons-vue'
+import { ArrowDown, List, User, Document, Checked, ChatDotRound, EditPen, Picture } from '@element-plus/icons-vue'
 import { useUserStore } from '../stores/user'
 
 const router = useRouter()

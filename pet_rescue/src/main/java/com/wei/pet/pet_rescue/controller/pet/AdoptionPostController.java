@@ -48,7 +48,7 @@ public class AdoptionPostController {
     }
     @Operation(summary = "获取领养生活记录贴")
     @GetMapping("/{postId}")
-    public Result<?> getAdoptionPost(@PathVariable Long postId) {
+    public Result<AdoptionPost> getAdoptionPost(@PathVariable Long postId) {
         return Result.success(adoptionPostService.getById(postId));
     }
     @Operation(summary = "删除领养生活记录贴")
@@ -60,7 +60,7 @@ public class AdoptionPostController {
 
     @Operation(summary = "列表展示领养生活记录贴")
     @GetMapping("/list")
-    public Result<List<AdoptionPost>> listAdoptionPosts(@RequestBody AdoptionPostQueryDTO queryDTO) {
+    public Result<List<AdoptionPost>> listAdoptionPosts( AdoptionPostQueryDTO queryDTO) {
         return Result.success(adoptionPostService.listAdoptionPosts(queryDTO));
     }
 }

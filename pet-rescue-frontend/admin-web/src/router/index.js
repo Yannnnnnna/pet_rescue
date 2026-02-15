@@ -64,6 +64,18 @@ const router = createRouter({
           name: 'ArticleEdit',
           component: () => import('../views/article/ArticleEditor.vue'),
           meta: { title: '编辑文章', hidden: true }
+        },
+        {
+          path: 'content/banner',
+          name: 'BannerList',
+          component: () => import('../views/content/BannerList.vue'),
+          meta: { title: '轮播图管理' }
+        },
+        {
+          path: 'community/diary-audit',
+          name: 'AdoptionDiaryAudit',
+          component: () => import('../views/community/AdoptionDiaryAudit.vue'),
+          meta: { title: '领养日记审核' }
         }
       ]
     },

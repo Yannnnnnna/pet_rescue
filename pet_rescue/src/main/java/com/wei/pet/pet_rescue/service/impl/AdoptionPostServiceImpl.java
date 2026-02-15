@@ -36,6 +36,7 @@ public class AdoptionPostServiceImpl extends ServiceImpl<AdoptionPostMapper, Ado
         BeanUtils.copyProperties(adoptionPostDTO, post);
         post.setUserId(StpUtil.getLoginIdAsLong());
         post.setCreateTime(LocalDateTime.now());
+        post.setAuditStatus(0); // 默认待审核
         return this.save(post);
     }
 

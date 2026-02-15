@@ -8,6 +8,7 @@ import com.wei.pet.pet_rescue.common.Result;
 import com.wei.pet.pet_rescue.entity.PetAdoption;
 import com.wei.pet.pet_rescue.entity.dto.adopt.AdoptionApplyDTO;
 import com.wei.pet.pet_rescue.entity.dto.adopt.AdoptionAuditDTO;
+import com.wei.pet.pet_rescue.entity.dto.adopt.SignRequestDTO;
 import com.wei.pet.pet_rescue.entity.vo.AdminAdoptionRecordVO;
 import com.wei.pet.pet_rescue.entity.vo.AdoptionDetailVO;
 import com.wei.pet.pet_rescue.entity.vo.AdoptionRecordVO;
@@ -108,16 +109,8 @@ public class PetAdoptionController {
     @Operation(summary = "获取申请详情 (用于审核查看)")
     @GetMapping("/detail/{id}")
     public Result<AdoptionDetailVO> getDetail(@Parameter(description = "申请ID") @PathVariable Long id) {
-        try {
-            Long userId = StpUtil.getLoginIdAsLong();
-            // 确保只有管理员或本人能看详情、
-            if (userId == 1L || id.equals(userId)){
-                return Result.success(adoptionService.getAdoptionDetail(id));
-            }
-            throw new RuntimeException("无权查看");
-        } catch (RuntimeException e) {
-            return Result.error(e.getMessage());
-        }
+       return Result.success(adoptionService.getAdoptionDetail(id));
+
     }
 
     // 接口1：全平台领养记录分页查询
@@ -145,6 +138,11 @@ public class PetAdoptionController {
 
         UserInfoVO userInfoVO = adoptionService.getByPetId(petId);
         return Result.success(userInfoVO);
+    }
+    @PostMapping("/sign")
+    @Operation(summary = "用户签署领养协议")
+    public Result<Boolean> signAgreement(@RequestBody SignRequestDTO req) {
+        return Result.success(adoptionService.signAgreement(req));
     }
 
 

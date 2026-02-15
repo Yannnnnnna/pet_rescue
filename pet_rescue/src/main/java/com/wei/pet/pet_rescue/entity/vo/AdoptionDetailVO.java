@@ -66,4 +66,13 @@ public class AdoptionDetailVO {
 
     @Schema(description = "领养理由")
     private String reason;
+
+    @Schema(description = "电子签名图片URL")
+    private String signatureImg;
+
+    @Schema(description = "签署时间")
+    private LocalDateTime signTime;
+
+    @Schema(description = "协议状态: 0-未签署 1-已签署")
+    private Integer agreementStatus;
 }
