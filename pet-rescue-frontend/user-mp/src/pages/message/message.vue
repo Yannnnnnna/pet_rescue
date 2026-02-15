@@ -19,7 +19,7 @@
           <view class="avatar-box">
              <image :src="item.avatar || '/static/logo.png'" class="avatar" mode="aspectFill"></image>
              <u-badge :value="item.unreadCount" max="99" absolute :offset="[-10, -10]" v-if="item.unreadCount > 0"></u-badge>
-          </view>
+  </view>
           
           <view class="info-box">
             <view class="top-row">
@@ -35,6 +35,7 @@
       
       <u-empty v-else mode="message" icon="http://cdn.uviewui.com/uview/empty/message.png" text="暂无消息记录"></u-empty>
     </view>
+    <my-tabbar :current="1"></my-tabbar>
   </view>
 </template>
 
@@ -52,6 +53,7 @@ const currentTab = ref(0)
 const dataList = ref([])
 
 onShow(() => {
+  uni.hideTabBar()
   fetchData()
 })
 

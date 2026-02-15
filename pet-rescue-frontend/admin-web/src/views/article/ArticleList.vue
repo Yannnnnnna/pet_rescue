@@ -70,6 +70,7 @@
           <template #default="scope">
             <el-button type="info" link :icon="View" @click="handleView(scope.row)">查看</el-button>
             <el-button type="primary" link :icon="Edit" @click="handleEdit(scope.row)">编辑</el-button>
+            <el-button type="success" link :icon="Monitor" @click="handleSetBanner(scope.row)">设为轮播</el-button>
             <el-button type="danger" link :icon="Delete" @click="handleDelete(scope.row)">删除</el-button>
           </template>
         </el-table-column>
@@ -164,8 +165,9 @@
 import { ref, reactive, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { getArticleList, deleteArticle } from '../../api/article'
+import { addBanner } from '../../api/banner'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { Search, Refresh, Plus, Edit, Delete, View, Picture } from '@element-plus/icons-vue'
+import { Search, Refresh, Plus, Edit, Delete, View, Picture, Monitor } from '@element-plus/icons-vue'
 
 const router = useRouter()
 const loading = ref(false)
@@ -289,6 +291,41 @@ const handleDelete = (row) => {
 const handleSizeChange = (val) => {
   queryParams.pageSize = val
   fetchList()
+}
+
+const handleSetBanner = (row) => {
+  ElMessageBox.confirm(`确定要将文章 "${row.title}" 设为首页轮播图吗？`, '提示', {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
+    type: 'warning'
+  }).then(async () => {
+    try {
+      // 准备轮播图数据
+      const bannerData = {
+        imgUrl: row.type === 3 ? row.wallpaperUrl : row.coverImg, // 如果是壁纸类型(3)，优先使用壁纸大图
+        sortOrder: 0,
+        status: 1,
+        targetUrl: ''
+      }
+      
+      // 根据文章类型设置跳转路径
+      if (row.type === 1) { // 公告
+         bannerData.targetUrl = `/pages/wiki/detail?id=${row.id}`
+      } else if (row.type === 2) { // 活动
+         bannerData.targetUrl = `/pages/wiki/detail?id=${row.id}`
+      } else if (row.type === 0) { // 百科
+         bannerData.targetUrl = `/pages/wiki/detail?id=${row.id}`
+      } else if (row.type === 3) { // 壁纸
+         bannerData.targetUrl = '' // 壁纸不跳转
+      }
+
+      await addBanner(bannerData)
+      ElMessage.success('设置成功，请前往轮播图管理页面查看')
+    } catch (error) {
+      console.error(error)
+      // ElMessage.error('设置失败')
+    }
+  })
 }
 
 const handleCurrentChange = (val) => {

@@ -5,7 +5,7 @@
       <view class="add-btn" @click="handleNewChat">
         <text class="plus-icon">+</text>
         <text>新对话</text>
-      </view>
+  </view>
     </view>
     
     <scroll-view scroll-y class="content" refresher-enabled @refresherrefresh="onRefresh" :refresher-triggered="isRefreshing">
@@ -38,6 +38,7 @@
         </view>
       </view>
     </scroll-view>
+    <my-tabbar :current="2"></my-tabbar>
   </view>
 </template>
 
@@ -52,6 +53,7 @@ const sessionList = ref([])
 const isRefreshing = ref(false)
 
 onShow(() => {
+  uni.hideTabBar()
   if (checkLogin('/pages/ai/ai')) {
     loadSessionList()
   }

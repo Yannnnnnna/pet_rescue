@@ -14,20 +14,20 @@
         <view class="info-right">
           <view class="name-row">
              <text class="name">{{ detail.realName || detail.userNickname || '用户' }}</text>
-             <u-icon v-if="detail.gender === 1" name="man" color="#2979ff" size="18"></u-icon>
-             <u-icon v-if="detail.gender === 2" name="woman" color="#fa3534" size="18"></u-icon>
+             <u-icon v-if="detail.gender === 1" name="nan" custom-prefix="custom-icon" color="#2979ff" size="18"></u-icon>
+             <u-icon v-if="detail.gender === 2" name="nv" custom-prefix="custom-icon" color="#fa3534" size="18"></u-icon>
              <text class="age" v-if="detail.age">{{ detail.age }}岁</text>
           </view>
           <view class="contact-row">
-             <u-icon name="phone" size="16" color="#666"></u-icon>
+             <u-icon name="dianhua" custom-prefix="custom-icon" size="16" color="#666"></u-icon>
              <text class="text">{{ detail.phone }}</text>
           </view>
           <view class="address-row">
-             <u-icon name="map" size="16" color="#666"></u-icon>
+             <u-icon name="dizhi" custom-prefix="custom-icon" size="16" color="#666"></u-icon>
              <text class="text">{{ detail.address || '未填写地址' }}</text>
           </view>
           <view class="time-row">
-             <u-icon name="clock" size="16" color="#999"></u-icon>
+             <u-icon name="lishi" custom-prefix="custom-icon" size="16" color="#999"></u-icon>
              <text class="text">申请时间：{{ formatDate(detail.createTime) }}</text>
           </view>
         </view>
@@ -79,15 +79,44 @@
           <image :src="detail.petCover" class="pet-cover" mode="aspectFill"></image>
           <view class="pet-name">{{ detail.petName }}</view>
           <view class="arrow">
-             <u-icon name="arrow-right" color="#ccc"></u-icon>
+             <u-icon name="gengduo" custom-prefix="custom-icon" color="#ccc"></u-icon>
           </view>
        </view>
     </view>
 
-    <view class="placeholder-footer" v-if="detail.status === 0"></view>
+    <!-- 协议签署状态 -->
+    <view class="card" v-if="detail.status === 1">
+       <view class="card-title">领养协议</view>
+       <view class="agreement-status">
+          <view class="status-row">
+             <u-icon :name="detail.agreementStatus === 1 ? 'duigou' : 'tishi'" 
+                     custom-prefix="custom-icon"
+                     :color="detail.agreementStatus === 1 ? '#19be6b' : '#ff9900'" size="24"></u-icon>
+             <text class="status-text" :class="{ signed: detail.agreementStatus === 1 }">
+               {{ detail.agreementStatus === 1 ? '已签署' : '待签署' }}
+             </text>
+          </view>
+          <view class="sign-time" v-if="detail.agreementStatus === 1 && detail.signTime">
+             <text>签署时间：{{ formatDate(detail.signTime) }}</text>
+          </view>
+          <view class="signature-preview" v-if="detail.agreementStatus === 1 && detail.signatureImg">
+             <image :src="detail.signatureImg" mode="aspectFit" class="signature-img" @click="previewSignature"></image>
+          </view>
+       </view>
+    </view>
+
+    <view class="placeholder-footer" v-if="detail.status === 0 || detail.status === 1 || detail.status === 4"></view>
     <!-- 底部操作栏 -->
     <view class="footer-bar" v-if="detail.status === 0">
        <button class="btn cancel" @click="handleCancel">取消申请</button>
+    </view>
+    
+    <!-- 已通过或已领养状态 -->
+    <view class="footer-bar" v-if="(detail.status === 1 || detail.status === 4 || detail.status === '1' || detail.status === '4') && detail.agreementStatus === 1">
+       <button class="btn outline" @click="handleViewAgreement">查看领养协议</button>
+    </view>
+    <view class="footer-bar" v-else-if="(detail.status === 1 || detail.status === '1') && detail.agreementStatus !== 1">
+       <button class="btn primary" @click="handleSignAgreement">签署领养协议</button>
     </view>
     
   </view>
@@ -182,7 +211,7 @@ const formatDate = (time) => {
 }
 
 const getStatusText = (status) => {
-    const map = { 0: '待审核', 1: '已通过', 2: '已驳回', 3: '已取消' }
+    const map = { 0: '待审核', 1: '已通过', 2: '已驳回', 3: '已取消', 4: '已领养' }
     return map[status] || '未知'
 }
 
@@ -223,6 +252,27 @@ const submitCancel = async () => {
         uni.showToast({ title: '网络请求失败', icon: 'none' })
     } finally {
         uni.hideLoading()
+    }
+}
+
+const handleSignAgreement = () => {
+    uni.navigateTo({
+        url: `/pages/adoption/sign-agreement?applicationId=${id.value}&petId=${detail.value.petId}`
+    })
+}
+
+const handleViewAgreement = () => {
+    uni.navigateTo({
+        url: `/pages/adoption/sign-agreement?applicationId=${id.value}&petId=${detail.value.petId}&mode=view`
+    })
+}
+
+const previewSignature = () => {
+    if (detail.value && detail.value.signatureImg) {
+        uni.previewImage({
+            urls: [detail.value.signatureImg],
+            current: detail.value.signatureImg
+        })
     }
 }
 </script>
@@ -380,6 +430,57 @@ const submitCancel = async () => {
             background: #fff;
             color: #666;
             border: 2rpx solid #ccc;
+        }
+        
+        &.primary {
+            background: linear-gradient(to right, #19be6b, #18b566);
+            color: #fff;
+            border: none;
+        }
+        
+        &.outline {
+            background: #fff;
+            color: #19be6b;
+            border: 2rpx solid #19be6b;
+        }
+    }
+}
+
+.agreement-status {
+    .status-row {
+        display: flex;
+        align-items: center;
+        
+        .status-text {
+            font-size: 28rpx;
+            color: #ff9900;
+            margin-left: 10rpx;
+            
+            &.signed {
+                color: #19be6b;
+            }
+        }
+    }
+    
+    .sign-time {
+        margin-top: 16rpx;
+        
+        text {
+            font-size: 24rpx;
+            color: #999;
+        }
+    }
+    
+    .signature-preview {
+        margin-top: 20rpx;
+        padding: 20rpx;
+        background: #fafafa;
+        border-radius: 8rpx;
+        text-align: center;
+        
+        .signature-img {
+            width: 300rpx;
+            height: 150rpx;
         }
     }
 }

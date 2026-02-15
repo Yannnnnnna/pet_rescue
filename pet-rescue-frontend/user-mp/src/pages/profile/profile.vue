@@ -17,7 +17,7 @@
             />
             <view class="edit-badge">
               <u-icon name="camera-fill" color="#fff" size="12"></u-icon>
-            </view>
+  </view>
           </view>
           
           <view class="user-meta">
@@ -29,7 +29,7 @@
           </view>
 
           <view class="coin-pill">
-            <u-icon name="gift-fill" color="#ff9c00" size="16"></u-icon>
+            <image src="../../static/小鱼干.png" style="width: 32rpx; height: 32rpx;" mode="aspectFit"></image>
             <text class="coin-val">{{ userInfo.coin || 0 }} 小鱼干</text>
           </view>
         </view>
@@ -81,13 +81,13 @@
         <view class="grid-box left-align">
           <view class="grid-item" @click="handleMyPets">
             <view class="icon-circle purple">
-              <u-icon name="grid-fill" color="#a0cfff" size="28"></u-icon>
+              <u-icon name="wofabude" custom-prefix="custom-icon" color="#a0cfff" size="28"></u-icon>
             </view>
             <text class="grid-label">我发布的</text>
           </view>
           <view class="grid-item" @click="handleTodoAudit">
             <view class="icon-circle cyan">
-              <u-icon name="checkmark-circle-fill" color="#19be6b" size="28"></u-icon>
+              <u-icon name="daibanshenhe" custom-prefix="custom-icon" color="#19be6b" size="28"></u-icon>
             </view>
             <text class="grid-label">待办审核</text>
           </view>
@@ -162,11 +162,13 @@
         </view>
       </view>
     </u-popup>
+    <my-tabbar :current="3"></my-tabbar>
   </view>
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue'
+import { onShow } from '@dcloudio/uni-app'
 import { getMyInfo, updateUserInfo, updatePassword, uploadImage } from '@/api/user'
 import { miniLogin, phoneLogin, logout } from '@/api/auth'
 import { checkLogin } from '@/utils/auth'
@@ -378,6 +380,10 @@ const handleAbout = () => uni.showToast({ title: '关于我们开发中...', ico
 onMounted(() => {
   if (!checkLogin('/pages/profile/profile')) return
   loadUserInfo()
+})
+
+onShow(() => {
+  uni.hideTabBar()
 })
 </script>
 

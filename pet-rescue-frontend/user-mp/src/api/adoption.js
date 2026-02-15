@@ -34,3 +34,8 @@ export const applyForAdoption = (data) => {
 export const cancelAdoptionApplication = (id) => {
     return request.post(`/pet-adoption/cancel/${id}`)
 }
+
+// 签署领养协议
+export const signAgreement = (data) => {
+    return request.post('/pet-adoption/sign', data)
+}

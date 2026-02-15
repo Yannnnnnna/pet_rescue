@@ -27,7 +27,8 @@
     <view class="action-bar">
       <view class="action-item" @click="handleFavorite">
         <u-icon 
-          :name="isFavorited ? 'star-fill' : 'star'" 
+          :name="isFavorited ? 'shoucang-fill' : 'shoucang'" 
+          custom-prefix="custom-icon"
           :color="isFavorited ? '#ff9500' : '#999'" 
           size="24"
         ></u-icon>
@@ -35,7 +36,8 @@
       </view>
       <view class="action-item" @click="handleLike">
         <u-icon 
-          :name="articleDetail.isLiked ? 'thumb-up-fill' : 'thumb-up'" 
+          :name="articleDetail.isLiked ? 'dianzan-fill' : 'dianzan'" 
+          custom-prefix="custom-icon"
           :color="articleDetail.isLiked ? '#19be6b' : '#999'" 
           size="24"
         ></u-icon>
@@ -43,7 +45,7 @@
       </view>
       <view class="action-item">
         <button open-type="share" class="share-btn">
-          <u-icon name="share" color="#999" size="24"></u-icon>
+          <u-icon name="fenxiang" custom-prefix="custom-icon" color="#999" size="24"></u-icon>
           <text>分享</text>
         </button>
       </view>
@@ -64,7 +66,7 @@
     <u-popup :show="showAISummary" mode="center" round="16" :closeable="true" @close="showAISummary = false" :customStyle="{width: '600rpx'}">
       <view class="ai-summary-popup">
         <view class="popup-title">
-          <u-icon name="grid-fill" color="#19be6b" size="24" style="margin-right: 10rpx;"></u-icon>
+          <u-icon name="jiqiren" custom-prefix="custom-icon" color="#19be6b" size="24" style="margin-right: 10rpx;"></u-icon>
           AI 智能总结
         </view>
         
@@ -81,7 +83,7 @@
         
         <view class="popup-footer" v-if="!aiLoading">
           <button class="regenerate-btn" @click="handleRegenerateSummary">
-            <u-icon name="reload" color="#666" size="16"></u-icon>
+            <u-icon name="shuaxin" custom-prefix="custom-icon" color="#666" size="16"></u-icon>
             <text>重新生成</text>
           </button>
         </view>
@@ -296,16 +298,16 @@ const formatTime = (time) => {
 <style lang="scss" scoped>
 .detail-container {
   min-height: 100vh;
-  background-color: #f5f5f5;
+  background: linear-gradient(to bottom, #e6f2e6, #f5f5f5);
   padding-bottom: constant(safe-area-inset-bottom);
   padding-bottom: env(safe-area-inset-bottom);
 }
 
 /* 文章头部 */
 .article-header {
-  background: #fff;
+  background: #e6f2e6;
   padding: 40rpx 30rpx 30rpx;
-  margin-bottom: 20rpx;
+  margin-bottom: 0;
 
   .article-title {
     font-size: 40rpx;
@@ -331,7 +333,7 @@ const formatTime = (time) => {
 
       .publish-info {
         font-size: 24rpx;
-        color: #999;
+        color: #666;
 
         .separator {
           margin: 0 8rpx;
@@ -343,7 +345,7 @@ const formatTime = (time) => {
 
 /* 正文区域 */
 .article-content {
-  background: #fff;
+  background: #f5f5f5;
   padding: 40rpx 30rpx;
   margin-bottom: 20rpx;
   line-height: 1.8;

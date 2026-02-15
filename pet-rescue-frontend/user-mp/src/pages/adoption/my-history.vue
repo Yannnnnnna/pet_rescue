@@ -92,7 +92,7 @@ const loadMore = () => {
 
 // 0-待审核 1-通过 2-驳回 3-已取消
 const getStatusText = (status) => {
-  const map = { 0: '待审核', 1: '已通过', 2: '已驳回', 3: '已取消' }
+  const map = { 0: '待审核', 1: '已通过', 2: '已驳回', 3: '已取消', 4: '已领养' }
   return map[status] || '未知'
 }
 

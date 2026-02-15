@@ -3,7 +3,7 @@
     <!-- 顶部搜索区 -->
     <view class="search-bar" :style="{ paddingTop: statusBarHeight + 'px' }">
       <view class="search-box" @click="handleSearch">
-        <u-icon name="search" size="18" color="#999"></u-icon>
+        <u-icon name="sousuo" custom-prefix="custom-icon" size="18" color="#999"></u-icon>
         <text class="placeholder">搜索关键词，如：猫咪感冒、新手养狗</text>
       </view>
     </view>
@@ -49,7 +49,7 @@
             <view class="meta-left">
               <u-tag :text="getFirstTag(item.tags)" type="success" size="mini" plain></u-tag>
               <view class="view-count">
-                <u-icon name="eye" size="12" color="#999"></u-icon>
+                <u-icon name="liulan" custom-prefix="custom-icon" size="12" color="#999"></u-icon>
                 <text>{{ formatViewCount(item.viewCount) }}</text>
               </view>
             </view>
@@ -188,7 +188,7 @@ const formatTime = (time) => {
 <style lang="scss" scoped>
 .wiki-container {
   min-height: 100vh;
-  background-color: #f5f5f5;
+  background: linear-gradient(to bottom, #e6f2e6, #f5f5f5);
 }
 
 /* 搜索栏 */
@@ -196,13 +196,12 @@ const formatTime = (time) => {
   position: sticky;
   top: 0;
   z-index: 100;
-  background: #fff;
+  background: #e6f2e6;
   padding: 20rpx 30rpx;
-  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.04);
 
   .search-box {
     height: 64rpx;
-    background: #f0f2f5;
+    background: #fff;
     border-radius: 32rpx;
     display: flex;
     align-items: center;
@@ -218,9 +217,9 @@ const formatTime = (time) => {
 
 /* 分类标签 */
 .category-tabs {
-  background: #fff;
+  background: #e6f2e6;
   padding: 20rpx 0;
-  border-bottom: 1rpx solid #f0f0f0;
+  border-bottom: 1rpx solid #d9e6d9;
 
   .tabs-scroll {
     white-space: nowrap;
@@ -231,9 +230,9 @@ const formatTime = (time) => {
       padding: 12rpx 24rpx;
       margin-right: 20rpx;
       font-size: 28rpx;
-      color: #666;
+      color: #333;
       border-radius: 32rpx;
-      background: #f5f5f5;
+      background: rgba(255,255,255,0.6);
       transition: all 0.3s;
 
       &.active {
@@ -248,12 +247,12 @@ const formatTime = (time) => {
 /* 轮播图 */
 .banner-section {
   padding: 20rpx 30rpx;
-  background: #fff;
+  background: transparent;
   margin-bottom: 20rpx;
 
   .banner-swiper {
     height: 320rpx;
-    border-radius: 16rpx;
+    border-radius: 32rpx;
     overflow: hidden;
     position: relative;
 
@@ -283,16 +282,17 @@ const formatTime = (time) => {
 
   .article-card {
     display: flex;
-    background: #fff;
-    border-radius: 16rpx;
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 32rpx;
     padding: 20rpx;
     margin-bottom: 20rpx;
-    box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.04);
+    box-shadow: 0 8rpx 16rpx rgba(0,0,0,0.05);
+    backdrop-filter: blur(10px);
 
     .article-cover {
       width: 200rpx;
       height: 150rpx;
-      border-radius: 12rpx;
+      border-radius: 16rpx;
       flex-shrink: 0;
     }
 
@@ -316,7 +316,7 @@ const formatTime = (time) => {
 
       .article-summary {
         font-size: 24rpx;
-        color: #999;
+        color: #666;
         line-height: 1.4;
         display: -webkit-box;
         -webkit-box-orient: vertical;
