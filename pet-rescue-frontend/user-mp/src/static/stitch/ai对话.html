@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>AI 萌宠助手对话</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#f2d00d",
+                        "primary-dark": "#d1b300",
+                        "forest-green": "#2d5a27",
+                        "background-light": "#f8f8f5",
+                        "background-dark": "#221f10",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        /* Hide scrollbar for Chrome, Safari and Opera */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        /* Hide scrollbar for IE, Edge and Firefox */
+        .no-scrollbar {
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
+        
+        /* Custom scroll behavior for smoother feel */
+        .scroll-smooth-custom {
+            scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-gray-800 dark:text-gray-100 h-screen overflow-hidden flex flex-col antialiased selection:bg-primary selection:text-black">
+<!-- Status Bar Area (Mockup for iOS) -->
+<div class="h-12 w-full shrink-0 bg-background-light dark:bg-background-dark flex items-end justify-between px-6 pb-2 z-50">
+<div class="text-sm font-semibold w-1/3">9:41</div>
+<div class="w-1/3 flex justify-center">
+<div class="h-7 w-28 bg-black dark:bg-white rounded-full opacity-0"></div> <!-- Dynamic Island Area -->
+</div>
+<div class="w-1/3 flex justify-end gap-2">
+<span class="material-icons-round text-sm">signal_cellular_alt</span>
+<span class="material-icons-round text-sm">wifi</span>
+<span class="material-icons-round text-sm">battery_full</span>
+</div>
+</div>
+<!-- Header -->
+<header class="shrink-0 px-4 py-3 bg-background-light dark:bg-background-dark border-b border-gray-200/50 dark:border-white/5 flex items-center justify-between z-40 sticky top-0">
+<button class="p-2 -ml-2 rounded-full hover:bg-gray-100 dark:hover:bg-white/10 transition-colors">
+<span class="material-icons-round text-2xl text-gray-800 dark:text-white">chevron_left</span>
+</button>
+<div class="flex flex-col items-center">
+<h1 class="text-lg font-bold text-gray-900 dark:text-white">AI 萌宠助手</h1>
+<div class="flex items-center gap-1.5 mt-0.5">
+<div class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
+<span class="text-xs font-medium text-gray-500 dark:text-gray-400">在线</span>
+</div>
+</div>
+<button class="p-2 -mr-2 rounded-full hover:bg-gray-100 dark:hover:bg-white/10 transition-colors">
+<span class="material-icons-round text-2xl text-gray-800 dark:text-white">more_horiz</span>
+</button>
+</header>
+<!-- Chat Area -->
+<main class="flex-1 overflow-y-auto scroll-smooth-custom px-4 py-6 space-y-6 bg-background-light dark:bg-background-dark">
+<!-- Timestamp -->
+<div class="flex justify-center">
+<span class="text-xs font-medium text-gray-400 bg-gray-100 dark:bg-white/5 px-3 py-1 rounded-full">今天 10:23 AM</span>
+</div>
+<!-- AI Message -->
+<div class="flex items-start gap-3 max-w-[85%]">
+<div class="w-10 h-10 rounded-full bg-white border border-gray-100 shadow-sm shrink-0 overflow-hidden flex items-center justify-center">
+<img alt="AI Assistant Avatar" class="w-full h-full object-cover" data-alt="Cute friendly dog mascot avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBLhyRqj-4X32Hh7ZVekiLGwy4KZijYtuutYpQHht90AsN3TL88fBxz7zFsEWrIHf6kIADowzxDdgYe49l2m4qHHrx-P5_Tw1F8i0iCHQzLn7vFz9hm0ua_2IJ7aoj4B1c3FbRQDw-b1g_SUWBpRcuY4oYk-XwfRth_f-xu6fcBkoKsiZ1KmR--gDpzcu8dnO51p7Tem2mghCtfdEzy7M8-DLoV4Ue9jCX9q341AqCe3fp75n9JgK0wIR2wzGwYoQkvdtYq65PfnyY"/>
+</div>
+<div class="flex flex-col gap-1">
+<span class="text-xs text-gray-500 ml-1">萌宠助手</span>
+<div class="bg-white dark:bg-[#2c291d] p-4 rounded-2xl rounded-tl-none shadow-sm text-sm leading-relaxed text-gray-700 dark:text-gray-200 border border-gray-100 dark:border-white/5">
+<p>你好！我是你的 AI 萌宠助手。有什么我可以帮你的吗？无论是日常护理、疾病预防还是行为训练，我都可以为你提供建议哦！🐶🐱</p>
+</div>
+</div>
+</div>
+<!-- User Message -->
+<div class="flex flex-col items-end gap-1 ml-auto max-w-[85%]">
+<div class="bg-forest-green text-white p-4 rounded-2xl rounded-tr-none shadow-sm text-sm leading-relaxed">
+<p>你好，我家的小狗最近总是掉毛，有什么办法吗？大概四个月大，是金毛。</p>
+</div>
+<span class="text-xs text-gray-400 mr-1">已读</span>
+</div>
+<!-- AI Message (Response) -->
+<div class="flex items-start gap-3 max-w-[90%]">
+<div class="w-10 h-10 rounded-full bg-white border border-gray-100 shadow-sm shrink-0 overflow-hidden flex items-center justify-center">
+<img alt="AI Assistant Avatar" class="w-full h-full object-cover" data-alt="Cute friendly dog mascot avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCtRX1o2DefTYw6qY5JMaCT4r8QGyRsWDQZmYLFC1H6DFPEIbZGNphYyJaH9yTpO3OcsDtr35K08mhXxy6fUC7qlssuFbBpqSFMoYZmSBc8MJkPZMSDQd2dga8uf8SFnh0jnL9ZdaKuRemmP9Ys1_ePEdxSz8YbKFgcbmkgSDzQK1d3Z7hSVB5qcNRwS_8lfhi5GfrUwbT-FQ36xKIARGd3zmPUcb5A0qx5wCi5gOJMVMsLhv22kB5VKMevhzM7wVKZBlD7D2HPBmE"/>
+</div>
+<div class="flex flex-col gap-1">
+<span class="text-xs text-gray-500 ml-1">萌宠助手</span>
+<div class="bg-white dark:bg-[#2c291d] p-4 rounded-2xl rounded-tl-none shadow-sm text-sm leading-relaxed text-gray-700 dark:text-gray-200 border border-gray-100 dark:border-white/5 space-y-3">
+<p>四个月大的金毛掉毛可能是因为到了<span class="font-bold text-forest-green dark:text-primary">「尴尬期」</span>（换胎毛），这是非常正常的现象。不过，我们也要排除其他因素：</p>
+<ul class="list-disc list-outside ml-4 space-y-1 text-gray-600 dark:text-gray-300">
+<li><strong>饮食问题：</strong> 狗粮是否太咸？建议检查成分。</li>
+<li><strong>皮肤健康：</strong> 拨开毛发检查是否有红点或皮屑。</li>
+<li><strong>梳理频率：</strong> 建议每天梳毛一次，促进血液循环。</li>
+</ul>
+<p>你可以尝试给它补充一些深海鱼油，帮助毛发更健康！需要我推荐一些适合幼犬的鱼油品牌吗？</p>
+</div>
+<!-- Suggested Action Buttons embedded in chat -->
+<div class="flex flex-wrap gap-2 mt-1">
+<button class="px-3 py-1.5 bg-primary/10 hover:bg-primary/20 text-xs font-semibold text-gray-800 dark:text-primary rounded-lg transition-colors border border-primary/20">
+                        推荐鱼油
+                    </button>
+<button class="px-3 py-1.5 bg-primary/10 hover:bg-primary/20 text-xs font-semibold text-gray-800 dark:text-primary rounded-lg transition-colors border border-primary/20">
+                        如何正确梳毛
+                    </button>
+</div>
+</div>
+</div>
+<!-- Spacer to prevent content being hidden behind input area -->
+<div class="h-2"></div>
+</main>
+<!-- Bottom Action Area -->
+<div class="shrink-0 bg-background-light dark:bg-background-dark z-50">
+<!-- Quick Action Chips -->
+<div class="px-4 pb-3 pt-2 overflow-x-auto no-scrollbar flex gap-3 mask-image-gradient">
+<button class="flex items-center gap-2 px-4 py-2 bg-white dark:bg-[#2c291d] rounded-full border border-gray-200 dark:border-white/10 shadow-sm hover:border-primary hover:bg-primary/5 transition-all group whitespace-nowrap">
+<span class="w-6 h-6 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center material-icons-round text-sm group-hover:bg-primary group-hover:text-black transition-colors">pets</span>
+<span class="text-sm font-medium text-gray-700 dark:text-gray-200">养宠建议</span>
+</button>
+<button class="flex items-center gap-2 px-4 py-2 bg-white dark:bg-[#2c291d] rounded-full border border-gray-200 dark:border-white/10 shadow-sm hover:border-primary hover:bg-primary/5 transition-all group whitespace-nowrap">
+<span class="w-6 h-6 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center material-icons-round text-sm group-hover:bg-primary group-hover:text-black transition-colors">psychology</span>
+<span class="text-sm font-medium text-gray-700 dark:text-gray-200">性格分析</span>
+</button>
+<button class="flex items-center gap-2 px-4 py-2 bg-white dark:bg-[#2c291d] rounded-full border border-gray-200 dark:border-white/10 shadow-sm hover:border-primary hover:bg-primary/5 transition-all group whitespace-nowrap">
+<span class="w-6 h-6 rounded-full bg-red-100 text-red-600 flex items-center justify-center material-icons-round text-sm group-hover:bg-primary group-hover:text-black transition-colors">medical_services</span>
+<span class="text-sm font-medium text-gray-700 dark:text-gray-200">健康咨询</span>
+</button>
+<!-- Spacer for scrolling -->
+<div class="w-2 shrink-0"></div>
+</div>
+<!-- Input Bar -->
+<div class="px-4 pb-6 pt-2">
+<div class="flex items-end gap-3 bg-white dark:bg-[#2c291d] p-2 pr-2 pl-3 rounded-[1.5rem] shadow-[0_4px_20px_-4px_rgba(0,0,0,0.1)] border border-gray-100 dark:border-white/5">
+<!-- Plus Button -->
+<button class="w-10 h-10 mb-0.5 rounded-full flex items-center justify-center text-gray-400 hover:text-gray-600 hover:bg-gray-100 dark:hover:bg-white/10 transition-colors shrink-0">
+<span class="material-icons-round text-2xl">add_circle_outline</span>
+</button>
+<!-- Text Input -->
+<div class="flex-1 py-3 mb-0.5 min-h-[44px]">
+<textarea class="w-full bg-transparent border-0 p-0 text-gray-800 dark:text-white placeholder-gray-400 focus:ring-0 resize-none leading-relaxed max-h-32 overflow-y-auto" placeholder="问点什么..." rows="1" style="min-height: 24px;"></textarea>
+</div>
+<!-- Send Button -->
+<button class="w-11 h-11 rounded-full bg-primary hover:bg-primary-dark text-black shadow-md shadow-primary/30 flex items-center justify-center transition-all transform active:scale-95 shrink-0 mb-0.5">
+<span class="material-icons-round -ml-0.5">arrow_upward</span>
+</button>
+</div>
+</div>
+<!-- Home Indicator Area -->
+<div class="h-6 w-full flex justify-center items-center pb-2">
+<div class="w-32 h-1 bg-gray-300 dark:bg-gray-600 rounded-full"></div>
+</div>
+</div>
+</body></html>

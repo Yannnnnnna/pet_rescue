@@ -18,4 +18,7 @@ public class UserUpdateDTO {
 
     @Schema(description = "手机号")
     private String phone;
+
+    @Schema(description = "验证码，修改手机号时必填")
+    private String code;
 }

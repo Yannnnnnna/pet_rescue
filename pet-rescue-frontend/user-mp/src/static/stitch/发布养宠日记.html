@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>发布领养日记</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#f2d00d",
+                        "primary-dark": "#d1b300",
+                        "forest-green": "#2d5a27",
+                        "background-light": "#f8f8f5",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+<style>
+        body {
+          min-height: max(884px, 100dvh);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light font-display text-gray-800 h-screen overflow-hidden flex flex-col antialiased selection:bg-primary selection:text-black">
+<div class="h-12 w-full shrink-0 bg-background-light flex items-end justify-between px-6 pb-2 z-50">
+<div class="text-sm font-semibold w-1/3 text-gray-900">9:41</div>
+<div class="w-1/3 flex justify-center">
+<div class="h-7 w-28 bg-black rounded-full"></div> 
+</div>
+<div class="w-1/3 flex justify-end gap-2 text-gray-900">
+<span class="material-icons-round text-sm">signal_cellular_alt</span>
+<span class="material-icons-round text-sm">wifi</span>
+<span class="material-icons-round text-sm">battery_full</span>
+</div>
+</div>
+<header class="shrink-0 px-4 py-3 bg-background-light flex items-center justify-between z-40 sticky top-0">
+<button class="p-2 -ml-2 rounded-full hover:bg-gray-100 transition-colors">
+<span class="material-icons-round text-2xl text-gray-900">close</span>
+</button>
+<h1 class="text-lg font-bold text-gray-900">发布日记</h1>
+<button class="px-3 py-1.5 rounded-full bg-forest-green/10 text-forest-green text-sm font-bold hover:bg-forest-green/20 transition-colors">
+            草稿箱
+        </button>
+</header>
+<main class="flex-1 overflow-y-auto no-scrollbar px-6 pt-4 pb-24 bg-background-light">
+<div class="w-full mb-6">
+<textarea class="w-full bg-transparent border-0 p-0 text-gray-800 placeholder-gray-400 focus:ring-0 text-lg leading-relaxed resize-none min-h-[120px]" placeholder="分享你和毛孩子的故事...
+这一刻的想法..."></textarea>
+</div>
+<div class="grid grid-cols-3 gap-3 mb-8">
+<div class="relative aspect-square rounded-2xl overflow-hidden group">
+<img alt="Pet photo 1" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBLhyRqj-4X32Hh7ZVekiLGwy4KZijYtuutYpQHht90AsN3TL88fBxz7zFsEWrIHf6kIADowzxDdgYe49l2m4qHHrx-P5_Tw1F8i0iCHQzLn7vFz9hm0ua_2IJ7aoj4B1c3FbRQDw-b1g_SUWBpRcuY4oYk-XwfRth_f-xu6fcBkoKsiZ1KmR--gDpzcu8dnO51p7Tem2mghCtfdEzy7M8-DLoV4Ue9jCX9q341AqCe3fp75n9JgK0wIR2wzGwYoQkvdtYq65PfnyY"/>
+<button class="absolute top-1 right-1 bg-black/50 text-white rounded-full p-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
+<span class="material-icons-round text-sm">close</span>
+</button>
+</div>
+<div class="relative aspect-square rounded-2xl overflow-hidden group">
+<img alt="Pet photo 2" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCtRX1o2DefTYw6qY5JMaCT4r8QGyRsWDQZmYLFC1H6DFPEIbZGNphYyJaH9yTpO3OcsDtr35K08mhXxy6fUC7qlssuFbBpqSFMoYZmSBc8MJkPZMSDQd2dga8uf8SFnh0jnL9ZdaKuRemmP9Ys1_ePEdxSz8YbKFgcbmkgSDzQK1d3Z7hSVB5qcNRwS_8lfhi5GfrUwbT-FQ36xKIARGd3zmPUcb5A0qx5wCi5gOJMVMsLhv22kB5VKMevhzM7wVKZBlD7D2HPBmE"/>
+<button class="absolute top-1 right-1 bg-black/50 text-white rounded-full p-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
+<span class="material-icons-round text-sm">close</span>
+</button>
+</div>
+<button class="aspect-square rounded-2xl border-2 border-dashed border-gray-300 bg-gray-50 flex flex-col items-center justify-center gap-1 hover:bg-gray-100 hover:border-gray-400 transition-all text-gray-400">
+<span class="material-icons-round text-3xl">add</span>
+<span class="text-xs font-medium">照片/视频</span>
+</button>
+</div>
+<div class="space-y-4">
+<div class="flex items-center justify-between py-3 border-b border-gray-100">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-forest-green">pets</span>
+<span class="text-base font-medium text-gray-800">关联宠物</span>
+</div>
+<div class="flex items-center gap-2 text-gray-400">
+<span class="text-sm">选择宠物</span>
+<span class="material-icons-round text-xl">chevron_right</span>
+</div>
+</div>
+<div class="flex items-center justify-between py-3 border-b border-gray-100">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-forest-green">location_on</span>
+<span class="text-base font-medium text-gray-800">添加位置</span>
+</div>
+<div class="flex items-center gap-2 text-gray-400">
+<span class="text-sm">你在哪里?</span>
+<span class="material-icons-round text-xl">chevron_right</span>
+</div>
+</div>
+<div class="flex items-center justify-between py-3 border-b border-gray-100">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-forest-green">tag</span>
+<span class="text-base font-medium text-gray-800">添加话题</span>
+</div>
+<div class="flex items-center gap-2 text-gray-400">
+<span class="text-sm">参与话题讨论</span>
+<span class="material-icons-round text-xl">chevron_right</span>
+</div>
+</div>
+</div>
+</main>
+<div class="fixed bottom-0 left-0 right-0 bg-background-light/90 backdrop-blur-md px-6 py-4 pb-8 z-50 border-t border-gray-100">
+<button class="w-full bg-primary hover:bg-primary-dark text-black text-lg font-bold py-4 rounded-full shadow-lg shadow-primary/20 transition-all active:scale-95 flex items-center justify-center gap-2">
+<span>发布</span>
+<span class="material-icons-round text-xl">send</span>
+</button>
+<div class="h-1 w-32 bg-gray-300 rounded-full mx-auto mt-4"></div>
+</div>
+
+</body></html>

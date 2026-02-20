@@ -1,57 +1,60 @@
 <template>
   <view class="publish-page">
-    <u-navbar :title="isEdit ? '编辑日记' : '发布日记'" :autoBack="true" bgColor="#fff" leftIconColor="#333" titleStyle="color: #333; font-weight: 600;"></u-navbar>
+    <view class="header-bg"></view>
     
-    <view class="content-area" :style="{ paddingTop: navHeight + 'px' }">
-      <!-- 关联宠物 -->
-      <view class="form-card">
-        <view class="card-title">关联宠物</view>
-        <view class="pet-info-row">
-          <u-icon name="chongwuzhaozhu" custom-prefix="custom-icon" color="#19be6b" size="20"></u-icon>
-          <text class="pet-name">{{ petName }}</text>
-          <u-tag text="已领养" type="success" plain size="mini" shape="circle" class="status-tag"></u-tag>
+    <view class="nav-bar" :style="{ paddingTop: statusBarHeight + 'px' }">
+      <view class="nav-content">
+        <view class="close-btn" @click="goBack">
+          <uni-icons type="close" size="24" color="#333"></uni-icons>
         </view>
+        <text class="nav-title">{{ isEdit ? '编辑日记' : '发布日记' }}</text>
+        <view class="placeholder"></view>
       </view>
+    </view>
 
-      <!-- 内容输入 -->
-      <view class="form-card">
-        <view class="card-title">记录美好生活</view>
-        <u-textarea 
+    <view class="content-area" :style="{ paddingTop: (statusBarHeight + 44) + 'px' }">
+      <view class="form-section">
+        <textarea 
+          class="content-input" 
           v-model="content" 
-          placeholder="记录下它的萌趣瞬间吧... (限500字)" 
-          count 
-          maxlength="500" 
-          height="200"
-          border="none"
-          customStyle="background-color: #f8f8f8; padding: 20rpx; border-radius: 12rpx;"
-        ></u-textarea>
+          placeholder="分享你和毛孩子的故事，这一刻的想法..." 
+          maxlength="500"
+        ></textarea>
       </view>
 
-      <!-- 图片上传 -->
-      <view class="form-card">
-        <view class="card-title">添加照片 (最多9张)</view>
-        <view class="upload-box">
-          <u-upload
-            :fileList="fileList"
-            @afterRead="afterRead"
-            @delete="deletePic"
-            multiple
-            :maxCount="9"
-            width="200"
-            height="200"
-          ></u-upload>
+      <view class="image-section">
+        <view class="image-grid">
+          <view class="image-item" v-for="(item, index) in fileList" :key="index">
+            <image :src="item.url" mode="aspectFill" class="preview-img"></image>
+            <view class="delete-btn" @click="deletePic(index)">
+              <uni-icons type="close" size="14" color="#fff"></uni-icons>
+            </view>
+          </view>
+          <view class="add-image-btn" v-if="fileList.length < 9" @click="chooseImage">
+            <uni-icons type="plusempty" size="36" color="#999"></uni-icons>
+            <text>照片/视频</text>
+          </view>
         </view>
       </view>
 
-      <!-- 提交按钮 -->
-      <view class="btn-area">
-        <u-button 
-          :text="isEdit ? '保存修改' : '发布日记'" 
-          color="linear-gradient(to right, #19be6b, #4cd964)" 
-          shape="circle" 
-          :loading="loading" 
-          @click="submit"
-        ></u-button>
+      <view class="option-section">
+        <view class="option-item" @click="showPetPicker = true">
+          <view class="option-left">
+            <uni-icons type="heart-filled" size="22" color="#2E7D32"></uni-icons>
+            <text class="option-label">关联宠物</text>
+          </view>
+          <view class="option-right">
+            <text class="option-value">{{ petName || '选择宠物' }}</text>
+            <uni-icons type="right" size="18" color="#ccc"></uni-icons>
+          </view>
+        </view>
+      </view>
+
+      <view class="submit-area">
+        <view class="submit-btn" :class="{ disabled: loading }" @click="submit">
+          <text>{{ isEdit ? '保存修改' : '发布' }}</text>
+          <uni-icons type="paperplane" size="20" color="#333"></uni-icons>
+        </view>
       </view>
     </view>
   </view>
@@ -62,7 +65,7 @@ import { ref } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
 import { addAdoptionPost, getAdoptionPostDetail, updateAdoptionPost } from '@/api/adoption-post'
 
-const navHeight = 44 + (uni.getSystemInfoSync().statusBarHeight || 0)
+const statusBarHeight = ref(20)
 const loading = ref(false)
 const isEdit = ref(false)
 const postId = ref('')
@@ -70,8 +73,12 @@ const petId = ref('')
 const petName = ref('')
 const content = ref('')
 const fileList = ref([])
+const showPetPicker = ref(false)
 
 onLoad((options) => {
+  const sysInfo = uni.getSystemInfoSync()
+  statusBarHeight.value = sysInfo.statusBarHeight || 20
+  
   if (options.id) {
     isEdit.value = true
     postId.value = options.id
@@ -89,9 +96,8 @@ const fetchDetail = async (id) => {
       const data = res.data
       content.value = data.content
       petId.value = data.petId
-      petName.value = data.petName || '关联宠物' // 后端可能未返回petName
+      petName.value = data.petName || '关联宠物'
       
-      // 处理图片回显
       let imageUrls = []
       if (data.images) {
         if (typeof data.images === 'string') {
@@ -107,8 +113,7 @@ const fetchDetail = async (id) => {
       
       fileList.value = imageUrls.map(url => ({
         url: url,
-        status: 'success',
-        message: ''
+        status: 'success'
       }))
     }
   } catch (e) {
@@ -117,42 +122,49 @@ const fetchDetail = async (id) => {
   }
 }
 
-// 删除图片
-const deletePic = (event) => {
-  fileList.value.splice(event.index, 1)
+const goBack = () => uni.navigateBack()
+
+const deletePic = (index) => {
+  fileList.value.splice(index, 1)
 }
 
-// 新增图片
-const afterRead = async (event) => {
-  let lists = [].concat(event.file)
-  let fileListLen = fileList.value.length
-  lists.map((item) => {
-    fileList.value.push({
-      ...item,
-      status: 'uploading',
-      message: '上传中'
-    })
+const chooseImage = () => {
+  const maxCount = 9 - fileList.value.length
+  uni.chooseImage({
+    count: maxCount,
+    sizeType: ['compressed'],
+    sourceType: ['album', 'camera'],
+    success: async (res) => {
+      const tempFilePaths = res.tempFilePaths
+      for (let i = 0; i < tempFilePaths.length; i++) {
+        fileList.value.push({
+          url: tempFilePaths[i],
+          status: 'uploading'
+        })
+        try {
+          const uploadedUrl = await uploadFile(tempFilePaths[i])
+          const idx = fileList.value.findIndex(f => f.url === tempFilePaths[i])
+          if (idx !== -1) {
+            fileList.value[idx].url = uploadedUrl
+            fileList.value[idx].status = 'success'
+          }
+        } catch (e) {
+          const idx = fileList.value.findIndex(f => f.url === tempFilePaths[i])
+          if (idx !== -1) {
+            fileList.value.splice(idx, 1)
+          }
+        }
+      }
+    }
   })
-  
-  for (let i = 0; i < lists.length; i++) {
-    const result = await uploadFilePromise(lists[i].url)
-    let item = fileList.value[fileListLen]
-    fileList.value.splice(fileListLen, 1, Object.assign(item, {
-      status: 'success',
-      message: '',
-      url: result
-    }))
-    fileListLen++
-  }
 }
 
-// 上传文件 Promise
-const uploadFilePromise = (url) => {
+const uploadFile = (filePath) => {
   return new Promise((resolve, reject) => {
     const baseURL = import.meta.env.VITE_APP_BASE_URL || 'http://localhost:8080'
     uni.uploadFile({
-      url: baseURL + '/file/upload', 
-      filePath: url,
+      url: baseURL + '/file/upload',
+      filePath: filePath,
       name: 'file',
       header: {
         satoken: uni.getStorageSync('token')
@@ -161,7 +173,7 @@ const uploadFilePromise = (url) => {
         try {
           const data = JSON.parse(res.data)
           if (data.code === 200 || data.code === 0) {
-            resolve(data.data) // 假设后端直接返回url字符串
+            resolve(data.data)
           } else {
             uni.showToast({ title: data.msg || '上传失败', icon: 'none' })
             reject(data.msg)
@@ -178,41 +190,36 @@ const uploadFilePromise = (url) => {
   })
 }
 
-// 提交发布
 const submit = async () => {
+  if (loading.value) return
+  
   if (!content.value && fileList.value.length === 0) {
     return uni.showToast({ title: '写点什么吧~', icon: 'none' })
   }
   
   loading.value = true
   
-  // 提取图片URL
   const images = fileList.value.map(item => item.url)
   
   try {
-    let res;
     const postData = {
       petId: petId.value,
       content: content.value,
-      images: images.join(',') // API要求逗号分隔的字符串
+      images: images.join(',')
     }
     
+    let res
     if (isEdit.value) {
-      res = await updateAdoptionPost({
-        id: postId.value,
-        ...postData
-      })
+      res = await updateAdoptionPost({ id: postId.value, ...postData })
     } else {
       res = await addAdoptionPost(postData)
     }
     
     if (res.code === 200 || res.code === 0) {
       uni.showToast({ title: isEdit.value ? '修改成功' : '发布成功', icon: 'success' })
-      setTimeout(() => {
-        uni.navigateBack()
-      }, 1500)
+      setTimeout(() => uni.navigateBack(), 1500)
     } else {
-      uni.showToast({ title: res.msg || (isEdit.value ? '修改失败' : '发布失败'), icon: 'none' })
+      uni.showToast({ title: res.msg || '操作失败', icon: 'none' })
     }
   } catch (e) {
     console.error(e)
@@ -226,68 +233,200 @@ const submit = async () => {
 <style lang="scss" scoped>
 .publish-page {
   min-height: 100vh;
-  background: linear-gradient(to bottom, #e6f2e6, #f5f5f5);
+  background: #f8f9fa;
+  position: relative;
+}
+
+.header-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 300rpx;
+  background: linear-gradient(180deg, rgba(46, 125, 50, 0.08) 0%, transparent 100%);
+  z-index: 0;
+}
+
+.nav-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  background: #f8f9fa;
+  
+  .nav-content {
+    height: 88rpx;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 30rpx;
+  }
+  
+  .close-btn {
+    width: 64rpx;
+    height: 64rpx;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .placeholder {
+    width: 64rpx;
+  }
+  
+  .nav-title {
+    font-size: 36rpx;
+    font-weight: 600;
+    color: #333;
+  }
 }
 
 .content-area {
+  position: relative;
+  z-index: 1;
   padding: 30rpx;
+  padding-bottom: 200rpx;
 }
 
-.form-card {
-  background: rgba(255, 255, 255, 0.8);
-  border-radius: 32rpx;
-  padding: 30rpx;
+.form-section {
   margin-bottom: 30rpx;
-  box-shadow: 0 8rpx 16rpx rgba(0,0,0,0.05);
-  backdrop-filter: blur(10px);
   
-  .card-title {
-    font-size: 30rpx;
-    font-weight: 600;
+  .content-input {
+    width: 100%;
+    min-height: 240rpx;
+    font-size: 32rpx;
+    line-height: 1.6;
     color: #333;
-    margin-bottom: 24rpx;
+    padding: 20rpx 0;
+  }
+}
+
+.image-section {
+  margin-bottom: 40rpx;
+  
+  .image-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16rpx;
+  }
+  
+  .image-item {
+    width: calc(33.33% - 12rpx);
+    aspect-ratio: 1;
+    border-radius: 24rpx;
+    overflow: hidden;
     position: relative;
-    padding-left: 20rpx;
     
-    &::before {
-      content: '';
+    .preview-img {
+      width: 100%;
+      height: 100%;
+    }
+    
+    .delete-btn {
       position: absolute;
-      left: 0;
-      top: 50%;
-      transform: translateY(-50%);
-      width: 6rpx;
-      height: 24rpx;
-      background: #19be6b;
-      border-radius: 4rpx;
+      top: 12rpx;
+      right: 12rpx;
+      width: 44rpx;
+      height: 44rpx;
+      background: rgba(0, 0, 0, 0.5);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+  
+  .add-image-btn {
+    width: calc(33.33% - 12rpx);
+    aspect-ratio: 1;
+    border-radius: 24rpx;
+    border: 2rpx dashed #ddd;
+    background: #fafafa;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8rpx;
+    
+    text {
+      font-size: 24rpx;
+      color: #999;
     }
   }
 }
 
-.pet-info-row {
-  display: flex;
-  align-items: center;
-  gap: 16rpx;
-  padding: 20rpx;
-  background: #e6f2e6;
-  border-radius: 12rpx;
+.option-section {
+  background: #fff;
+  border-radius: 24rpx;
+  overflow: hidden;
   
-  .pet-name {
-    font-size: 32rpx;
-    font-weight: 600;
-    color: #333;
-  }
-  
-  .status-tag {
-    margin-left: auto;
+  .option-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 32rpx 30rpx;
+    
+    .option-left {
+      display: flex;
+      align-items: center;
+      gap: 20rpx;
+      
+      .option-label {
+        font-size: 30rpx;
+        color: #333;
+        font-weight: 500;
+      }
+    }
+    
+    .option-right {
+      display: flex;
+      align-items: center;
+      gap: 12rpx;
+      
+      .option-value {
+        font-size: 28rpx;
+        color: #999;
+      }
+    }
   }
 }
 
-.upload-box {
-  padding: 10rpx 0;
-}
-
-.btn-area {
-  margin-top: 60rpx;
-  padding: 0 20rpx;
+.submit-area {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 30rpx;
+  padding-bottom: calc(30rpx + env(safe-area-inset-bottom));
+  background: rgba(248, 249, 250, 0.9);
+  backdrop-filter: blur(10px);
+  border-top: 1rpx solid #f0f0f0;
+  
+  .submit-btn {
+    width: 100%;
+    height: 96rpx;
+    background: linear-gradient(135deg, #FFC107, #FFD54F);
+    border-radius: 48rpx;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12rpx;
+    box-shadow: 0 8rpx 24rpx rgba(255, 193, 7, 0.3);
+    
+    text {
+      font-size: 32rpx;
+      font-weight: 600;
+      color: #333;
+    }
+    
+    &.disabled {
+      opacity: 0.6;
+    }
+    
+    &:active {
+      transform: scale(0.98);
+    }
+  }
 }
 </style>

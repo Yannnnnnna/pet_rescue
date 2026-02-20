@@ -2,11 +2,13 @@ package com.wei.pet.pet_rescue.controller.cms;
 
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.wei.pet.pet_rescue.common.BizType;
 import com.wei.pet.pet_rescue.common.Result;
 import com.wei.pet.pet_rescue.entity.CmsArticle;
 import com.wei.pet.pet_rescue.entity.dto.article.ArticleFormDTO;
 import com.wei.pet.pet_rescue.entity.dto.article.ArticleQueryDTO;
 import com.wei.pet.pet_rescue.service.ICmsArticleService;
+import com.wei.pet.pet_rescue.service.impl.InteractionServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
@@ -27,6 +29,8 @@ import org.springframework.web.bind.annotation.*;
 public class CmsArticleController {
     @Resource
     private ICmsArticleService cmsArticleService;
+    @Resource
+    private InteractionServiceImpl interactionService;
 
     @Operation(summary = "发布/修改文章", description = "支持百科(type=0)、公告(type=1)、壁纸(type=3)")
     @PostMapping("/save")
@@ -38,6 +42,8 @@ public class CmsArticleController {
     @Operation(summary = "删除文章")
     @DeleteMapping("/delete/{id}")
     public Result<Boolean> delete(@PathVariable Long id) {
+        // 删除文章时，清除相关的浏览量和点赞数据
+        interactionService.clearInteractionData(BizType.ARTICLE, id);
         return cmsArticleService.removeById(id) ? Result.success(true) : Result.error("删除失败");
     }
 
@@ -52,8 +58,6 @@ public class CmsArticleController {
     @GetMapping("/{id}")
     public Result<CmsArticle> getDetail(@PathVariable Long id) {
         CmsArticle article = cmsArticleService.getDetail(id);
-
-
         return Result.success(article);
     }
 }

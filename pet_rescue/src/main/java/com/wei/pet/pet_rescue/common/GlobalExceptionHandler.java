@@ -13,15 +13,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice // 核心注解：表示这是一个增强版的 Controller，用于处理全局异常
 public class GlobalExceptionHandler {
 
-    /**
-     * 1. 捕获业务异常 (RuntimeException)
-     * 例如：throw new RuntimeException("库存不足");
-     */
-    @ExceptionHandler(RuntimeException.class)
-    public Result<?> handleRuntimeException(RuntimeException e) {
-        log.error("业务异常信息：{}", e.getMessage());
-        return Result.error(e.getMessage());
-    }
+
 
     /**
      * 2. 捕获 Sa-Token 未登录异常
@@ -32,6 +24,16 @@ public class GlobalExceptionHandler {
         log.warn("用户未登录：{}", e.getMessage());
         // 返回 401 状态码，前端收到后应该跳转到登录页
         return Result.error(Result.CODE_NO_LOGIN, "您尚未登录，请登录后操作");
+    }
+
+    /**
+     * 1. 捕获业务异常 (RuntimeException)
+     * 例如：throw new RuntimeException("库存不足");
+     */
+    @ExceptionHandler(RuntimeException.class)
+    public Result<?> handleRuntimeException(RuntimeException e) {
+        log.error("业务异常信息：{}", e.getMessage());
+        return Result.error(e.getMessage());
     }
 
     /**

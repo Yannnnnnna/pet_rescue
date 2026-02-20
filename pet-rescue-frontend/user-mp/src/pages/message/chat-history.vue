@@ -1,68 +1,61 @@
 <template>
-  <view class="chat-container">
-    <scroll-view scroll-y class="msg-list" :scroll-top="scrollTop" :scroll-with-animation="true" :style="{ paddingBottom: footerHeight + 'px' }">
-      <view class="loading-more" v-if="loading">
-        <u-loading-icon mode="circle"></u-loading-icon>
+  <view class="chat-page">
+    <!-- 顶部导航 -->
+    <view class="chat-header">
+      <view class="back-btn" @click="navigateBack">
+        <u-icon name="arrow-left" size="22" color="#333"></u-icon>
       </view>
-      
+      <text class="nickname">{{ chatTitle }}</text>
+      <view class="placeholder"></view> <!-- 占位，使标题居中 -->
+    </view>
+
+    <!-- 聊天内容 -->
+    <scroll-view 
+      scroll-y 
+      class="msg-list"
+      :scroll-top="scrollTop"
+      :style="{ paddingBottom: footerHeight + 'px' }"
+    >
       <view v-for="(msg, index) in msgList" :key="index" class="msg-group">
+        <view class="time-header" v-if="shouldShowTime(msg, index)">{{ formatTime(msg.time) }}</view>
         <view class="msg-row" :class="isMsgMe(msg) ? 'right' : 'left'">
-          <view class="time-header">{{ formatTime(msg.time) }}</view>
-          <view class="msg-body">
-             <image v-if="!isMsgMe(msg)" :src="msg.userAvatar" class="avatar"></image>
-             
-             <view class="content-wrapper">
-               <text class="nickname">{{ msg.userNickname }}</text>
-               <view class="bubble">
-                 <text class="text" v-if="msg.content">{{ msg.content }}</text>
-                 <view class="img-grid" v-if="msg.images && msg.images.length">
-                    <image 
-                      v-for="(img, i) in msg.images" 
-                      :key="i"
-                      :src="img" 
-                      mode="aspectFill" 
-                      class="msg-img"
-                      @click="previewImage(msg.images, i)"
-                    ></image>
-                 </view>
-               </view>
-             </view>
-             
-             <image v-if="isMsgMe(msg)" :src="msg.userAvatar" class="avatar"></image>
+          <image v-if="!isMsgMe(msg)" :src="msg.userAvatar" class="avatar"></image>
+          <view class="bubble">
+            <text class="text" v-if="msg.content">{{ msg.content }}</text>
+            <image 
+              v-if="msg.images && msg.images.length"
+              :src="msg.images[0]" 
+              mode="aspectFill" 
+              class="msg-img"
+              @click="previewImage(msg.images, 0)"
+            ></image>
           </view>
+          <image v-if="isMsgMe(msg)" :src="msg.userAvatar" class="avatar"></image>
         </view>
       </view>
-      
-      <u-empty v-if="!loading && msgList.length === 0" mode="message" text="暂无咨询记录"></u-empty>
+      <u-empty v-if="!loading && msgList.length === 0" mode="message" text="开始你们的对话吧"></u-empty>
     </scroll-view>
 
     <!-- 底部输入框 -->
-    <view class="chat-footer" id="chatFooter">
+    <view class="chat-footer" :style="{ bottom: keyboardHeight + 'px' }" id="chatFooter">
       <view class="input-area">
-        <view class="icon-btn" @click="handleChooseImage">
-          <u-icon name="photo" size="28" color="#606266"></u-icon>
-        </view>
-        <view class="input-box">
-          <input 
-            v-model="inputText" 
-            type="text" 
-            placeholder="请输入内容..." 
-            confirm-type="send"
-            @confirm="handleSend"
-            class="chat-input"
-          />
-        </view>
-        <view class="send-btn" :class="{ 'disabled': !inputText.trim() }" @click="handleSend">
-          <text>发送</text>
-        </view>
+        <u-icon name="photo" size="28" color="#333" @click="handleChooseImage"></u-icon>
+        <input 
+          v-model="inputText" 
+          type="text" 
+          placeholder="说点什么..." 
+          class="chat-input"
+          :adjust-position="false"
+          @focus="onFocus"
+          @blur="onBlur"
+        />
+        <button class="send-btn" :disabled="!inputText.trim() && !tempImage" @click="handleSend">发送</button>
       </view>
-      
-      <!-- 预览待发送的图片 -->
       <view class="upload-preview" v-if="tempImage">
-         <image :src="tempImage" mode="aspectFill" class="preview-img"></image>
-         <view class="del-btn" @click="tempImage = ''">
-           <u-icon name="close" color="#fff" size="12"></u-icon>
-         </view>
+        <image :src="tempImage" mode="aspectFill" class="preview-img"></image>
+        <view class="del-btn" @click="tempImage = ''">
+          <u-icon name="close" color="#fff" size="10"></u-icon>
+        </view>
       </view>
     </view>
   </view>
@@ -70,41 +63,81 @@
 
 <script setup>
 import { ref, onMounted, nextTick, computed } from 'vue'
-import { onLoad } from '@dcloudio/uni-app'
+import { onLoad, onUnload } from '@dcloudio/uni-app'
 import { getConsultationHistory, askConsultation, replyConsultation, sendReturnVisit } from '@/api/consultation'
-import { getMyInfo, uploadImage } from '@/api/user'
+import { getMyInfo, getUserDetail, uploadImage } from '@/api/user' // 引入 getUserDetail
 import dayjs from 'dayjs'
 
 const petId = ref(null)
-const applicantId = ref(null) // 咨询发起人ID
-const currentUserId = ref(null) // 当前登录用户ID
+const applicantId = ref(null)
+const currentUserId = ref(null)
 
-const msgList = ref([]) // 这里存放扁平化后的消息列表
-// 原始的成对数据，用于回复时查找上一条消息ID
+const msgList = ref([])
 const rawPairList = ref([]) 
 
 const scrollTop = ref(0)
 const loading = ref(false)
-const userCache = ref({}) 
+const userCache = ref({})
 const footerHeight = ref(60)
+const keyboardHeight = ref(0)
 
 const inputText = ref('')
 const tempImage = ref('')
 
-const chatType = ref('') // 聊天类型，如 'return_visit'
+const chatType = ref('')
+const chatTitle = ref('聊天') // 新增：聊天窗口标题
 
 onLoad((options) => {
   if (options.petId) {
     petId.value = options.petId
   }
-  // 过滤无效的 applicantId 字符串
   if (options.applicantId && options.applicantId !== 'null' && options.applicantId !== 'undefined') {
     applicantId.value = options.applicantId
   }
   if (options.chatType) {
     chatType.value = options.chatType
   }
+  if (options.title) {
+    chatTitle.value = decodeURIComponent(options.title)
+  }
+  
+  uni.onKeyboardHeightChange(res => {
+    keyboardHeight.value = res.height
+    if (res.height > 0) {
+      scrollToBottom()
+    }
+  })
 })
+
+onUnload(() => {
+  uni.offKeyboardHeightChange(() => {})
+})
+
+// 新增：返回上一页
+const navigateBack = () => {
+  uni.navigateBack()
+}
+
+// 新增：判断是否显示时间
+const shouldShowTime = (message, index) => {
+  if (index === 0) return true
+  const prevMessage = msgList.value[index - 1]
+  const prevTime = dayjs(prevMessage.time)
+  const currentTime = dayjs(message.time)
+  return currentTime.diff(prevTime, 'minute') > 5
+}
+
+// 新增：输入框聚焦
+const onFocus = (e) => {
+  keyboardHeight.value = e.detail.height
+  scrollToBottom()
+}
+
+// 新增：输入框失焦
+const onBlur = () => {
+  keyboardHeight.value = 0
+  scrollToBottom()
+}
 
 onMounted(async () => {
   await fetchUserInfo()
@@ -424,197 +457,141 @@ const scrollToBottom = () => {
 </script>
 
 <style lang="scss" scoped>
-.chat-container {
-  min-height: 100vh;
-  background-color: #ededed;
+.chat-page {
   display: flex;
   flex-direction: column;
+  height: 100vh;
+  background-color: #f4f4f4;
+}
+
+.chat-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20rpx 30rpx;
+  padding-top: var(--status-bar-height);
+  background-color: #fff;
+  border-bottom: 1rpx solid #e5e5e5;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+
+  .back-btn, .placeholder {
+    width: 60rpx;
+  }
+
+  .nickname {
+    font-size: 34rpx;
+    font-weight: bold;
+    color: #333;
+  }
 }
 
 .msg-list {
   flex: 1;
-  padding: 20rpx 0;
+  padding: 20rpx 30rpx;
   box-sizing: border-box;
-}
-
-.msg-group {
-  margin-bottom: 30rpx;
 }
 
 .time-header {
   text-align: center;
   font-size: 24rpx;
-  color: #b2b2b2;
+  color: #999;
   margin: 20rpx 0;
 }
 
 .msg-row {
   display: flex;
-  flex-direction: column;
-  margin-bottom: 20rpx;
-  padding: 0 20rpx;
-  
-  .msg-body {
-    display: flex;
-    align-items: flex-start;
-  }
+  align-items: flex-start;
+  margin-bottom: 40rpx;
+  gap: 20rpx;
 
   .avatar {
     width: 80rpx;
     height: 80rpx;
-    border-radius: 10rpx;
+    border-radius: 50%;
     flex-shrink: 0;
-  }
-  
-  .content-wrapper {
-    display: flex;
-    flex-direction: column;
-    max-width: 70%;
-  }
-
-  .nickname {
-    font-size: 24rpx;
-    color: #b2b2b2;
-    margin-bottom: 6rpx;
   }
 
   .bubble {
-    padding: 20rpx;
-    border-radius: 10rpx;
+    max-width: 70%;
+    padding: 20rpx 24rpx;
+    border-radius: 20rpx;
     font-size: 30rpx;
-    color: #333;
     line-height: 1.5;
-    position: relative;
     word-break: break-all;
-    min-height: 40rpx;
-  }
-  
-  .img-grid {
-    margin-top: 10rpx;
-    
-    .msg-img {
-      width: 200rpx;
-      height: 200rpx;
-      border-radius: 8rpx;
-    }
   }
 
-  /* Left Style (Others) */
+  .msg-img {
+    width: 300rpx;
+    height: 300rpx;
+    border-radius: 16rpx;
+  }
+
   &.left {
-    .msg-body {
-      flex-direction: row;
-    }
-    
-    .avatar {
-      margin-right: 20rpx;
-    }
-    
-    .nickname {
-      margin-left: 0;
-      text-align: left;
-    }
-    
     .bubble {
-      background: #fff;
-      border: 1rpx solid #ededed;
-      
-      &::before {
-        content: '';
-        position: absolute;
-        left: -16rpx;
-        top: 26rpx;
-        border: 8rpx solid transparent;
-        border-right-color: #fff;
-      }
+      background-color: #fff;
+      color: #333;
+      border-top-left-radius: 0;
     }
   }
 
-  /* Right Style (Me) */
   &.right {
-    .msg-body {
-      flex-direction: row;
-      justify-content: flex-end; /* Align content to right */
-    }
-    
-    .avatar {
-      margin-left: 20rpx;
-    }
-    
-    .content-wrapper {
-      align-items: flex-end; /* Align nickname and bubble to right */
-    }
-    
-    .nickname {
-      margin-right: 0;
-      text-align: right;
-    }
-
+    flex-direction: row-reverse;
     .bubble {
-      background: #95ec69;
-      
-      &::before {
-        content: '';
-        position: absolute;
-        right: -16rpx;
-        top: 26rpx;
-        border: 8rpx solid transparent;
-        border-left-color: #95ec69;
-       }
+      background-color: #005339; // 主题绿色
+      color: #fff;
+      border-top-right-radius: 0;
     }
   }
 }
 
 .chat-footer {
-  background: #f7f7f7;
-  padding: 20rpx;
-  padding-bottom: constant(safe-area-inset-bottom);
-  padding-bottom: env(safe-area-inset-bottom);
+  background: #fff;
+  padding: 20rpx 30rpx;
+  padding-bottom: calc(20rpx + constant(safe-area-inset-bottom));
+  padding-bottom: calc(20rpx + env(safe-area-inset-bottom));
   border-top: 1rpx solid #e5e5e5;
-  
+  transition: bottom 0.2s ease-in-out;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+
   .input-area {
     display: flex;
     align-items: center;
     gap: 20rpx;
-    
-    .icon-btn {
-      width: 60rpx;
-      height: 60rpx;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-    }
+  }
 
-    .input-box {
-      flex: 1;
-      background: #fff;
-      border-radius: 40rpx;
-      padding: 0 30rpx;
-      height: 70rpx;
-      display: flex;
-      align-items: center;
-      
-      .chat-input {
-        width: 100%;
-        height: 100%;
-        font-size: 28rpx;
-        border: none;
-        outline: none;
-      }
+  .chat-input {
+    flex: 1;
+    background-color: #f4f4f4;
+    border-radius: 40rpx;
+    padding: 18rpx 30rpx;
+    font-size: 28rpx;
+    height: 76rpx;
+    box-sizing: border-box;
+  }
+
+  .send-btn {
+    background-color: #005339;
+    color: #fff;
+    border: none;
+    border-radius: 40rpx;
+    padding: 0 40rpx;
+    height: 76rpx;
+    font-size: 28rpx;
+    line-height: 76rpx;
+    flex-shrink: 0;
+
+    &[disabled] {
+      background-color: #a3d4c4;
+      color: #fff;
     }
     
-    .send-btn {
-      background: #07c160;
-      color: #fff;
-      padding: 16rpx 32rpx;
-      border-radius: 40rpx;
-      font-size: 28rpx;
-      flex-shrink: 0;
-      
-      &.disabled {
-        background: #c0c4cc;
-        opacity: 0.6;
-      }
+    &::after {
+      border: none;
     }
   }
   
@@ -624,19 +601,19 @@ const scrollToBottom = () => {
     margin-top: 20rpx;
     
     .preview-img {
-      width: 120rpx;
-      height: 120rpx;
-      border-radius: 8rpx;
+      width: 140rpx;
+      height: 140rpx;
+      border-radius: 16rpx;
     }
     
     .del-btn {
       position: absolute;
       top: -10rpx;
       right: -10rpx;
-      background: rgba(0,0,0,0.5);
+      background: rgba(0,0,0,0.6);
       border-radius: 50%;
-      width: 32rpx;
-      height: 32rpx;
+      width: 36rpx;
+      height: 36rpx;
       display: flex;
       align-items: center;
       justify-content: center;

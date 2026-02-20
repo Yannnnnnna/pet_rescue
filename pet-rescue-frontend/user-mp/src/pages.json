@@ -2,208 +2,195 @@
 	"easycom": {
 		"autoscan": true,
 		"custom": {
-		"^u-(.*)": "uview-plus/components/u-$1/u-$1.vue",
-		"^up-(.*)": "uview-plus/components/u-$1/u-$1.vue"
-		}
+        "^u-(.*)": "uview-plus/components/u-$1/u-$1.vue",
+        "^up-(.*)": "uview-plus/components/u-$1/u-$1.vue",
+        "^uni-(.*)": "@dcloudio/uni-ui/lib/uni-$1/uni-$1.vue" 
+    	}
   	},
 	"pages": [
 		{
 			"path": "pages/index/index",
 			"style": {
-				"navigationStyle": "custom",
-				"navigationBarTitleText": "首页"
+				
 			}
 		},
 		{
 			"path": "pages/message/message",
 			"style": {
-				"navigationBarTitleText": "消息"
+				
 			}
 		},
 		{
 			"path": "pages/ai/ai",
 			"style": {
-				"navigationBarTitleText": "AI助手",
-				"navigationStyle": "custom"
+				
 			}
 		},
 		{
 			"path": "pages/ai/chat",
 			"style": {
-				"navigationBarTitleText": "AI对话",
-				"navigationBarBackgroundColor": "#ffffff",
-				"backgroundColor": "#f8f9fa"
+				"app-plus": {
+					"titleNView": {
+						"titleText": "",
+						"titleSize": "16px"
+					}
+				}
 			}
 		},
 		{
 			"path": "pages/profile/profile",
 			"style": {
-				"navigationBarTitleText": "个人中心"
+				
 			}
 		},
 		{
 			"path": "pages/login/login",
 			"style": {
-				"navigationBarTitleText": "登录"
+				
 			}
 		},
 		{
 			"path": "pages/pet/my-list",
 			"style": {
-				"navigationBarTitleText": "宠物列表"
+				
 			}
 		},
 		{
 			"path": "pages/pet/my-adopted",
 			"style": {
-				"navigationBarTitleText": "我的爱宠",
-				"navigationStyle": "custom"
+				
 			}
 		},
 		{
 			"path": "pages/adoption/my-history",
 			"style": {
-				"navigationBarTitleText": "申请记录"
+				
 			}
 		},
 		{
 			"path": "pages/adoption/application-detail",
 			"style": {
-				"navigationBarTitleText": "申请详情"
+				
 			}
 		},
 		{
 			"path": "pages/adoption/process",
 			"style": {
-				"navigationStyle": "custom"
+				
 			}
 		},
 		{
 			"path": "pages/adoption/sign-agreement",
 			"style": {
-				"navigationBarTitleText": "签署领养协议"
+				
 			}
 		},
 		{
 			"path": "pages/pet/diary-list",
 			"style": {
-				"navigationBarTitleText": "成长日记",
-				"navigationStyle": "custom"
+				
 			}
 		},
 		{
 			"path": "pages/pet/detail",
 			"style": {
-				"navigationStyle": "custom"
+				
 			}
 		},
 		{
 			"path": "pages/pet/publish",
 			"style": {
-				"navigationBarTitleText": "发布送养"
+				
 			}
 		},
 		{
 			"path": "pages/pet/edit",
 			"style": {
-				"navigationBarTitleText": "修改宠物信息"
+				
 			}
 		},
 		{
 			"path": "pages/message/chat-history",
 			"style": {
-				"navigationBarTitleText": "咨询记录"
+				
 			}
 		},
 		{
 			"path": "pages/message/consultation-list",
 			"style": {
-				"navigationBarTitleText": "咨询记录列表"
+				
 			}
 		},
 		{
 			"path": "pages/adoption/audit-list",
 			"style": {
-				"navigationBarTitleText": "待办审核"
+				
 			}
 		},
 		{
 			"path": "pages/adoption/audit-detail",
 			"style": {
-				"navigationBarTitleText": "申请详情"
+				
 			}
 		},
 		{
 			"path": "pages/search/search",
 			"style": {
-				"navigationBarTitleText": "搜索宠物"
+				
 			}
 		},
 		{
 			"path": "pages/adoption/apply",
 			"style": {
-				"navigationBarTitleText": "领养申请"
+				
 			}
 		},
 		{
 			"path": "pages/pet/my-favorite",
 			"style": {
-				"navigationBarTitleText": "我的收藏"
+				
 			}
 		},
 		{
 			"path": "pages/wiki/index",
 			"style": {
-				"navigationBarTitleText": "养宠百科",
-				"navigationBarBackgroundColor": "#19be6b",
-				"navigationBarTextStyle": "white"
+				
 			}
 		},
 		{
 			"path": "pages/wiki/detail",
 			"style": {
-				"navigationBarTitleText": "文章详情",
-				"navigationBarBackgroundColor": "#ffffff",
-				"navigationBarTextStyle": "black"
+				
 			}
 		},
 		{
 			"path": "pages/cms/wallpaper",
 			"style": {
-				"navigationBarTitleText": "精选壁纸",
-				"navigationBarBackgroundColor": "#19be6b",
-				"navigationBarTextStyle": "white"
+				
 			}
 		},
 		{
 			"path": "pages/cms/news",
 			"style": {
-				"navigationBarTitleText": "资讯中心",
-				"navigationBarBackgroundColor": "#19be6b",
-				"navigationBarTextStyle": "white"
+			
 			}
 		},
 		{
 			"path": "pages/post/publish",
 			"style": {
-				"navigationBarTitleText": "发布日记",
-				"navigationStyle": "custom"
+				
 			}
 		},
 		{
 			"path": "pages/post/detail",
 			"style": {
-				"navigationBarTitleText": "日记详情",
-				"navigationBarBackgroundColor": "#ffffff",
-				"navigationBarTextStyle": "black"
+				
 			}
 		},
 		{
 			"path": "pages/post/list",
 			"style": {
-				"navigationBarTitleText": "领养日记",
-				"navigationBarBackgroundColor": "#ffffff",
-				"navigationBarTextStyle": "black"
+		
 			}
 		}
 	],
@@ -233,8 +220,9 @@
 	},
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
-		"navigationBarTitleText": "宠物救助",
+		"navigationBarTitleText": "",
 		"navigationBarBackgroundColor": "#F8F8F8",
-		"backgroundColor": "#F8F8F8"
+		"backgroundColor": "#F8F8F8",
+		"navigationStyle": "custom"
 	}
 }

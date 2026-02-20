@@ -13,6 +13,9 @@ public class LoginPhoneDTO {
     @Schema(description = "手机号", requiredMode = Schema.RequiredMode.REQUIRED)
     private String phone;
 
-    @Schema(description = "密码", requiredMode = Schema.RequiredMode.REQUIRED)
+    @Schema(description = "密码")
     private String password;
+
+    @Schema(description = "验证码")
+    private String code;
 }

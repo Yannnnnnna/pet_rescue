@@ -4,7 +4,7 @@
 
 // 请求基础配置
 // 注意：微信小程序不支持 Node.js 原生模块，这里直接使用 Vite 环境变量
-const baseURL = import.meta.env.VITE_APP_BASE_URL || 'http://localhost:8080'
+const baseURL = import.meta.env.VITE_APP_BASE_URL || 'http://localhost:8888'
 
 // 请求拦截器
 const requestInterceptor = (config) => {

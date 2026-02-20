@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>记录与收藏管理 (浅色版)</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#2E7D32","secondary": "#FFC107","background-light": "#F9FAFB",
+                        "surface-light": "#ffffff",
+                        "text-main": "#1F2937",
+                        "text-sub": "#6B7280",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "2xl": "1rem", "full": "9999px"},
+                    boxShadow: {
+                        "soft": "0 4px 20px -2px rgba(0, 0, 0, 0.05)",
+                        "card": "0 2px 8px rgba(0, 0, 0, 0.04)"
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light text-text-main font-display min-h-screen flex flex-col">
+<header class="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-gray-100 shadow-sm">
+<div class="max-w-md mx-auto px-4 h-16 flex items-center justify-between">
+<button class="p-2 -ml-2 rounded-full hover:bg-gray-50 transition-colors">
+<span class="material-icons text-2xl text-text-main">arrow_back</span>
+</button>
+<h1 class="text-lg font-bold text-gray-900">记录与收藏</h1>
+<button class="p-2 -mr-2 rounded-full hover:bg-gray-50 transition-colors">
+<span class="material-icons text-2xl text-text-main">notifications_none</span>
+</button>
+</div>
+<div class="max-w-md mx-auto px-2">
+<div class="flex items-center justify-around relative">
+<button class="flex-1 py-4 text-sm font-medium text-text-sub hover:text-primary transition-colors relative">
+                    咨询中
+                    <span class="absolute top-3 right-4 w-2 h-2 bg-red-500 rounded-full ring-2 ring-white"></span>
+</button>
+<button class="flex-1 py-4 text-sm font-medium text-text-sub hover:text-primary transition-colors">
+                    我的收藏
+                </button>
+<button class="flex-1 py-4 text-sm font-bold text-primary relative">
+                    申请记录
+<span class="absolute bottom-0 left-1/2 -translate-x-1/2 w-8 h-1 bg-primary rounded-t-full"></span>
+</button>
+</div>
+</div>
+</header>
+<main class="flex-1 max-w-md mx-auto w-full px-4 py-6 space-y-6">
+<section class="space-y-4" id="applications">
+<div class="flex items-center justify-between mb-2">
+<p class="text-xs font-semibold text-text-sub uppercase tracking-wider pl-1">最近申请 (3)</p>
+<button class="text-xs text-primary font-medium flex items-center hover:bg-green-50 px-2 py-1 rounded transition-colors">
+                    筛选 <span class="material-icons text-sm ml-1">filter_list</span>
+</button>
+</div>
+<div class="bg-white rounded-2xl p-4 shadow-card hover:shadow-soft transition-shadow duration-300 border border-gray-50">
+<div class="flex gap-4">
+<div class="relative w-20 h-20 flex-shrink-0">
+<img alt="Golden Retriever sitting in grass" class="w-full h-full object-cover rounded-xl" data-alt="Golden Retriever dog portrait" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBR-BhZdt0dzu1tFYTViS6zpYIg3DkHSjSFflWXBI-nSQun-YZDG9TmexCt0HcHkv6k69fwFgwPv48kaqgUZ_Pb0QpG2tydYbjWjt4kdkhDloZBCa7AIvMWLQc8mmzSGr2Y-JMGsEo7dnhkPbRPJIZOJ-vUpJP5RGZEd98oOwJxAvyDGwOR4SFLN7ie1GMGzXtdDzvXsitmf7EYK1iFzN_QxsASWWR0tI2-GljWAuG8hkK2tyR7cIj1QXkxHzb2w1ctLZ-lWoKKBq8"/>
+</div>
+<div class="flex-1 min-w-0 flex flex-col justify-between">
+<div class="flex justify-between items-start">
+<div>
+<h3 class="font-bold text-base truncate text-gray-900">Buddy (金毛寻回犬)</h3>
+<p class="text-xs text-text-sub mt-1 font-medium">申请编号: #APP-20231024</p>
+</div>
+<span class="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold bg-secondary/20 text-yellow-700 uppercase tracking-wide">
+                                审核中
+                            </span>
+</div>
+<div class="flex items-end justify-between mt-2">
+<span class="text-xs text-gray-400 font-medium">2023-10-24</span>
+<button class="px-4 py-1.5 bg-primary hover:bg-green-700 text-white text-xs font-semibold rounded-lg transition-colors shadow-lg shadow-primary/20">
+                                查看详情
+                            </button>
+</div>
+</div>
+</div>
+</div>
+<div class="bg-white rounded-2xl p-4 shadow-card hover:shadow-soft transition-shadow duration-300 border border-gray-50">
+<div class="flex gap-4">
+<div class="relative w-20 h-20 flex-shrink-0">
+<img alt="Close up of a tabby cat" class="w-full h-full object-cover rounded-xl" data-alt="Cute tabby cat face" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAIftYMsSa1Qpf5GAwciUDTcT4wUzTkA6ACOlkViMlrvtyVsURq4d3DQ-LJAvUaIO0DVI21bQ_jyxD8Rt7oyvrEiPUoEXjjyRvYsEeG-MS27xB2cAp82f4eEJqSA-jmmcE9WQ778OHq_u_Jro5l-yBqXhzy1oXmQyh4Cjufg7iSZ_lOQ1O_Ig9ouYK-NW2uk4d95AyQ7oxM5lzA-rN6x92CRfqFYQqVqoBeH0xUavtOiQD9pIdufjdvrBVcByvF8Abv-K1enGzj7rc"/>
+</div>
+<div class="flex-1 min-w-0 flex flex-col justify-between">
+<div class="flex justify-between items-start">
+<div>
+<h3 class="font-bold text-base truncate text-gray-900">Luna (狸花猫)</h3>
+<p class="text-xs text-text-sub mt-1 font-medium">申请编号: #APP-20231020</p>
+</div>
+<span class="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold bg-primary/10 text-primary uppercase tracking-wide">
+                                已通过
+                            </span>
+</div>
+<div class="flex items-end justify-between mt-2">
+<span class="text-xs text-gray-400 font-medium">2023-10-20</span>
+<button class="px-4 py-1.5 border border-gray-200 text-text-sub text-xs font-semibold rounded-lg transition-colors hover:bg-gray-50 hover:text-primary hover:border-primary/30">
+                                查看详情
+                            </button>
+</div>
+</div>
+</div>
+</div>
+<div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 opacity-90">
+<div class="flex gap-4">
+<div class="relative w-20 h-20 flex-shrink-0 grayscale">
+<img alt="Beagle dog looking sideways" class="w-full h-full object-cover rounded-xl" data-alt="Beagle dog profile" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD5BrvuQmOpScsy4OHpj0dzZ18_CFfLq4_iGTM1tGrpNEM81R9-b55EEqWHHQw_p0SnJt7vGA_dL7N8Pen7jlqszJxepb-LNI1Hi-ERV-3qaFzFhAPeJ-jlDGAcf2OCJMU5bXYNLOTrbc28LuxIbvHop7A0hid6pxrOw_1EwsFzCEuQSMgkmyFxKBg0avIdhkCTrQuZCbsp-hUhyL5mNEDPJAwd5Rxg8e6aiYwxIXMKorga7rMySeF7YF61ZropU4N0t20zhcWvVGI"/>
+</div>
+<div class="flex-1 min-w-0 flex flex-col justify-between">
+<div class="flex justify-between items-start">
+<div>
+<h3 class="font-bold text-base truncate text-gray-500">Cooper (比格犬)</h3>
+<p class="text-xs text-gray-400 mt-1 font-medium">申请编号: #APP-20230915</p>
+</div>
+<span class="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold bg-gray-100 text-gray-500 uppercase tracking-wide">
+                                未通过
+                            </span>
+</div>
+<div class="flex items-end justify-between mt-2">
+<span class="text-xs text-gray-400 font-medium">2023-09-15</span>
+<button class="px-4 py-1.5 border border-gray-200 text-gray-500 text-xs font-semibold rounded-lg transition-colors hover:bg-gray-50">
+                                查看详情
+                            </button>
+</div>
+</div>
+</div>
+</div>
+</section>
+<div class="py-6 flex items-center gap-4">
+<div class="h-px bg-gradient-to-r from-transparent via-gray-200 to-transparent flex-1"></div>
+<span class="text-[10px] text-gray-400 font-mono uppercase tracking-widest">我的收藏视图示例</span>
+<div class="h-px bg-gradient-to-r from-transparent via-gray-200 to-transparent flex-1"></div>
+</div>
+<section class="grid grid-cols-2 gap-4" id="favorites">
+<div class="bg-white rounded-2xl overflow-hidden shadow-card border border-gray-50 group relative">
+<div class="absolute top-2 right-2 z-10">
+<button class="w-8 h-8 rounded-full bg-white/80 backdrop-blur-md flex items-center justify-center text-gray-400 hover:text-red-500 hover:bg-white transition-all shadow-sm">
+<span class="material-icons text-lg">favorite</span>
+</button>
+</div>
+<div class="aspect-[4/5] relative">
+<img alt="Pug dog looking at camera" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" data-alt="Pug dog portrait" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAzpfeoa0rvrjWUrdVWHhAPXmkGVJX6oZebGvbnlu8cvT61mk8RQFR3XvQwdmOTvUqZX5jndV0SpxkuurAL91ii_Qq4nsydW6m3zhS-a5BWHU1fTAspUnrMAbXwXcbR5XoRqRSS3tOKCL-XOAq1goTJFb18TSNc6SgOmsIJL7LwLD9AT7VUasB_00BhjwzGUwXZPe0nT-AQGyIDG1AHpHWPq2D-WXGjKatrmH5QhALUIvzCijNYv0xXEBglK-y39eQlUNi6iiGZPKk"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-80"></div>
+<div class="absolute bottom-3 left-3 text-white">
+<h4 class="font-bold text-sm tracking-wide">Mochi</h4>
+<p class="text-[10px] opacity-90 font-medium bg-white/20 inline-block px-1.5 py-0.5 rounded backdrop-blur-sm mt-1">2岁 · 雄性 · 巴哥</p>
+</div>
+</div>
+</div>
+<div class="bg-white rounded-2xl overflow-hidden shadow-card border border-gray-50 group relative">
+<div class="absolute top-2 right-2 z-10">
+<button class="w-8 h-8 rounded-full bg-white/80 backdrop-blur-md flex items-center justify-center text-gray-400 hover:text-red-500 hover:bg-white transition-all shadow-sm">
+<span class="material-icons text-lg">favorite</span>
+</button>
+</div>
+<div class="aspect-[4/5] relative">
+<img alt="White cat with blue eyes" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" data-alt="White cat portrait" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBLrlbSmCVxGTdzk-3-Ya4weWxDMV6eKyU1CuB1jXszU9Siy6FlQVrD-TWLpNkyBnNKiXfAYHXx7_VfwnkLbjOuMipaS9VrhIXH04hDseuQWkzTWZY9S9YJP-eM5CUKrT9Tjd_7xdmtanfXAQlrGz4u9EWDXonkBn_ccIbGLHr0dq4nTAyzbeQk0u0T9aMdrBELOh-eqNjPXV3XfQ5nsEbHyVhEDONVY07z87WdfDzhi1C34bnCGdNtxtAD3YfxkvWBDqtDiw_r6OY"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-80"></div>
+<div class="absolute bottom-3 left-3 text-white">
+<h4 class="font-bold text-sm tracking-wide">Snow</h4>
+<p class="text-[10px] opacity-90 font-medium bg-white/20 inline-block px-1.5 py-0.5 rounded backdrop-blur-sm mt-1">1岁 · 雌性 · 波斯猫</p>
+</div>
+</div>
+</div>
+<div class="bg-white rounded-2xl overflow-hidden shadow-card border border-gray-50 group relative">
+<div class="absolute top-2 right-2 z-10">
+<button class="w-8 h-8 rounded-full bg-white/80 backdrop-blur-md flex items-center justify-center text-gray-400 hover:text-red-500 hover:bg-white transition-all shadow-sm">
+<span class="material-icons text-lg">favorite</span>
+</button>
+</div>
+<div class="aspect-[4/5] relative">
+<img alt="Husky dog in snow" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" data-alt="Husky dog portrait" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB8s8h6w0YKU5llM6Ra4lcWyyS_Coi65KU9i2txmuHKX5I4Wu9FRhAvQdfI0EQrooYvXAVKDRdYy6DTxRcVyQFavqjMXLR1buxJKJoDUoIMg_D4h_s1vGg-0Wr8i-ldhZrgAvz4B4Vaa0xCpNWtaW8w1PHJTzQjxSQ59sB9wKuK_eq_dGtY9-rwKX2wtftYuetP1zchbsRVAYm8h2EA30eRQgqvYrY-eQyHFTtiBRExv5mNC8x23VTyx3sNQ0VlIdeteAwfbgWeRcE"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-80"></div>
+<div class="absolute bottom-3 left-3 text-white">
+<h4 class="font-bold text-sm tracking-wide">Max</h4>
+<p class="text-[10px] opacity-90 font-medium bg-white/20 inline-block px-1.5 py-0.5 rounded backdrop-blur-sm mt-1">3岁 · 雄性 · 哈士奇</p>
+</div>
+</div>
+</div>
+<div class="bg-white rounded-2xl border-2 border-dashed border-gray-200 flex flex-col items-center justify-center text-center p-4 aspect-[4/5] group cursor-pointer hover:border-primary hover:bg-green-50/30 transition-all duration-300">
+<div class="w-12 h-12 rounded-full bg-gray-50 flex items-center justify-center mb-3 group-hover:bg-primary group-hover:text-white transition-colors shadow-sm">
+<span class="material-icons text-xl text-gray-400 group-hover:text-white">add</span>
+</div>
+<span class="text-xs font-bold text-gray-400 group-hover:text-primary">浏览更多</span>
+</div>
+</section>
+</main>
+<nav class="fixed bottom-0 w-full bg-white border-t border-gray-100 pb-safe shadow-[0_-4px_20px_rgba(0,0,0,0.02)]">
+<div class="max-w-md mx-auto px-4 h-16 flex items-center justify-around">
+<button class="flex flex-col items-center justify-center w-12 h-full text-gray-400 hover:text-primary transition-colors">
+<span class="material-icons text-2xl">home</span>
+<span class="text-[10px] mt-1 font-medium">首页</span>
+</button>
+<button class="flex flex-col items-center justify-center w-12 h-full text-gray-400 hover:text-primary transition-colors">
+<span class="material-icons text-2xl">pets</span>
+<span class="text-[10px] mt-1 font-medium">领养</span>
+</button>
+<div class="relative -top-6">
+<button class="w-14 h-14 rounded-full bg-secondary text-gray-900 flex items-center justify-center shadow-lg shadow-secondary/40 transform hover:scale-105 transition-all border-4 border-white">
+<span class="material-icons text-2xl">add</span>
+</button>
+</div>
+<button class="flex flex-col items-center justify-center w-12 h-full text-primary">
+<span class="material-icons text-2xl">description</span>
+<span class="text-[10px] mt-1 font-bold">记录</span>
+</button>
+<button class="flex flex-col items-center justify-center w-12 h-full text-gray-400 hover:text-primary transition-colors">
+<span class="material-icons text-2xl">person</span>
+<span class="text-[10px] mt-1 font-medium">我的</span>
+</button>
+</div>
+</nav>
+<div class="h-24 w-full"></div>
+
+</body></html>

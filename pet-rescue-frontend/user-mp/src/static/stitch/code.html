@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>首页 (活泼专业版)</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Noto+Sans+SC:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+    tailwind.config = {
+        darkMode: "class",
+        theme: {
+            extend: {
+                colors: {
+                    "forest-green": "#2E7D32", // Forest Green - Primary
+                    "forest-light": "#E8F5E9", // Light Green BG
+                    "sunflower": "#FFC107", // Sunflower Yellow - Highlights
+                    "sunflower-light": "#FFF8E1",
+                    "terracotta": "#E64A19", // Terracotta Orange - Secondary Accents
+                    "terracotta-light": "#FBE9E7",
+                    "background-light": "#FAFAFA", // Crisp White/Off-white background
+                    "background-dark": "#1E293B",
+                    "slate-dark": "#334155",
+                },
+                fontFamily: {
+                    "display": ["Plus Jakarta Sans", "Noto Sans SC", "sans-serif"]
+                },
+                borderRadius: { "DEFAULT": "0.5rem", "lg": "1rem", "xl": "1.5rem", "2xl": "2rem", "3xl": "2.5rem", "full": "9999px" },
+                boxShadow: {
+                    'soft': '0 4px 20px -2px rgba(46, 125, 50, 0.15)',
+                    'card': '0 2px 10px rgba(0, 0, 0, 0.05)',
+                    'crisp': '0 1px 3px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.06)',
+                }
+            },
+        },
+    }
+</script>
+<style>
+    .no-scrollbar::-webkit-scrollbar {
+        display: none;
+    }
+    .no-scrollbar {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+    .masonry-grid {
+        column-count: 2;
+        column-gap: 1rem;
+    }
+    .masonry-item {
+        break-inside: avoid;
+        margin-bottom: 1rem;
+    }
+    body {
+        min-height: max(884px, 100dvh);
+    }
+</style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-800 dark:text-gray-100 antialiased selection:bg-forest-green selection:text-white">
+<div class="max-w-md mx-auto min-h-screen relative pb-28 bg-gray-50 dark:bg-background-dark">
+<div class="h-12 w-full bg-forest-green dark:bg-background-dark z-50 fixed top-0 left-0 max-w-md mx-auto"></div>
+<header class="pt-14 px-5 sticky top-0 bg-forest-green dark:bg-background-dark z-40 pb-6 rounded-b-[2rem] shadow-soft mb-2">
+<div class="flex items-center gap-3 mb-4">
+<button class="flex items-center gap-1 text-white font-bold text-sm shrink-0 bg-white/20 px-3 py-1.5 rounded-full backdrop-blur-sm">
+<span class="material-icons-round text-sunflower text-lg">location_on</span>
+<span>上海市</span>
+<span class="material-icons-round text-base">expand_more</span>
+</button>
+<div class="flex-1 relative">
+<input class="w-full bg-white text-slate-700 border-none rounded-full py-2.5 pl-10 pr-4 text-sm shadow-sm focus:ring-2 focus:ring-sunflower placeholder-slate-400" placeholder="搜索宠物或资讯" type="text"/>
+<span class="material-icons-round absolute left-3 top-2.5 text-forest-green text-lg">search</span>
+</div>
+<button class="relative p-2 rounded-full bg-white/20 hover:bg-white/30 transition-colors group">
+<span class="material-icons-round text-white group-hover:text-sunflower transition-colors">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-terracotta rounded-full border-2 border-forest-green"></span>
+</button>
+</div>
+</header>
+<main class="px-5 space-y-6 -mt-4 relative z-30">
+<section class="relative w-full h-48 rounded-3xl overflow-hidden shadow-lg mx-auto transform transition-all hover:scale-[1.01] bg-white">
+<div class="absolute inset-0 bg-gradient-to-r from-black/60 to-transparent z-10"></div>
+<img alt="Happy dog running in a field at sunset" class="w-full h-full object-cover" data-alt="Happy dog running in a field at sunset" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAp6hnYOfED7zyrLsegbfmAmmVuEJDVohLmyhUzlyFfzLCWSbMNkXSMNRStEuNWBzLy5obC9vxPX4EjN7EzWreSP4DRfybH0DI5VeMqg2rSm3ZnkgY0RdQvq8ejmPQ3pMc5MR1PRazNMYEa9txokytPIcq7WZOOUwmaKoF6flSJR8uZZlc_gnk-Vd-i4ofkrC9r1Y5DC4NdGrKyXsM6P4RUuDKobxdV0kzftqts0tIRuOsHNanWgSs1Eu-A28l8mykRqyDyflEUWZs"/>
+<div class="absolute bottom-6 left-6 z-20 text-white max-w-[70%]">
+<span class="px-3 py-1 bg-sunflower text-slate-900 rounded-lg text-[10px] font-bold uppercase tracking-wider mb-2 inline-block shadow-sm">精选故事</span>
+<h2 class="text-xl font-bold leading-tight drop-shadow-md mt-1">从流浪到明星：<br/>旺财的奇幻旅程</h2>
+</div>
+<div class="absolute bottom-5 right-5 z-20 flex gap-1.5">
+<div class="w-6 h-1.5 bg-sunflower rounded-full shadow-sm"></div>
+<div class="w-1.5 h-1.5 bg-white/60 rounded-full backdrop-blur-sm"></div>
+<div class="w-1.5 h-1.5 bg-white/60 rounded-full backdrop-blur-sm"></div>
+</div>
+</section>
+<section class="grid grid-cols-3 gap-y-6 gap-x-2 px-1 py-4 bg-white dark:bg-slate-800 rounded-3xl shadow-card">
+<div class="flex flex-col items-center gap-2 group cursor-pointer">
+<div class="w-14 h-14 rounded-full bg-forest-light dark:bg-green-900/30 flex items-center justify-center text-forest-green shadow-sm group-hover:bg-forest-green group-hover:text-white transition-all duration-300">
+<span class="material-symbols-outlined text-3xl">menu_book</span>
+</div>
+<span class="text-[11px] font-bold text-slate-700 dark:text-gray-300 text-center">养宠百科</span>
+</div>
+<div class="flex flex-col items-center gap-2 group cursor-pointer">
+<div class="w-14 h-14 rounded-full bg-yellow-100 dark:bg-yellow-900/30 flex items-center justify-center text-yellow-700 shadow-sm group-hover:bg-sunflower group-hover:text-slate-900 transition-all duration-300">
+<span class="material-symbols-outlined text-3xl">edit_note</span>
+</div>
+<span class="text-[11px] font-bold text-slate-700 dark:text-gray-300 text-center">领养日记</span>
+</div>
+<div class="flex flex-col items-center gap-2 group cursor-pointer">
+<div class="w-14 h-14 rounded-full bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center text-terracotta shadow-sm group-hover:bg-terracotta group-hover:text-white transition-all duration-300">
+<span class="material-symbols-outlined text-3xl">pets</span>
+</div>
+<span class="text-[11px] font-bold text-slate-700 dark:text-gray-300 text-center">发布送养</span>
+</div>
+<div class="flex flex-col items-center gap-2 group cursor-pointer">
+<div class="w-14 h-14 rounded-full bg-teal-100 dark:bg-teal-900/30 flex items-center justify-center text-teal-700 shadow-sm group-hover:bg-teal-600 group-hover:text-white transition-all duration-300">
+<span class="material-symbols-outlined text-3xl">assignment_turned_in</span>
+</div>
+<span class="text-[11px] font-bold text-slate-700 dark:text-gray-300 text-center">领养流程</span>
+</div>
+<div class="flex flex-col items-center gap-2 group cursor-pointer">
+<div class="w-14 h-14 rounded-full bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center text-purple-700 shadow-sm group-hover:bg-purple-600 group-hover:text-white transition-all duration-300">
+<span class="material-symbols-outlined text-3xl">wallpaper</span>
+</div>
+<span class="text-[11px] font-bold text-slate-700 dark:text-gray-300 text-center">精选壁纸</span>
+</div>
+<div class="flex flex-col items-center gap-2 group cursor-pointer">
+<div class="w-14 h-14 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center text-blue-700 shadow-sm group-hover:bg-blue-600 group-hover:text-white transition-all duration-300">
+<span class="material-symbols-outlined text-3xl">newspaper</span>
+</div>
+<span class="text-[11px] font-bold text-slate-700 dark:text-gray-300 text-center">资讯中心</span>
+</div>
+</section>
+<section class="bg-white dark:bg-slate-800 p-5 rounded-3xl shadow-crisp border border-gray-100 dark:border-gray-700">
+<div class="flex justify-between items-center mb-4">
+<div class="flex items-center gap-2">
+<div class="bg-terracotta/10 p-1.5 rounded-lg">
+<span class="material-icons-round text-terracotta text-xl">home</span>
+</div>
+<h3 class="text-lg font-bold text-slate-800 dark:text-white">新家成员</h3>
+</div>
+<a class="text-xs font-bold text-forest-green hover:text-forest-green/80 flex items-center bg-forest-light dark:bg-green-900/20 px-3 py-1.5 rounded-full transition-colors" href="#">
+                    查看全部 <span class="material-icons-round text-sm ml-0.5">chevron_right</span>
+</a>
+</div>
+<div class="flex overflow-x-auto gap-4 no-scrollbar pb-2">
+<div class="flex-shrink-0 w-28 group cursor-pointer">
+<div class="relative w-28 h-28 rounded-2xl overflow-hidden mb-2 shadow-sm group-hover:shadow-md transition-all">
+<div class="absolute inset-0 bg-black/0 group-hover:bg-black/10 z-10 transition-colors"></div>
+<img alt="Small puppy being held by owner" class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500" data-alt="Small puppy being held by owner" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB6QVACyRYjWq8oTbWc7i23pS3icBTk7CiIW8EeDmxZkgXa85KStdAAeS24r2YOBkFB62fO580gKGuB2tCHRsqsApf1whuZsdheWVP1syh_JWLqOPXLnTrXfLN42uCpeTlgJpfVZvCf3UhhA-CdRHLcdvz1IAPB-WcvKpSG03AAKhn54iU7J69MvtopJdJd5w-Ds_W_-VY25Nh4lIoiYqQSbXHUFtN-TVMGbIIOiuLblCk5YXYGik2hfetiyGZwEkopngqFTprl8MY"/>
+<div class="absolute bottom-2 right-2 z-20">
+<img alt="User avatar" class="w-7 h-7 rounded-full border-2 border-white shadow-md" data-alt="User avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCrKhNsljNO0b-_Mp1-g53HhlNu5tZxpJwxuWb-qHEm_QX9EM0ajhXMNYk-hLJbAWt8LxNtYx8cZDkkv3Qai8Rw4m45ea0VG8QZNRS6hH3nNf6lwOf2QT1WrCbrpQ9OYWMLmNdshwFk8hZqSBur950KlgLsV_WzJRBCFqGwjaPe21_c1z4bRq3qgF4gYpNV9yjgdfG5HfuInVYPC_FTXqACUBAD4j2t1-EFIBFXElcCLsJiVrw_ztKNdi5xyvpz0Bj4Yz5IQZPM11U"/>
+</div>
+</div>
+<p class="text-xs font-bold text-slate-700 dark:text-gray-200 truncate text-center mt-1">豆豆找到家啦！</p>
+</div>
+<div class="flex-shrink-0 w-28 group cursor-pointer">
+<div class="relative w-28 h-28 rounded-2xl overflow-hidden mb-2 shadow-sm group-hover:shadow-md transition-all">
+<div class="absolute inset-0 bg-black/0 group-hover:bg-black/10 z-10 transition-colors"></div>
+<img alt="Cat looking out window" class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500" data-alt="Cat looking out window" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCWFCcjdsavEtBdu5u-bMYBH3jZL6t6jvwtFJOiyyOcuxIobG10rDHri1h5e00BanfEv9iONvBbC3wDRoULeMBO9RoCZfikgPDRCiP54xvPMKB-4tX7EhhxV3Bau4JSX_m4msPiXYkSl7Q6-Qp7WSY2gb2FGJorOSvUGJZnTtNYXBiyMw8oG67RTDUqtOtU-RtqmZfKEh2JAgnWJNd5MWlOVghZRZ3IGpNMZzCkYgcMmEifLjOIhg8_rrbByVKLoHCO1_j6AFeWtTU"/>
+<div class="absolute bottom-2 right-2 z-20">
+<img alt="User avatar" class="w-7 h-7 rounded-full border-2 border-white shadow-md" data-alt="User avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBgaruHRPZexAb1x5le-kps2NS2L3eQ2xIyRbV47R0hpNpoV-rQGxZ-y8cQth99ktEzWh_thH7rkxDbF5K5xHPpeBuOR1MvTM3qIPc3Q68ZQPHKhRPXPdoLlZfOHv1637jE2uZY-Ta085wgG-H4aPEKUmTINoaE68ZWzE8xSh8UNegTOMC4iDIt_u92igJSv-TX6StqjYVt-Hf1NFtQdT9oXXvi523edoP8ERNQ5l7YX4qEJmu_8UwaGehDwxyER3A9fzUiemgqpj0"/>
+</div>
+</div>
+<p class="text-xs font-bold text-slate-700 dark:text-gray-200 truncate text-center mt-1">露娜的第一天</p>
+</div>
+<div class="flex-shrink-0 w-28 group cursor-pointer">
+<div class="relative w-28 h-28 rounded-2xl overflow-hidden mb-2 shadow-sm group-hover:shadow-md transition-all">
+<div class="absolute inset-0 bg-black/0 group-hover:bg-black/10 z-10 transition-colors"></div>
+<img alt="Two dogs playing in park" class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500" data-alt="Two dogs playing in park" src="https://lh3.googleusercontent.com/aida-public/AB6AXuApRNZuCFkF4oSixl5Etuei353f5N7s4Jy-vMS07IgcTiXw-HlF2Mz31XCoVRBxv-MFYXZQ4X6kKbMx8BXrq2O0boXv_k07s2Bo4iSt9EFNeJlCkd_Zm3UPH7TUpLDTiGqVbhNDNwsfD6_qRu3pM_klplei3loU58lEccOWXUpmXYOhhEJnEqfN42tMIs07f_wUZ0fz8KfleukC7XoIn__TwdCgAdRAh2o-83BYsl71Ttskj6IzBxZzBIQxUEMgDeNYF2GfLBTa0Xs"/>
+<div class="absolute bottom-2 right-2 z-20">
+<img alt="User avatar" class="w-7 h-7 rounded-full border-2 border-white shadow-md" data-alt="User avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB9VZ6QNEietyDb35igKf1nlPnC46YWoPSByJbQ8I52CFuGFaPKp1_wIjiO6zRrWDZchzdEAo54fwY31Ub0nJ9GptB_zO_kCnZPFbchPU9DjFZPe9KNCgDbVbAyYoG8i2VtkOthtHiVKYZu0LbMOab832In3fAg4jlImcQ3WJ0Dfq_bPih0MQT_efDn2ZAWZAxQhq5TNZDKGM36tchnZUDfDKP3mOHuEsmhmUJN-Ww7bb1h8XodsOEtoBtxjb1ezxbAAfJUgNhrOF8"/>
+</div>
+</div>
+<p class="text-xs font-bold text-slate-700 dark:text-gray-200 truncate text-center mt-1">兄弟团聚</p>
+</div>
+</div>
+</section>
+<section>
+<div class="sticky top-[110px] bg-gray-50/95 backdrop-blur-sm dark:bg-background-dark/95 py-3 z-30 flex gap-3 overflow-x-auto no-scrollbar -mx-5 px-5 mb-2">
+<button class="px-5 py-2 rounded-full bg-forest-green text-white text-sm font-bold shadow-md shadow-forest-green/20 whitespace-nowrap tracking-wide">推荐</button>
+<button class="px-5 py-2 rounded-full bg-white dark:bg-white/10 text-slate-600 dark:text-gray-300 text-sm font-semibold whitespace-nowrap hover:bg-forest-light dark:hover:bg-white/20 transition-colors border border-gray-200 dark:border-gray-700">猫猫</button>
+<button class="px-5 py-2 rounded-full bg-white dark:bg-white/10 text-slate-600 dark:text-gray-300 text-sm font-semibold whitespace-nowrap hover:bg-forest-light dark:hover:bg-white/20 transition-colors border border-gray-200 dark:border-gray-700">狗狗</button>
+<button class="px-5 py-2 rounded-full bg-white dark:bg-white/10 text-slate-600 dark:text-gray-300 text-sm font-semibold whitespace-nowrap hover:bg-forest-light dark:hover:bg-white/20 transition-colors border border-gray-200 dark:border-gray-700">其他</button>
+</div>
+<div class="masonry-grid pt-2">
+<div class="masonry-item bg-white dark:bg-slate-800 rounded-2xl overflow-hidden shadow-crisp hover:shadow-card transition-all duration-300 border border-gray-100 dark:border-slate-700">
+<div class="relative">
+<img alt="Golden Retriever puppy sitting" class="w-full h-48 object-cover" data-alt="Golden Retriever puppy sitting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBOLmgV60a1vQ0tltMNjtWzx5KAeOfv2igo4tDiyctGoOvpGhS_i6iwqBgxnAwVB-GLv8szZe2mRa-opHH82O8QpEcFEzP33DX54hry4Uarr51VsEYjxile6p7V_dMy-Gi7Lj94GEXmTEqDi2HFmkUyzPehwvwhuLIlkCr5xPMPNUsc-rVwkv-5E5Nr0UtHnQ7sdG8DR1XEMMhzO8vZZ7o6KxtpCgfhvjdMC8iR67YDyRgXMtoCtmiEL-1zve8boLGHFsphFTbqsbI"/>
+<button class="absolute top-3 right-3 w-8 h-8 bg-white/30 backdrop-blur-md rounded-full flex items-center justify-center text-white hover:bg-white hover:text-terracotta transition-all shadow-sm">
+<span class="material-icons-round text-lg">favorite_border</span>
+</button>
+</div>
+<div class="p-3">
+<div class="flex justify-between items-start mb-1.5">
+<h3 class="font-bold text-slate-800 dark:text-white text-base">饼干</h3>
+<span class="text-forest-green font-bold text-[10px] bg-forest-light dark:bg-green-900/20 px-2 py-0.5 rounded-md uppercase tracking-wide">狗狗</span>
+</div>
+<div class="flex items-center gap-2 text-xs text-slate-500 dark:text-gray-400 mb-2 font-medium">
+<span>2 岁</span>
+<span class="w-1 h-1 bg-slate-300 rounded-full"></span>
+<span>金毛寻回犬</span>
+</div>
+</div>
+</div>
+<div class="masonry-item bg-white dark:bg-slate-800 rounded-2xl overflow-hidden shadow-crisp hover:shadow-card transition-all duration-300 border border-gray-100 dark:border-slate-700">
+<div class="relative">
+<img alt="Orange tabby cat staring intently" class="w-full h-36 object-cover" data-alt="Orange tabby cat staring intently" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCtj5c8g3odSGq2ryBq96z1m-BSm8at8yXrQpZijoM2zpDfH_7AGa3yJB3QcYMlkhb_FKKYZUiuyOH5SmD-5Zj4plnVUJ9AVAe4KeW18huqkBr7oCAnNML_0HMrV59KilZjjPC3ODAEtr6HnIQpbi0G9aXwdl4C62X9t8BuScG107nWrJd9k7oDo_B0wRRyU4lCZk68rkKarX1tAuTB8eRGQYZ7vm8OAu3uiM3Vkc4dIGLND8lPs3VVM4r5GA-N0AYOuiclaaO95Z4"/>
+<button class="absolute top-3 right-3 w-8 h-8 bg-white/30 backdrop-blur-md rounded-full flex items-center justify-center text-white hover:bg-white hover:text-terracotta transition-all shadow-sm">
+<span class="material-icons-round text-lg">favorite_border</span>
+</button>
+</div>
+<div class="p-3">
+<div class="flex justify-between items-start mb-1.5">
+<h3 class="font-bold text-slate-800 dark:text-white text-base">麦洛</h3>
+<span class="text-terracotta font-bold text-[10px] bg-terracotta-light dark:bg-orange-900/20 px-2 py-0.5 rounded-md uppercase tracking-wide">猫猫</span>
+</div>
+<div class="flex items-center gap-2 text-xs text-slate-500 dark:text-gray-400 mb-2 font-medium">
+<span>8 个月</span>
+<span class="w-1 h-1 bg-slate-300 rounded-full"></span>
+<span>橘猫</span>
+</div>
+</div>
+</div>
+<div class="masonry-item bg-white dark:bg-slate-800 rounded-2xl overflow-hidden shadow-crisp hover:shadow-card transition-all duration-300 border border-gray-100 dark:border-slate-700">
+<div class="relative">
+<img alt="Gray cat sleeping on a blanket" class="w-full h-40 object-cover" data-alt="Gray cat sleeping on a blanket" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDA7-Jyx4ZA_FbGQk6PFxa57NDRCRAtLoPOy5JVh2mPCDu5P9bfYam4uhQJWVYM0GECYdJmj4h9BcHhhYhYl0qxcjcown7t0bPjEnfZtRhQu66RpEFH3ZaSrLTaCQolq9uceus6CxhgFT0zAVEDJCrQ4xNBBkZ4WA1CtdaJ24wNhZTlGYr03_2bS-PtBgZ3oWi-I50m-_dScgVC0PqOl-M6ToYkEWCMbJz58HoskamkDHRksTudjz-k9LPAeCRbLpEblxJ9exttYyM"/>
+<button class="absolute top-3 right-3 w-8 h-8 bg-white/30 backdrop-blur-md rounded-full flex items-center justify-center text-white hover:bg-white hover:text-terracotta transition-all shadow-sm">
+<span class="material-icons-round text-lg">favorite_border</span>
+</button>
+</div>
+<div class="p-3">
+<div class="flex justify-between items-start mb-1.5">
+<h3 class="font-bold text-slate-800 dark:text-white text-base">暗影</h3>
+<span class="text-terracotta font-bold text-[10px] bg-terracotta-light dark:bg-orange-900/20 px-2 py-0.5 rounded-md uppercase tracking-wide">猫猫</span>
+</div>
+<div class="flex items-center gap-2 text-xs text-slate-500 dark:text-gray-400 mb-2 font-medium">
+<span>3 岁</span>
+<span class="w-1 h-1 bg-slate-300 rounded-full"></span>
+<span>俄罗斯蓝猫</span>
+</div>
+</div>
+</div>
+<div class="masonry-item bg-white dark:bg-slate-800 rounded-2xl overflow-hidden shadow-crisp hover:shadow-card transition-all duration-300 border border-gray-100 dark:border-slate-700">
+<div class="relative">
+<img alt="Corgi smiling in garden" class="w-full h-56 object-cover" data-alt="Corgi smiling in garden" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCJBmos1G86nEs6KntbsZD5Wgt2-kmVPUxcI2wUwakXZYI9yfobTdY4Rq51HpM3WTbzTxITle7QgefSRS4GiGgyU8Tzpyu5f03lGZBScZB1UqD7eNaAFKC7668qz3e-WjL5HAXXuPB_idnaiC7FBMwqTQ0T03xH7TyatMxINsM9VwBprWW5krvb9dotA7nJxhsVyqa2BS-CeDzeFHxg0WdFAdOWsVpqrpfxFRtBOsUya-USXDkstLO8c-epKCI0P8PI6V0HH8gTfkM"/>
+<button class="absolute top-3 right-3 w-8 h-8 bg-white/30 backdrop-blur-md rounded-full flex items-center justify-center text-white hover:bg-white hover:text-terracotta transition-all shadow-sm">
+<span class="material-icons-round text-lg">favorite_border</span>
+</button>
+</div>
+<div class="p-3">
+<div class="flex justify-between items-start mb-1.5">
+<h3 class="font-bold text-slate-800 dark:text-white text-base">皮皮</h3>
+<span class="text-forest-green font-bold text-[10px] bg-forest-light dark:bg-green-900/20 px-2 py-0.5 rounded-md uppercase tracking-wide">狗狗</span>
+</div>
+<div class="flex items-center gap-2 text-xs text-slate-500 dark:text-gray-400 mb-2 font-medium">
+<span>1 岁</span>
+<span class="w-1 h-1 bg-slate-300 rounded-full"></span>
+<span>柯基</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+</main>
+<nav class="fixed bottom-0 w-full max-w-md bg-white dark:bg-slate-900 border-t border-gray-100 dark:border-slate-800 pb-6 pt-3 px-6 flex justify-between items-end z-50 rounded-t-2xl shadow-[0_-4px_20px_rgba(0,0,0,0.05)]">
+<button class="flex flex-col items-center gap-1 text-forest-green w-1/4">
+<span class="material-icons-round text-2xl">home</span>
+<span class="text-[10px] font-bold">首页</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-slate-400 dark:text-gray-500 hover:text-terracotta dark:hover:text-gray-300 transition-colors w-1/4">
+<span class="material-icons-round text-2xl">pets</span>
+<span class="text-[10px] font-medium">领养</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-slate-400 dark:text-gray-500 hover:text-terracotta dark:hover:text-gray-300 transition-colors w-1/4">
+<span class="material-icons-round text-2xl">forum</span>
+<span class="text-[10px] font-medium">消息</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-slate-400 dark:text-gray-500 hover:text-terracotta dark:hover:text-gray-300 transition-colors w-1/4">
+<span class="material-icons-round text-2xl">person</span>
+<span class="text-[10px] font-medium">我的</span>
+</button>
+</nav>
+</div>
+</body></html>

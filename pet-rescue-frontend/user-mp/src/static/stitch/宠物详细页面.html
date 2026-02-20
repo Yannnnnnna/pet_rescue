@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>宠物详情 (精简专业版)</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500;600;700&amp;family=Quicksand:wght@400;500;600;700&amp;family=Noto+Sans+SC:wght@400;500;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "forest": "#2E7D32",       
+                        "forest-dark": "#1B5E20",  
+                        "sunflower": "#FFC107",    
+                        "terracotta": "#E64A19",   
+                        "sage": "#E8F5E9",         
+                        "cream": "#FFFDE7",        
+                        "background-light": "#FAFAFA", 
+                        "surface-light": "#ffffff",
+                    },
+                    fontFamily: {
+                        "display": ["Noto Sans SC", "Fredoka", "sans-serif"], 
+                        "body": ["Noto Sans SC", "Quicksand", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "2xl": "1.5rem", 
+                        "3xl": "2rem", 
+                        "4xl": "2.5rem",
+                    },
+                    boxShadow: {
+                        "soft": "0 10px 30px -10px rgba(46, 125, 50, 0.15)",
+                        "card": "0 4px 15px -3px rgba(0, 0, 0, 0.04)",
+                        "tab": "0 -4px 20px -5px rgba(0, 0, 0, 0.08)"
+                    }
+                },
+            },
+        }
+    </script>
+<style type="text/tailwindcss">
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        body {
+            background-color: #FAFAFA;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="font-body antialiased text-slate-800">
+<div class="max-w-md mx-auto relative min-h-screen flex flex-col bg-white overflow-hidden">
+<div class="absolute top-0 left-0 right-0 z-20 flex justify-between items-center p-6 pt-12">
+<button class="w-10 h-10 bg-black/20 backdrop-blur-md rounded-full flex items-center justify-center text-white border border-white/20">
+<span class="material-icons-round">arrow_back</span>
+</button>
+<button class="w-10 h-10 bg-black/20 backdrop-blur-md rounded-full flex items-center justify-center text-white border border-white/20">
+<span class="material-icons-round">ios_share</span>
+</button>
+</div>
+<div class="relative h-[50vh] w-full bg-gray-100">
+<div class="flex h-full w-full overflow-x-auto snap-x snap-mandatory no-scrollbar">
+<div class="flex-shrink-0 w-full h-full snap-center">
+<img alt="Pet Image 1" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAgBe_jC2tmKTbwyDQ07ROaCK27VHe2CNnQBPWjRoyj5R4sn3_iGMnxu9nk6T27B2HLpiGNCJsWfRBj__q8_WkXtY5q-di3xPsu9ioZPKKztDFTxfb7L_62Oev0AYnuURujprHtUc7EFPXwF_V9N6OuP2BQz50K4vRMEEsvhXf0oOOy-0R27zPiyVMdWur4rsXaSRWCJKvaSbKE0puBUm2gC_LvyMuwGMGBBFM8qEsrH67u07kMBGaWx5rPBj1II98JdsL38mLJUJk"/>
+</div>
+<div class="flex-shrink-0 w-full h-full snap-center">
+<img alt="Pet Image 2" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBUogRB0Wyag32KPaEKbmgoz2Ed5Yb2sBhlVmsXiKR6c2drl_AXNj--TuMFxdtJzrDOCE-jMH35NZDN-21VjRccLwqe1Ux6cKLIb6FhZenF8Cm1dne_SsVEAtYhv6C0r54WC7QkYRfkJ8oHrBOv5PjqlfWJJvNeAIhDTTxBhDCogb5GktyCmLRxX-SJYv6soMUnihySq6lTeUnKGoQX32lxpuz5gm-fs4n3JdELpnKJMZ9EZc5-poX2c_AsnYZthE0SLFzef3xnbKE"/>
+</div>
+</div>
+<div class="absolute bottom-12 left-0 right-0 flex justify-center gap-1.5 z-10">
+<div class="w-2 h-2 rounded-full bg-white shadow-sm"></div>
+<div class="w-2 h-2 rounded-full bg-white/50"></div>
+<div class="w-2 h-2 rounded-full bg-white/50"></div>
+</div>
+<div class="absolute bottom-0 left-0 right-0 h-10 bg-white rounded-t-[2.5rem] z-20"></div>
+</div>
+<div class="relative z-20 -mt-2 flex-1 bg-white px-6 pb-32">
+<div class="flex justify-between items-start mb-6">
+<div>
+<h1 class="text-3xl font-display font-extrabold text-slate-900 mb-1 tracking-tight">小福</h1>
+<div class="flex items-center gap-4 mt-2">
+<div class="flex items-center gap-1 text-slate-500 font-bold text-sm">
+<span class="material-icons-round text-blue-500 text-lg">male</span>
+                            公 · 2岁
+                        </div>
+<div class="flex items-center gap-1 text-slate-500 font-bold text-sm">
+<span class="material-icons-round text-forest text-lg">location_on</span>
+                            旧金山
+                        </div>
+</div>
+</div>
+<div class="flex flex-col items-center gap-1">
+<img alt="Rescuer" class="w-12 h-12 rounded-full object-cover ring-2 ring-sage shadow-sm" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBUogRB0Wyag32KPaEKbmgoz2Ed5Yb2sBhlVmsXiKR6c2drl_AXNj--TuMFxdtJzrDOCE-jMH35NZDN-21VjRccLwqe1Ux6cKLIb6FhZenF8Cm1dne_SsVEAtYhv6C0r54WC7QkYRfkJ8oHrBOv5PjqlfWJJvNeAIhDTTxBhDCogb5GktyCmLRxX-SJYv6soMUnihySq6lTeUnKGoQX32lxpuz5gm-fs4n3JdELpnKJMZ9EZc5-poX2c_AsnYZthE0SLFzef3xnbKE"/>
+<span class="text-[10px] font-bold text-slate-400">莎莎</span>
+</div>
+</div>
+<div class="flex gap-2 overflow-x-auto no-scrollbar mb-8">
+<div class="flex-shrink-0 bg-forest text-white px-4 py-1.5 rounded-full text-xs font-bold flex items-center gap-1">
+<span class="material-icons-round text-sm">verified</span>
+                    已疫苗
+                </div>
+<div class="flex-shrink-0 bg-forest text-white px-4 py-1.5 rounded-full text-xs font-bold flex items-center gap-1">
+<span class="material-icons-round text-sm">check_circle</span>
+                    已绝育
+                </div>
+<div class="flex-shrink-0 bg-forest text-white px-4 py-1.5 rounded-full text-xs font-bold flex items-center gap-1">
+<span class="material-icons-round text-sm">health_and_safety</span>
+                    已驱虫
+                </div>
+</div>
+<div class="mb-8">
+<h3 class="text-sm font-bold text-slate-400 uppercase tracking-widest mb-4">性格标签</h3>
+<div class="flex flex-wrap gap-2">
+<span class="px-4 py-2 bg-blue-50 text-blue-600 rounded-xl text-sm font-bold">活泼</span>
+<span class="px-4 py-2 bg-pink-50 text-pink-600 rounded-xl text-sm font-bold">粘人</span>
+<span class="px-4 py-2 bg-orange-50 text-orange-600 rounded-xl text-sm font-bold">亲近人</span>
+<span class="px-4 py-2 bg-purple-50 text-purple-600 rounded-xl text-sm font-bold">聪明</span>
+</div>
+</div>
+<div class="space-y-4">
+<h2 class="text-xl font-display font-bold text-slate-900 flex items-center gap-2">
+<span class="w-1.5 h-6 bg-sunflower rounded-full"></span>
+                    关于小福
+                </h2>
+<div class="text-slate-600 leading-relaxed text-sm space-y-3">
+<p>小福是一只充满阳光的小可爱，最喜欢玩捡球游戏啦！☀️ 他是在公园附近被发现的流浪小狗，但很快就适应了家庭生活。他对小朋友超级温柔，和其他狗狗也能愉快相处哦。</p>
+<p>他已经学会了定点上厕所，还懂“坐下”和“等待”这些基本指令。小福正在寻找一个永远的家。</p>
+</div>
+</div>
+</div>
+<div class="fixed bottom-0 left-0 right-0 p-4 pb-8 bg-white/95 backdrop-blur-md border-t border-gray-100 z-50 max-w-md mx-auto">
+<div class="flex items-center gap-3">
+<button class="flex items-center justify-center w-14 h-14 rounded-2xl bg-gray-50 text-slate-400 hover:text-terracotta transition-colors border border-gray-100">
+<span class="material-icons-round text-2xl">favorite_border</span>
+</button>
+<button class="flex-1 bg-sunflower text-slate-900 font-display font-bold text-base py-4 rounded-2xl flex items-center justify-center gap-2 transition-transform active:scale-95 shadow-lg shadow-sunflower/20">
+<span class="material-icons-round text-xl">chat_bubble_outline</span>
+<span>咨询</span>
+</button>
+<button class="flex-[1.5] bg-forest text-white font-display font-bold text-base py-4 rounded-2xl flex items-center justify-center gap-2 transition-transform active:scale-95 shadow-lg shadow-forest/20">
+<span>申请领养</span>
+<span class="material-icons-round text-lg">arrow_forward</span>
+</button>
+</div>
+</div>
+</div>
+
+</body></html>

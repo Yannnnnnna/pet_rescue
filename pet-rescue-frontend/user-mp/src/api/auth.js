@@ -43,6 +43,25 @@ export const phoneLogin = (data) => {
 }
 
 /**
+ * 发送短信验证码
+ * @param {string} phone 手机号
+ * @param {number} type 类型: 1注册登录 2修改绑定 3重置密码 4绑定新手机
+ */
+export const sendSmsCode = (phone, type) => {
+  return request.get('/api/sms/send', { phone, type })
+}
+
+/**
+ * 手机号验证码登录
+ * @param {Object} data 登录信息
+ * @param {string} data.phone 手机号
+ * @param {string} data.code 验证码
+ */
+export const smsLogin = (data) => {
+  return request.post('/sys-user/sms-login', data)
+}
+
+/**
  * 退出登录
  */
 export const logout = () => {
@@ -52,5 +71,7 @@ export const logout = () => {
 export default {
   miniLogin,
   phoneLogin,
+  sendSmsCode,
+  smsLogin,
   logout
 }

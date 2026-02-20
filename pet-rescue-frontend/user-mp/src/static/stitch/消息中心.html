@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>消息中心 - 萌宠领养</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#005339", // Forest Green - updated from #13ec13 to match "deep green" request
+                        "primary-light": "#e6eee9",
+                        "secondary": "#FFD700", // Sunflower Yellow
+                        "background-light": "#ffffff",
+                        "background-dark": "#102210",
+                    },
+                    fontFamily: {
+                        "display": ["Plus Jakarta Sans"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.5rem",
+                        "lg": "1rem",
+                        "xl": "1.5rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+        body {
+            min-height: max(884px, 100dvh);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light min-h-screen font-display">
+<div class="h-12 bg-white flex items-center justify-between px-6 sticky top-0 z-50">
+<span class="text-sm font-bold">9:41</span>
+<div class="flex items-center space-x-1.5">
+<span class="material-icons text-xs">signal_cellular_alt</span>
+<span class="material-icons text-xs">wifi</span>
+<span class="material-icons text-xs rotate-90">battery_full</span>
+</div>
+</div>
+<header class="bg-white px-5 pt-2 pb-6">
+<h1 class="text-2xl font-bold text-slate-900 mb-6">消息中心</h1>
+<div class="bg-slate-50 p-1 rounded-full flex">
+<button class="flex-1 py-2 text-sm font-bold rounded-full bg-white text-slate-900 shadow-sm transition-all">
+                我的咨询
+            </button>
+<button class="flex-1 py-2 text-sm font-bold rounded-full text-slate-400 transition-all">
+                收到消息
+            </button>
+</div>
+</header>
+<main class="bg-white pb-24">
+<div class="px-5 py-5 flex items-start space-x-4 active:bg-slate-50 transition-colors border-b border-slate-50">
+<div class="relative flex-shrink-0">
+<img alt="Avatar" class="w-14 h-14 rounded-full object-cover" data-alt="Golden Retriever puppy portrait looking curious" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCP7wTOXSfkQ9rXLfJrIc3-07IClu3a4GCVmAn5qVAIbKZ5_Pbt8Z_aNylW7JEy8EbCBkRVhLFV3jT7lPaBlYBbblZgNhV0BXV3zhTzLoQmT7jkQ_PbXi4wHFfiqACqi8cHgn4MTR5f9u03LbM-ezPl9rnFpC1PJYCREASngolCh4DqmPv_2Lfb5qEJblVAA65dfjRJp9S3bf3g2uTuQpnldgYtmNJpTkalWvpAsEmA7d7ejbSJG7t1SuRfTV5yJI9TJD7zo-b_kYg"/>
+<span class="absolute bottom-0 right-0 w-3.5 h-3.5 bg-secondary rounded-full border-2 border-white"></span>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between items-center mb-1">
+<div class="flex items-center space-x-2">
+<h3 class="font-bold text-slate-900 truncate">金毛 - 豆豆</h3>
+<span class="px-2 py-0.5 bg-[#e6eee9] text-primary text-[10px] font-bold rounded">咨询中</span>
+</div>
+<span class="text-[10px] text-slate-400">14:20</span>
+</div>
+<p class="text-sm text-slate-500 truncate">你好，请问豆豆平时的饮食有什么禁忌吗？我很喜欢它...</p>
+</div>
+</div>
+<div class="px-5 py-5 flex items-start space-x-4 active:bg-slate-50 transition-colors border-b border-slate-50">
+<div class="relative flex-shrink-0">
+<img alt="Avatar" class="w-14 h-14 rounded-full object-cover" data-alt="Beautiful white and grey cat sitting elegantly" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB1wGPdJZQwfVB1_Ya4eIQvL_BvyNQWJlp0iZCTOeKfwr6WutXpRpyedmb7--nqLToKoGlqD_cRTfc0OedAP7FKNQ91NrkQj1fWf5L_DcWlGpb1FZNvndOtUun7NTzB2Nne052H-MSwMmO1MHTJJqHzNXD0_1swyjuLbiTdNFFFkqDOiHbwDO12aG2NWXvHbQss0RX1c4z2ps7eDrUPFQd4wVPlQDB1HWe5-aTaHW6LfLIBFd8gQl5FXll62bIlVlXfLBZ7wCYKTdk"/>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between items-center mb-1">
+<div class="flex items-center space-x-2">
+<h3 class="font-bold text-slate-900 truncate">流浪猫领养中心</h3>
+<span class="px-2 py-0.5 bg-slate-100 text-slate-400 text-[10px] font-bold rounded">已回访</span>
+</div>
+<span class="text-[10px] text-slate-400">昨天</span>
+</div>
+<p class="text-sm text-slate-400 truncate">感谢您对小白的照顾，领养协议已通过初审。</p>
+</div>
+</div>
+<div class="px-5 py-5 flex items-start space-x-4 active:bg-slate-50 transition-colors border-b border-slate-50">
+<div class="relative flex-shrink-0">
+<img alt="Avatar" class="w-14 h-14 rounded-full object-cover" data-alt="Friendly small dog tilting its head" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAIrMKvYuHJ8zQnVrE0z8Y3N_UkJ7ugpbzPDFqtv5PH3M8wiLUec-uRFhdUs4Bpt9stsmgW03gboyW3MbMqozjTpsvK-R3K5bL3g7Z1d-5HGQAg3xMB9kpUwdLCOC4h36uoRsTMtm3bjuWSyHAbuRaElRpkIszXMmdO9Ey4kIlb_z4-nrEHvGCj7FkGk-Gedgsb1m2r1D9rkEESPZ0ZLgHp8b5F9qRXDgXdBcfukIQ4dSxsIw0AzqwpnZVk-btoOPasNHoSqMfF41U"/>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between items-center mb-1">
+<div class="flex items-center space-x-2">
+<h3 class="font-bold text-slate-900 truncate">柯基 - 乐乐</h3>
+<span class="px-2 py-0.5 bg-[#e6eee9] text-primary text-[10px] font-bold rounded">待预约</span>
+</div>
+<span class="text-[10px] text-slate-400">周三</span>
+</div>
+<p class="text-sm text-slate-400 truncate">您可以本周末下午3点过来基地进行线下互动哦。</p>
+</div>
+</div>
+<div class="px-5 py-5 flex items-start space-x-4 active:bg-slate-50 transition-colors border-b border-slate-50">
+<div class="relative flex-shrink-0">
+<img alt="Avatar" class="w-14 h-14 rounded-full object-cover" data-alt="Funny dog with sunglasses in a playful pose" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDf8MEYPEpJSYlEzp0ej93o5yrhmJwchjVxVkNtTGl9K-FioIfEc89XEkDI6T-_XTfyasbf5ErZ-K3N1pZFrDCTscTjy8nSirvuzn48GM3tCBL8zWL7lBwzrrCfveRLAN3IyQ39S5Z8wcoItjUdBDhiPWHUMVsqVDRLpa6rmt7So2BaAGbpk2WBidWP-HcPZV11NbrpzuSAoqv3BNRTCB3sD4o8Ah0zWKKLDNp1Zuk09msIyWK53cp-HoxjEGkZ3MpGtd4alz805cI"/>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between items-center mb-1">
+<div class="flex items-center space-x-2">
+<h3 class="font-bold text-slate-900 truncate">阳光宠物医院</h3>
+<span class="px-2 py-0.5 bg-slate-100 text-slate-400 text-[10px] font-bold rounded">已结单</span>
+</div>
+<span class="text-[10px] text-slate-400">10月24日</span>
+</div>
+<p class="text-sm text-slate-400 truncate">关于年度疫苗接种的提醒，已经发送至您的邮箱。</p>
+</div>
+</div>
+</main>
+<nav class="fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-md border-t border-slate-100 flex justify-around items-center pt-3 pb-8 z-50">
+<div class="flex flex-col items-center">
+<span class="material-icons text-slate-300">home</span>
+<span class="text-[10px] text-slate-400 font-medium mt-1">首页</span>
+</div>
+<div class="flex flex-col items-center">
+<span class="material-icons text-slate-300">pets</span>
+<span class="text-[10px] text-slate-400 font-medium mt-1">领养</span>
+</div>
+<div class="flex flex-col items-center">
+<div class="relative">
+<span class="material-icons text-[#00c853]">chat_bubble</span>
+<span class="absolute -top-1 -right-1 w-2.5 h-2.5 bg-secondary rounded-full border-2 border-white"></span>
+</div>
+<span class="text-[10px] text-[#00c853] font-bold mt-1">消息</span>
+</div>
+<div class="flex flex-col items-center">
+<span class="material-icons text-slate-300">person</span>
+<span class="text-[10px] text-slate-400 font-medium mt-1">我的</span>
+</div>
+</nav>
+<div class="fixed bottom-1 left-1/2 -translate-x-1/2 w-32 h-1 bg-slate-200 rounded-full z-50"></div>
+
+</body></html>

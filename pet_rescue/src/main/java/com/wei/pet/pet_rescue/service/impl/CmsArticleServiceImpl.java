@@ -4,17 +4,22 @@ import cn.dev33.satoken.stp.StpUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.wei.pet.pet_rescue.common.BizType;
 import com.wei.pet.pet_rescue.entity.CmsArticle;
 import com.wei.pet.pet_rescue.entity.CmsArticleLike;
 import com.wei.pet.pet_rescue.entity.dto.article.ArticleFormDTO;
 import com.wei.pet.pet_rescue.entity.dto.article.ArticleQueryDTO;
+import com.wei.pet.pet_rescue.entity.vo.CheckResultVO;
 import com.wei.pet.pet_rescue.mapper.CmsArticleMapper;
 import com.wei.pet.pet_rescue.service.ICmsArticleLikeService;
 import com.wei.pet.pet_rescue.service.ICmsArticleService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -27,11 +32,15 @@ import org.springframework.util.StringUtils;
  * @since 2026-01-10
  */
 @Service
-
+@RequiredArgsConstructor
+@Slf4j
 public class CmsArticleServiceImpl extends ServiceImpl<CmsArticleMapper, CmsArticle> implements ICmsArticleService {
     @Autowired
     @Lazy
     private ICmsArticleLikeService likeService;
+
+    private final InteractionServiceImpl interactionService;
+
 
     /**
      * 保存文章
@@ -49,9 +58,6 @@ public class CmsArticleServiceImpl extends ServiceImpl<CmsArticleMapper, CmsArti
             String text = article.getContent().replaceAll("<[^>]*>", "");
             article.setSummary(text.length() > 50 ? text.substring(0, 50) + "..." : text);
         }
-
-        // TODO: (Phase 4) 这里后续需要调用 AI 接口，将文章内容向量化并在 VectorDB 中新增/更新
-
         return this.saveOrUpdate(article); // MyBatis-Plus 提供的 saveOrUpdate，根据ID是否有值自动判断
     }
 
@@ -88,24 +94,35 @@ public class CmsArticleServiceImpl extends ServiceImpl<CmsArticleMapper, CmsArti
     @Override
     public CmsArticle getDetail(Long id) {
         CmsArticle article = this.getById(id);
+
         // 增加阅读量 (简单的 +1 操作，高并发下需优化，毕设这样写没问题)
-        if (article != null) {
-            article.setViewCount(article.getViewCount() + 1);
-            this.updateById(article);
-        }
+        interactionService.incrementView(BizType.ARTICLE, id);
+//        if (article != null) {
+//            article.setViewCount(article.getViewCount() + 1);
+//            this.updateById(article);
+//        }
         // 2. 查用户是否点赞
         // (如果没登录，直接设为 false)
-        boolean isLiked = false;
-        Long userId = StpUtil.getLoginIdAsLong();
-        if (userId != null) {
-            long count = likeService.lambdaQuery()
-                    .eq(CmsArticleLike::getArticleId, article.getId())
-                    .eq(CmsArticleLike::getUserId, userId)
-                    .count();
-            isLiked = count > 0;
+        CheckResultVO result = interactionService.getLikeInfo(BizType.ARTICLE, id, StpUtil.getLoginIdAsLong());
+        if (result != null) {
+            log.info("通过redis获取文章点赞信息: {}", result);
+            article.setIsLiked(result.getChecked());
+            article.setLikeCount(Math.toIntExact(result.getCount()));
+        } else {
+            log.info("通过数据库获取文章点赞信息");
+            Long userId = StpUtil.getLoginIdAsLong();
+            boolean isLiked = false;
+            if (userId != null) {
+                long count = likeService.lambdaQuery()
+                        .eq(CmsArticleLike::getArticleId, article.getId())
+                        .eq(CmsArticleLike::getUserId, userId)
+                        .count();
+                isLiked = count > 0;
+            }
+            article.setIsLiked(isLiked);
+            article.setLikeCount(article.getLikeCount() == null ? 0 : article.getLikeCount());
         }
-        article.setIsLiked(isLiked);
-        article.setLikeCount(article.getLikeCount() == null ? 0 : article.getLikeCount());
+
         return article;
     }
 }

@@ -338,8 +338,37 @@ const adoptionPosts = ref([])
 const fetchAdoptionPosts = async () => {
   try {
     const res = await getAdoptionPostList({ pageNum: 1, pageSize: 5 })
-    if (res.data && res.data.records) {
-      adoptionPosts.value = res.data.records
+    if (res.data && Array.isArray(res.data)) {
+      const posts = res.data
+
+      // 异步获取每个帖子的用户信息并处理数据
+      const processedPosts = await Promise.all(posts.map(async (post) => {
+        let userAvatar = '' // 默认头像
+        try {
+          // 获取用户信息
+          const userRes = await getUserDetail(post.userId)
+          if (userRes.data && userRes.data.avatar) {
+            userAvatar = userRes.data.avatar
+          }
+        } catch (e) {
+          console.error(`获取用户 ${post.userId} 信息失败`, e)
+        }
+
+        // 提取封面图 (处理不规范的 images 字符串)
+        const cover = post.images ? post.images.replace(/`/g, '').trim() : ''
+        
+        // 创建简短内容
+        const shortContent = post.content.length > 20 ? post.content.substring(0, 20) + '...' : post.content
+
+        return {
+          ...post,
+          userAvatar,
+          cover,
+          shortContent,
+        }
+      }))
+      
+      adoptionPosts.value = processedPosts
     }
   } catch (error) {
     console.error('获取领养日记失败', error)
@@ -357,6 +386,7 @@ onLoad(() => {
 
 onShow(() => {
   uni.hideTabBar()
+  fetchAdoptionPosts()
 })
 
 onReachBottom(() => {

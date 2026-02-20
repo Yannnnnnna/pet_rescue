@@ -20,10 +20,10 @@ public class AliyunOssUtil {
     @Value("${aliyun.oss.endpoint}")
     private String endpoint;
 
-    @Value("${aliyun.oss.accessKeyId}")
+    @Value("${aliyun.accessKeyId}")
     private String accessKeyId;
 
-    @Value("${aliyun.oss.accessKeySecret}")
+    @Value("${aliyun.accessKeySecret}")
     private String accessKeySecret;
 
     @Value("${aliyun.oss.bucketName}")

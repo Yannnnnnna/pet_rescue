@@ -4,6 +4,7 @@ import cn.dev33.satoken.stp.StpUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.wei.pet.pet_rescue.common.BizType;
 import com.wei.pet.pet_rescue.entity.PetAdoption;
 import com.wei.pet.pet_rescue.entity.PetInfo;
 import com.wei.pet.pet_rescue.entity.SysUser;
@@ -20,6 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -42,6 +44,9 @@ public class PetInfoServiceImpl extends ServiceImpl<PetInfoMapper, PetInfo> impl
     @Lazy
     @Autowired
     private  IPetAdoptionService petAdoptionService;
+
+    private final RedisTemplate<String, Object> redisTemplate;
+    private final InteractionServiceImpl interactionService;
     /**
      * 新增宠物
      * @param petForm
@@ -101,8 +106,10 @@ public class PetInfoServiceImpl extends ServiceImpl<PetInfoMapper, PetInfo> impl
             dto.setDetailImgList(Arrays.asList(pet.getDetailImgs().split(",")));
         }
         // 浏览量增加1
-        pet.setViewCount(pet.getViewCount() + 1); // 浏览量加1
-        this.updateById(pet);
+        interactionService.incrementView(BizType.PET, id);
+        log.info("🚀 通过 InteractionServiceImpl 增加宠物浏览量，ID: {}", id);
+//        pet.setViewCount(pet.getViewCount() + 1); // 浏览量加1
+//        this.updateById(pet);
         return dto;
     }
     /**

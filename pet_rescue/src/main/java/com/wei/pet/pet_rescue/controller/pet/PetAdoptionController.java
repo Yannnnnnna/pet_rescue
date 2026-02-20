@@ -4,6 +4,7 @@ package com.wei.pet.pet_rescue.controller.pet;
 import cn.dev33.satoken.stp.StpUtil;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.wei.pet.pet_rescue.common.NoRepeatSubmit;
 import com.wei.pet.pet_rescue.common.Result;
 import com.wei.pet.pet_rescue.entity.PetAdoption;
 import com.wei.pet.pet_rescue.entity.dto.adopt.AdoptionApplyDTO;
@@ -18,6 +19,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -38,9 +40,12 @@ import java.util.List;
 public class PetAdoptionController {
 
     private final IPetAdoptionService adoptionService;
+    private final RedisTemplate redisTemplate;
+    private static final String  MY_ADOPTED_PETS_CACHE = "my:adopted:pets";
 
     @Operation(summary = "提交领养申请")
     @PostMapping("/apply")
+    @NoRepeatSubmit(lockTime = 5) // 5秒内同一用户不能重复提交
     public Result<Boolean> apply(@RequestBody @Validated AdoptionApplyDTO dto) {
         try {
             return Result.success(adoptionService.apply(dto));
@@ -142,6 +147,7 @@ public class PetAdoptionController {
     @PostMapping("/sign")
     @Operation(summary = "用户签署领养协议")
     public Result<Boolean> signAgreement(@RequestBody SignRequestDTO req) {
+        redisTemplate.delete(MY_ADOPTED_PETS_CACHE);
         return Result.success(adoptionService.signAgreement(req));
     }
 

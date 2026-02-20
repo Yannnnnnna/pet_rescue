@@ -30,4 +30,6 @@ public interface ISysUserService extends IService<SysUser> {
     String loginByPhone(String phone, String password);
 
     AdminDashboardVO getDashboardData();
+
+    String loginBySMS(String phone, String code);
 }

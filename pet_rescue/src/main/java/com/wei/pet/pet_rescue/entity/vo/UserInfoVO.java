@@ -3,6 +3,8 @@ package com.wei.pet.pet_rescue.entity.vo;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
+import java.time.LocalDateTime;
+
 /**
  * @author wyr on 2026/1/26
  */
@@ -34,4 +36,7 @@ public class UserInfoVO {
 
     @Schema(description = "是否已设置密码")
     private Boolean hasPassword;
+
+    @Schema(description = "创建时间")
+    private LocalDateTime createTime;
 }

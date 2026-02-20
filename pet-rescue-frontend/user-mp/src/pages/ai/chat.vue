@@ -11,7 +11,7 @@
       <view class="msg-item" v-for="(msg, index) in msgList" :key="msg.id || index" :id="'msg-' + index">
         <!-- AI 消息 -->
         <view v-if="msg.role === 'assistant' || msg.role === 'system'" class="msg-row msg-left">
-          <view class="avatar ai-avatar">🤖</view>
+          <image src="../../static/机器人.png" class="avatar ai-avatar" mode="aspectFill"></image>
           <view class="msg-content ai-content">
             <up-parse :content="renderMarkdown(msg.content)" :selectable="true"></up-parse>
             <view v-if="msg.isThinking" class="thinking-dots">
@@ -38,14 +38,14 @@
       <view class="pet-tag-content">
         <image :src="selectedPet.cover || '/static/default-pet.png'" class="pet-tag-img" mode="aspectFill" @error="handleImageError"></image>
         <text class="pet-tag-name">正在咨询：{{ selectedPet.name }}</text>
-        <view class="pet-tag-close" @click="clearPet">×</view>
+        <uni-icons type="arrow-up" size="18" color="#666"></uni-icons>
       </view>
     </view>
 
     <!-- 底部输入区域 -->
     <view class="input-area">
       <view class="add-pet-btn" @click="showPetPicker">
-        <text class="add-icon">+</text>
+        <uni-icons type="plus" color="#2E7D32" size="24"></uni-icons>
       </view>
       <view class="input-box">
         <textarea 
@@ -64,17 +64,19 @@
         @click="handleSend"
         :disabled="!inputContent.trim() || isGenerating"
       >
-        <text v-if="!isGenerating">发送</text>
+        <uni-icons v-if="!isGenerating" type="paperplane-filled" color="#000" size="22"></uni-icons>
         <view v-else class="loading-spinner"></view>
       </button>
     </view>
 
     <!-- 宠物选择底部弹窗 -->
-    <view class="pet-picker-mask" v-if="showPetPickerFlag" @click="hidePetPicker">
+    <view class="pet-picker-mask" :class="{ 'visible': showPetPickerFlag }" @click="hidePetPicker">
       <view class="pet-picker-content" @click.stop>
         <view class="picker-header">
           <text class="picker-title">选择咨询的宠物</text>
-          <text class="picker-close" @click="hidePetPicker">×</text>
+          <view class="picker-close" @click="hidePetPicker">
+            <uni-icons type="closeempty" size="20" color="#999"></uni-icons>
+          </view>
         </view>
         <scroll-view scroll-y class="pet-list-scroll">
           <view class="pet-list">
@@ -91,7 +93,7 @@
                 <text class="pet-item-breed">{{ pet.breed || '未知品种' }}</text>
               </view>
               <view v-if="selectedPet && selectedPet.id === pet.id" class="pet-item-check">
-                <text>✓</text>
+                <uni-icons type="checkmarkempty" color="#fff" size="14"></uni-icons>
               </view>
             </view>
             <view v-if="myPets.length === 0" class="pet-empty">
@@ -294,11 +296,19 @@ const handleSend = () => {
 </script>
 
 <style lang="scss" scoped>
+$uni-color-primary: #2e7d32; // 主题绿色
+$uni-color-warning: #f2d00d; // 主题黄色
+$uni-bg-color: #f8f8f5; // 页面背景色
+$uni-bg-color-grey: #f4f4f4; // 灰色背景
+$uni-text-color: #333; // 主要文字颜色
+$uni-text-color-inverse: #fff; // 反色文字
+$uni-text-color-placeholder: #999; // 占位文字颜色
+
 .chat-page {
   height: 100vh;
   display: flex;
   flex-direction: column;
-  background-color: #f5f5f5;
+  background-color: $uni-bg-color;
 }
 
 .msg-list {
@@ -341,8 +351,7 @@ const handleSend = () => {
 }
 
 .ai-avatar {
-  background-color: #7c3aed;
-  color: #fff;
+  background-color: #fff;
 }
 
 .user-avatar {
@@ -366,7 +375,7 @@ const handleSend = () => {
 }
 
 .user-content {
-  background-color: #7c3aed;
+  background-color: $uni-color-primary;
   color: #fff;
   border-top-right-radius: 4rpx;
 }
@@ -403,7 +412,7 @@ const handleSend = () => {
     display: flex;
     align-items: center;
     gap: 16rpx;
-    background: #f3e8ff;
+    background: #eef7ee;
     padding: 12rpx 20rpx;
     border-radius: 40rpx;
   }
@@ -417,7 +426,7 @@ const handleSend = () => {
   .pet-tag-name {
     flex: 1;
     font-size: 26rpx;
-    color: #7c3aed;
+    color: $uni-color-primary;
     font-weight: 500;
   }
   
@@ -450,7 +459,7 @@ const handleSend = () => {
 .add-pet-btn {
   width: 72rpx;
   height: 72rpx;
-  background: #f3e8ff;
+  background: $uni-bg-color-grey;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -459,19 +468,19 @@ const handleSend = () => {
   
   .add-icon {
     font-size: 40rpx;
-    color: #7c3aed;
+    color: $uni-color-primary;
     font-weight: 300;
     line-height: 1;
   }
   
   &:active {
-    background: #e9d5ff;
+    background: darken($uni-bg-color-grey, 5%);
   }
 }
 
 .input-box {
   flex: 1;
-  background-color: #f5f5f5;
+  background-color: $uni-bg-color-grey;
   border-radius: 40rpx;
   padding: 16rpx 24rpx;
   min-height: 40rpx;
@@ -486,8 +495,8 @@ const handleSend = () => {
 .send-btn {
   width: 120rpx;
   height: 72rpx;
-  background-color: #7c3aed;
-  color: #fff;
+  background-color: $uni-color-warning;
+  color: $uni-text-color;
   border-radius: 36rpx;
   font-size: 28rpx;
   display: flex;
@@ -497,7 +506,7 @@ const handleSend = () => {
   margin: 0;
   
   &.disabled {
-    background-color: #d8b4fe;
+    background-color: #fceeb5;
     opacity: 0.7;
   }
   
@@ -507,12 +516,12 @@ const handleSend = () => {
 }
 
 .loading-spinner {
-  width: 32rpx;
-  height: 32rpx;
-  border: 3rpx solid #fff;
-  border-top-color: transparent;
+  width: 40rpx;
+  height: 40rpx;
+  border: 4rpx solid rgba(0, 0, 0, 0.2);
+  border-left-color: #000;
   border-radius: 50%;
-  animation: spin 0.8s linear infinite;
+  animation: spin 1s linear infinite;
 }
 
 @keyframes spin {
@@ -525,24 +534,40 @@ const handleSend = () => {
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.4);
   z-index: 999;
   display: flex;
   align-items: flex-end;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+  
+  &.visible {
+    opacity: 1;
+    pointer-events: auto;
+    
+    .pet-picker-content {
+      transform: translateY(0);
+    }
+  }
 }
 
 .pet-picker-content {
   width: 100%;
   max-height: 80vh;
   background: #fff;
-  border-radius: 32rpx 32rpx 0 0;
+  border-radius: 24rpx 24rpx 0 0;
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  padding-bottom: constant(safe-area-inset-bottom);
+  padding-bottom: env(safe-area-inset-bottom);
+  transform: translateY(100%);
+  transition: transform 0.3s ease;
 }
 
 .picker-header {
-  padding: 30rpx;
+  padding: 32rpx;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -551,7 +576,7 @@ const handleSend = () => {
   .picker-title {
     font-size: 32rpx;
     font-weight: 600;
-    color: #333;
+    color: $uni-text-color;
   }
   
   .picker-close {
@@ -560,8 +585,8 @@ const handleSend = () => {
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 48rpx;
-    color: #999;
+    font-size: 40rpx;
+    color: $uni-text-color-placeholder;
     
     &:active {
       color: #666;
@@ -581,16 +606,17 @@ const handleSend = () => {
 .pet-item {
   display: flex;
   align-items: center;
-  gap: 20rpx;
-  padding: 20rpx;
+  gap: 24rpx;
+  padding: 24rpx;
   border-radius: 20rpx;
-  margin-bottom: 16rpx;
+  margin-bottom: 20rpx;
   background: #f8f9fa;
   transition: all 0.2s;
+  border: 2rpx solid transparent;
   
   &.active {
-    background: #f3e8ff;
-    border: 2rpx solid #7c3aed;
+    background: #eef7ee;
+    border-color: $uni-color-primary;
   }
   
   &:active {
@@ -619,35 +645,35 @@ const handleSend = () => {
   .pet-item-name {
     font-size: 30rpx;
     font-weight: 600;
-    color: #333;
+    color: $uni-text-color;
   }
   
   .pet-item-breed {
-    font-size: 24rpx;
-    color: #999;
+    font-size: 26rpx;
+    color: #666;
   }
   
   .pet-item-check {
-    width: 48rpx;
-    height: 48rpx;
-    background: #7c3aed;
+    width: 40rpx;
+    height: 40rpx;
+    background: $uni-color-primary;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #fff;
-    font-size: 28rpx;
+    color: $uni-text-color-inverse;
+    font-size: 24rpx;
     font-weight: bold;
   }
 }
 
 .pet-empty {
-  padding: 100rpx 0;
+  padding: 80rpx 0;
   text-align: center;
   
   text {
     font-size: 28rpx;
-    color: #999;
+    color: $uni-text-color-placeholder;
   }
 }
 </style>

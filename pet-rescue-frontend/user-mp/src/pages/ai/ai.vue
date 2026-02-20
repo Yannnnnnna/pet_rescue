@@ -106,7 +106,7 @@ const formatTime = (time) => {
 <style lang="scss" scoped>
 .ai-page {
   height: 100vh;
-  background-color: #f8f9fa;
+  background-color: #f8f8f5;
   display: flex;
   flex-direction: column;
 }
@@ -127,7 +127,7 @@ const formatTime = (time) => {
 }
 
 .add-btn {
-  background: #7c3aed;
+  background: #2E7D32;
   color: #fff;
   padding: 12rpx 24rpx;
   border-radius: 40rpx;
@@ -136,7 +136,7 @@ const formatTime = (time) => {
   gap: 8rpx;
   font-size: 26rpx;
   font-weight: 500;
-  box-shadow: 0 4rpx 12rpx rgba(124, 58, 237, 0.3);
+  box-shadow: 0 4rpx 12rpx rgba(46, 125, 50, 0.3);
   
   &:active {
     transform: scale(0.96);
@@ -179,7 +179,7 @@ const formatTime = (time) => {
 .session-icon {
   width: 88rpx;
   height: 88rpx;
-  background: #f3e8ff;
+  background: #eef7ee;
   border-radius: 50%;
   display: flex;
   align-items: center;

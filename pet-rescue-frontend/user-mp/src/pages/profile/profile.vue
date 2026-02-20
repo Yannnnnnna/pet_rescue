@@ -1,128 +1,198 @@
 <template>
   <view class="profile-page">
-    <!-- 顶部装饰背景 -->
-    <view class="header-bg"></view>
-
-    <!-- 内容区域 -->
-    <view class="content-wrapper">
-      <!-- 1. 用户信息卡片 (悬浮样式) -->
-      <view class="user-card">
-        <view class="user-main" @click="handleEditInfo">
-          <view class="avatar-wrapper">
+    <scroll-view 
+      class="scroll-container" 
+      scroll-y 
+      :scroll-top="scrollTop"
+      @scroll="onScroll"
+    >
+      <view class="header-section">
+        <view class="header-pattern"></view>
+        <view class="header-decor decor-1"></view>
+        <view class="header-decor decor-2"></view>
+        
+        <view class="user-info-area">
+          <view class="avatar-box" @click.stop="handleAvatarClick">
             <image 
               class="avatar" 
               :src="userInfo.avatar || '/static/logo.png'" 
               mode="aspectFill"
-              @click.stop="handleAvatarClick"
             />
-            <view class="edit-badge">
-              <u-icon name="camera-fill" color="#fff" size="12"></u-icon>
-  </view>
+            <view class="avatar-edit-btn">
+              <uni-icons type="camera-filled" size="14" color="#2E7D32"></uni-icons>
+            </view>
           </view>
           
-          <view class="user-meta">
-            <view class="name-row">
-              <text class="nickname">{{ userInfo.nickname || '登录/注册' }}</text>
-              <u-icon name="edit-pen" color="#fff" size="18" v-if="userInfo.nickname"></u-icon>
+          <view class="user-name">{{ userInfo.nickname || '登录/注册' }}</view>
+          <view class="user-tags">
+            <view class="tag-item primary" v-if="userInfo.nickname">
+              <uni-icons type="checkbox-filled" size="14" color="#FFD600"></uni-icons>
+              <text>爱心领养人</text>
             </view>
-            <text class="phone-text">{{ userInfo.phone || '点击完善个人信息' }}</text>
-          </view>
-
-          <view class="coin-pill">
-            <image src="../../static/小鱼干.png" style="width: 32rpx; height: 32rpx;" mode="aspectFit"></image>
-            <text class="coin-val">{{ userInfo.coin || 0 }} 小鱼干</text>
-          </view>
-        </view>
-
-        <!-- 装饰波浪 -->
-        <view class="card-wave"></view>
-      </view>
-
-      <!-- 2. 领养中心 -->
-      <view class="panel-card">
-        <view class="panel-header">
-          <text class="panel-title">领养中心</text>
-          <text class="panel-tag">我是领养人</text>
-        </view>
-        <view class="grid-box">
-          <view class="grid-item" @click="handleApplyHistory">
-            <view class="icon-circle blue">
-              <u-icon name="file-text-fill" color="#2979ff" size="28"></u-icon>
+            <view class="tag-item plain">
+              <text>{{ joinYear }}年加入</text>
             </view>
-            <text class="grid-label">申请记录</text>
-          </view>
-          <view class="grid-item" @click="handleMyAdoptedPets">
-            <view class="icon-circle orange">
-              <u-icon name="home-fill" color="#ff9c00" size="28"></u-icon>
-            </view>
-            <text class="grid-label">我的宠物</text>
-          </view>
-          <view class="grid-item" @click="handleMyChats">
-            <view class="icon-circle green">
-              <u-icon name="chat-fill" color="#19be6b" size="28"></u-icon>
-            </view>
-            <text class="grid-label">咨询足迹</text>
-          </view>
-          <view class="grid-item" @click="handleMyFavorites">
-            <view class="icon-circle pink">
-              <u-icon name="star-fill" color="#ff4d4f" size="28"></u-icon>
-            </view>
-            <text class="grid-label">我的收藏</text>
           </view>
         </view>
       </view>
 
-      <!-- 3. 送养管理 -->
-      <view class="panel-card">
-        <view class="panel-header">
-          <text class="panel-title">送养管理</text>
-          <text class="panel-tag orange">我是送养人</text>
+      <view class="content-area">
+      <view class="stats-card">
+        <view class="stat-item" @click="handleMyPets">
+          <text class="stat-num">{{ publishedCount }}</text>
+          <text class="stat-label">我的发布</text>
         </view>
-        <view class="grid-box left-align">
-          <view class="grid-item" @click="handleMyPets">
-            <view class="icon-circle purple">
-              <u-icon name="wofabude" custom-prefix="custom-icon" color="#a0cfff" size="28"></u-icon>
+        <view class="stat-divider"></view>
+        <view class="stat-item highlight" @click="handleMyAdoptedPets">
+          <text class="stat-num">{{ adoptedCount }}</text>
+          <text class="stat-label">已领养</text>
+        </view>
+        <view class="stat-divider"></view>
+        <view class="stat-item">
+          <text class="stat-num">{{ userInfo.coin || 0 }}</text>
+          <text class="stat-label">小鱼干</text>
+        </view>
+      </view>
+
+      <view class="section-block">
+        <view class="section-header">
+          <view class="section-indicator"></view>
+          <text class="section-title">领养中心</text>
+          <text class="section-tag">我是领养人</text>
+        </view>
+        
+        <view class="service-grid">
+          <view class="service-item" @click="handleApplyHistory">
+            <view class="service-icon orange">
+              <u-icon name="shenqing" custom-prefix="custom-icon" size="22" color="#E65100"></u-icon>
             </view>
-            <text class="grid-label">我发布的</text>
+            <view class="service-info">
+              <text class="service-name">领养申请</text>
+              <text class="service-desc">查看历史记录</text>
+            </view>
           </view>
-          <view class="grid-item" @click="handleTodoAudit">
-            <view class="icon-circle cyan">
-              <u-icon name="daibanshenhe" custom-prefix="custom-icon" color="#19be6b" size="28"></u-icon>
+          
+          <view class="service-item" @click="handleMyAdoptedPets">
+            <view class="service-icon blue">
+              <u-icon name="wodechongwu" custom-prefix="custom-icon" size="22" color="#1976D2"></u-icon>
             </view>
-            <text class="grid-label">待办审核</text>
+            <view class="service-info">
+              <text class="service-name">我的宠物</text>
+              <text class="service-desc">已领养的宝贝</text>
+            </view>
+          </view>
+          
+          <view class="service-item" @click="handleMyChats">
+            <view class="service-icon green">
+              <u-icon name="paw" custom-prefix="custom-icon" size="22" color="#2E7D32"></u-icon>
+            </view>
+            <view class="service-info">
+              <text class="service-name">咨询足迹</text>
+              <text class="service-desc">聊天记录</text>
+            </view>
+          </view>
+          
+          <view class="service-item" @click="handleMyFavorites">
+            <view class="service-icon purple">
+              <u-icon name="shoucang" custom-prefix="custom-icon" size="22" color="#7B1FA2"></u-icon>
+            </view>
+            <view class="service-info">
+              <text class="service-name">我的收藏</text>
+              <text class="service-desc">收藏的萌宠</text>
+            </view>
           </view>
         </view>
       </view>
 
-      <!-- 4. 常用功能 -->
-      <view class="panel-card menu-card">
-        <view class="menu-list">
-          <view class="menu-item" @click="handleSettings">
-            <view class="menu-left">
-              <u-icon name="setting-fill" color="#909399" size="24"></u-icon>
-              <text class="menu-text">账号设置 (修改密码)</text>
+      <view class="section-block">
+        <view class="section-header">
+          <view class="section-indicator orange"></view>
+          <text class="section-title">送养管理</text>
+          <text class="section-tag orange">我是送养人</text>
+        </view>
+        
+        <view class="service-grid two-col">
+          <view class="service-item" @click="handleMyPets">
+            <view class="service-icon cyan">
+              <u-icon name="wofabude" custom-prefix="custom-icon" size="22" color="#00838F"></u-icon>
             </view>
-            <u-icon name="arrow-right" color="#c0c4cc" size="14"></u-icon>
+            <view class="service-info">
+              <text class="service-name">我发布的</text>
+              <text class="service-desc">送养信息</text>
+            </view>
           </view>
-          <view class="menu-item" @click="handleAbout">
-            <view class="menu-left">
-              <u-icon name="info-circle-fill" color="#909399" size="24"></u-icon>
-              <text class="menu-text">关于我们</text>
+          
+          <view class="service-item" @click="handleTodoAudit">
+            <view class="service-icon pink">
+              <u-icon name="daibanshenhe" custom-prefix="custom-icon" size="22" color="#C2185B"></u-icon>
             </view>
-            <u-icon name="arrow-right" color="#c0c4cc" size="14"></u-icon>
-          </view>
-          <view class="menu-item no-border" @click="handleLogout">
-            <view class="menu-left">
-              <u-icon name="backspace" color="#fa3534" size="24"></u-icon>
-              <text class="menu-text" style="color: #fa3534;">退出登录</text>
+            <view class="service-info">
+              <text class="service-name">待办审核</text>
+              <text class="service-desc">处理申请</text>
             </view>
-            <u-icon name="arrow-right" color="#c0c4cc" size="14"></u-icon>
           </view>
         </view>
       </view>
-    </view>
 
-    <!-- 弹窗部分保持不变 -->
+      <view class="achievement-card" v-if="adoptedCount > 0">
+        <view class="achievement-icon">
+          <uni-icons type="medal-filled" size="28" color="#2E7D32"></uni-icons>
+        </view>
+        <view class="achievement-content">
+          <text class="achievement-title">您的公益足迹</text>
+          <text class="achievement-desc">您已帮助 <text class="highlight-num">{{ adoptedCount }}</text> 只宠物找到新家！</text>
+        </view>
+        <view class="achievement-arrow">
+          <uni-icons type="right" size="18" color="#E65100"></uni-icons>
+        </view>
+        <view class="achievement-bg-icon">
+          <uni-icons type="heart-filled" size="80" color="#FFD600"></uni-icons>
+        </view>
+      </view>
+
+      <view class="menu-card">
+        <view class="menu-item" @click="handleBindPhone">
+          <view class="menu-icon">
+            <uni-icons type="phone-filled" size="20" color="#909399"></uni-icons>
+          </view>
+          <text class="menu-text">{{ userInfo.phone ? '修改手机号' : '绑定手机号' }}</text>
+          <view class="menu-right">
+            <text class="menu-value">{{ userInfo.phone || '未绑定' }}</text>
+            <uni-icons type="right" size="16" color="#c0c4cc"></uni-icons>
+          </view>
+        </view>
+        
+        <view class="menu-item" @click="handleSettings">
+          <view class="menu-icon">
+            <u-icon name="shezhi" custom-prefix="custom-icon" size="20" color="#909399"></u-icon>
+          </view>
+          <text class="menu-text">账号设置</text>
+          <uni-icons type="right" size="16" color="#c0c4cc"></uni-icons>
+        </view>
+        
+        <view class="menu-item" @click="handleAbout">
+          <view class="menu-icon">
+            <u-icon name="guanyu" custom-prefix="custom-icon" size="20" color="#909399"></u-icon>
+          </view>
+          <text class="menu-text">关于我们</text>
+          <uni-icons type="right" size="16" color="#c0c4cc"></uni-icons>
+        </view>
+        
+        <view class="menu-item logout" @click="handleLogout">
+          <view class="menu-icon">
+            <u-icon name="tuichu" custom-prefix="custom-icon" size="20" color="#fa3534"></u-icon>
+          </view>
+          <text class="menu-text" style="color: #fa3534;">退出登录</text>
+          <uni-icons type="right" size="16" color="#c0c4cc"></uni-icons>
+        </view>
+      </view>
+
+        <view class="version-info">
+          <text>Version 1.0.0 · Made with love for pets</text>
+        </view>
+      </view>
+    </scroll-view>
+
     <u-popup :show="showEditPopup" @close="showEditPopup = false" mode="center" :round="20">
       <view class="edit-popup">
         <view class="popup-title">编辑资料</view>
@@ -130,13 +200,36 @@
           <text class="form-label">昵称</text>
           <input class="form-input" v-model="editForm.nickname" placeholder="请输入昵称" maxlength="20"/>
         </view>
-        <view class="form-item">
-          <text class="form-label">手机号</text>
-          <input class="form-input" v-model="editForm.phone" placeholder="请输入手机号" type="number" maxlength="11"/>
-        </view>
         <view class="popup-buttons">
           <button class="popup-btn cancel" @click="showEditPopup = false">取消</button>
           <button class="popup-btn confirm" @click="handleSaveEdit">保存</button>
+        </view>
+      </view>
+    </u-popup>
+
+    <u-popup :show="showPhonePopup" @close="closePhonePopup" mode="center" :round="20">
+      <view class="edit-popup phone-popup">
+        <view class="popup-title">{{ userInfo.phone ? '修改手机号' : '绑定手机号' }}</view>
+        <view class="form-item">
+          <text class="form-label">新手机号</text>
+          <input class="form-input" v-model="phoneForm.phone" placeholder="请输入新手机号" type="number" maxlength="11"/>
+        </view>
+        <view class="form-item">
+          <text class="form-label">验证码</text>
+          <view class="code-input-row">
+            <input class="form-input code-input" v-model="phoneForm.code" placeholder="请输入验证码" type="number" maxlength="6"/>
+            <button 
+              class="code-btn" 
+              :disabled="phoneCountdown > 0 || sendingPhoneCode"
+              @click="handleSendPhoneCode"
+            >
+              {{ phoneCountdown > 0 ? `${phoneCountdown}s` : (sendingPhoneCode ? '发送中...' : '获取验证码') }}
+            </button>
+          </view>
+        </view>
+        <view class="popup-buttons">
+          <button class="popup-btn cancel" @click="closePhonePopup">取消</button>
+          <button class="popup-btn confirm" @click="handleSavePhone">确认</button>
         </view>
       </view>
     </u-popup>
@@ -167,40 +260,60 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, onUnmounted, computed } from 'vue'
 import { onShow } from '@dcloudio/uni-app'
 import { getMyInfo, updateUserInfo, updatePassword, uploadImage } from '@/api/user'
-import { miniLogin, phoneLogin, logout } from '@/api/auth'
+import { sendSmsCode, logout } from '@/api/auth'
 import { checkLogin } from '@/utils/auth'
 
-// 用户信息
 const userInfo = ref({
   nickname: '',
   avatar: '',
   phone: '',
   coin: 0,
-  hasPassword: false
+  hasPassword: false,
+  createTime: ''
 })
 
-// 编辑表单
+const joinYear = computed(() => {
+  if (userInfo.value.createTime) {
+    return new Date(userInfo.value.createTime).getFullYear()
+  }
+  return new Date().getFullYear()
+})
+
+const publishedCount = ref(0)
+const adoptedCount = ref(0)
+
 const editForm = ref({
   nickname: '',
-  phone: '',
   avatar: ''
 })
 
-// 密码表单
+const phoneForm = ref({
+  phone: '',
+  code: ''
+})
+
 const passwordForm = ref({
   oldPassword: '',
   newPassword: '',
   confirmPassword: ''
 })
 
-// 弹窗状态
 const showEditPopup = ref(false)
+const showPhonePopup = ref(false)
 const showPasswordPopup = ref(false)
 
-// 修改/设置密码
+const scrollTop = ref(0)
+const onScroll = (e) => {
+  scrollTop.value = e.detail.scrollTop
+}
+
+const phoneCountdown = ref(0)
+const sendingPhoneCode = ref(false)
+let phoneTimer = null
+
 const handleChangePassword = () => {
   passwordForm.value = {
     oldPassword: '',
@@ -210,9 +323,7 @@ const handleChangePassword = () => {
   showPasswordPopup.value = true
 }
 
-// 保存密码
 const handleSavePassword = async () => {
-  // 只有已设置过密码才需要验证旧密码
   if (userInfo.value.hasPassword && !passwordForm.value.oldPassword) {
     uni.showToast({ title: '请输入旧密码', icon: 'none' })
     return
@@ -253,7 +364,6 @@ const handleSavePassword = async () => {
   }
 }
 
-// 获取个人信息
 const loadUserInfo = async () => {
   try {
     const res = await getMyInfo()
@@ -265,7 +375,6 @@ const loadUserInfo = async () => {
   }
 }
 
-// 点击头像
 const handleAvatarClick = () => {
   uni.chooseImage({
     count: 1,
@@ -288,25 +397,17 @@ const handleAvatarClick = () => {
   })
 }
 
-// 编辑资料
 const handleEditInfo = () => {
   editForm.value = {
     nickname: userInfo.value.nickname || '',
-    phone: userInfo.value.phone || '',
     avatar: userInfo.value.avatar || ''
   }
   showEditPopup.value = true
 }
 
-// 保存编辑
 const handleSaveEdit = async () => {
   if (!editForm.value.nickname) {
     uni.showToast({ title: '请输入昵称', icon: 'none' })
-    return
-  }
-  
-  if (editForm.value.phone && !/^1[3-9]\d{9}$/.test(editForm.value.phone)) {
-    uni.showToast({ title: '请输入正确的手机号', icon: 'none' })
     return
   }
   
@@ -323,7 +424,90 @@ const handleSaveEdit = async () => {
   }
 }
 
-// 退出登录
+const handleBindPhone = () => {
+  phoneForm.value = {
+    phone: '',
+    code: ''
+  }
+  showPhonePopup.value = true
+}
+
+const closePhonePopup = () => {
+  showPhonePopup.value = false
+  if (phoneTimer) {
+    clearInterval(phoneTimer)
+    phoneTimer = null
+  }
+  phoneCountdown.value = 0
+}
+
+const startPhoneCountdown = () => {
+  phoneCountdown.value = 60
+  phoneTimer = setInterval(() => {
+    phoneCountdown.value--
+    if (phoneCountdown.value <= 0) {
+      clearInterval(phoneTimer)
+      phoneTimer = null
+    }
+  }, 1000)
+}
+
+const handleSendPhoneCode = async () => {
+  if (sendingPhoneCode.value || phoneCountdown.value > 0) return
+  
+  if (!phoneForm.value.phone) {
+    return uni.showToast({ title: '请输入手机号', icon: 'none' })
+  }
+  
+  if (!/^1[3-9]\d{9}$/.test(phoneForm.value.phone)) {
+    return uni.showToast({ title: '请输入正确的手机号', icon: 'none' })
+  }
+  
+  sendingPhoneCode.value = true
+  try {
+    await sendSmsCode(phoneForm.value.phone, 2)
+    uni.showToast({ title: '验证码已发送', icon: 'success' })
+    startPhoneCountdown()
+  } catch (error) {
+    console.error('发送验证码失败:', error)
+    uni.showToast({
+      title: error?.message || '发送失败',
+      icon: 'none'
+    })
+  } finally {
+    sendingPhoneCode.value = false
+  }
+}
+
+const handleSavePhone = async () => {
+  if (!phoneForm.value.phone) {
+    return uni.showToast({ title: '请输入手机号', icon: 'none' })
+  }
+  
+  if (!/^1[3-9]\d{9}$/.test(phoneForm.value.phone)) {
+    return uni.showToast({ title: '请输入正确的手机号', icon: 'none' })
+  }
+  
+  if (!phoneForm.value.code) {
+    return uni.showToast({ title: '请输入验证码', icon: 'none' })
+  }
+  
+  try {
+    uni.showLoading({ title: '保存中...' })
+    await updateUserInfo({
+      phone: phoneForm.value.phone,
+      code: phoneForm.value.code
+    })
+    showPhonePopup.value = false
+    uni.showToast({ title: '手机号绑定成功', icon: 'success' })
+    await loadUserInfo()
+  } catch (error) {
+    console.error('绑定失败:', error)
+  } finally {
+    uni.hideLoading()
+  }
+}
+
 const handleLogout = () => {
   uni.showModal({
     title: '提示',
@@ -343,34 +527,26 @@ const handleLogout = () => {
   })
 }
 
-// Placeholder functions
-// 申请记录
 const handleApplyHistory = () => {
   uni.navigateTo({ url: '/pages/adoption/my-history' })
 }
 
-// 我的已领养宠物
 const handleMyAdoptedPets = () => {
-  // 跳转到专属的"我的爱宠"页面
   uni.navigateTo({ url: '/pages/pet/my-adopted' })
 }
 
-// 我的收藏
 const handleMyFavorites = () => {
   uni.navigateTo({ url: '/pages/pet/my-favorite' })
 }
 
-// 我发布的宠物
 const handleMyPets = () => {
   uni.navigateTo({ url: '/pages/pet/my-list?type=published' })
 }
 
-// 我沟通过的宠物
 const handleMyChats = () => {
   uni.navigateTo({ url: '/pages/pet/my-list?type=chatted' })
 }
 
-// 待办审核
 const handleTodoAudit = () => {
   uni.navigateTo({ url: '/pages/adoption/audit-list' })
 }
@@ -385,263 +561,454 @@ onMounted(() => {
 onShow(() => {
   uni.hideTabBar()
 })
+
+onUnmounted(() => {
+  if (phoneTimer) {
+    clearInterval(phoneTimer)
+    phoneTimer = null
+  }
+})
 </script>
 
 <style lang="scss" scoped>
 .profile-page {
-  min-height: 100vh;
+  height: 100vh;
   background-color: #f8f9fa;
-  position: relative;
+  display: flex;
+  flex-direction: column;
 }
 
-.header-bg {
+.scroll-container {
+  flex: 1;
+  height: 100%;
+}
+
+.header-section {
+  position: relative;
+  background: linear-gradient(135deg, #2E7D32 0%, #1B5E20 100%);
+  padding: 80rpx 40rpx 100rpx;
+  border-radius: 0 0 60rpx 60rpx;
+  overflow: hidden;
+}
+
+.header-pattern {
   position: absolute;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 480rpx;
-  background: linear-gradient(180deg, #19be6b 0%, #19be6b 60%, rgba(25, 190, 107, 0) 100%);
-  z-index: 0;
+  right: 0;
+  bottom: 0;
+  background-image: radial-gradient(circle, rgba(255,255,255,0.08) 1px, transparent 1px);
+  background-size: 20px 20px;
+  opacity: 0.5;
 }
 
-.content-wrapper {
-  position: relative;
-  z-index: 1;
-  padding: 0 30rpx;
-  padding-top: 150rpx; /* 给头部留出空间 */
-  padding-bottom: 50rpx;
-}
-
-/* 用户卡片 */
-.user-card {
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(10px);
-  border-radius: 24rpx;
-  padding: 40rpx;
-  box-shadow: 0 12rpx 32rpx rgba(25, 190, 107, 0.15);
-  margin-bottom: 30rpx;
-  position: relative;
-  overflow: hidden;
+.header-decor {
+  position: absolute;
+  border-radius: 50%;
   
-  .user-main {
-    display: flex;
-    align-items: center;
-    position: relative;
-    z-index: 2;
+  &.decor-1 {
+    width: 200rpx;
+    height: 200rpx;
+    background: rgba(255,255,255,0.1);
+    top: 40rpx;
+    right: -40rpx;
+    filter: blur(40rpx);
+  }
+  
+  &.decor-2 {
+    width: 160rpx;
+    height: 160rpx;
+    background: rgba(255, 214, 0, 0.15);
+    bottom: 40rpx;
+    left: -40rpx;
+    filter: blur(30rpx);
   }
 }
 
-.card-wave {
-  position: absolute;
-  bottom: -50rpx;
-  right: -50rpx;
-  width: 200rpx;
-  height: 200rpx;
-  background: radial-gradient(circle, rgba(25, 190, 107, 0.1) 0%, rgba(255, 255, 255, 0) 70%);
-  border-radius: 50%;
-  z-index: 1;
+.user-info-area {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
-.avatar-wrapper {
+.avatar-box {
   position: relative;
-  margin-right: 30rpx;
+  margin-bottom: 20rpx;
   
   .avatar {
-    width: 120rpx;
-    height: 120rpx;
+    width: 140rpx;
+    height: 140rpx;
     border-radius: 50%;
-    border: 4rpx solid #fff;
-    box-shadow: 0 4rpx 12rpx rgba(0,0,0,0.1);
+    border: 6rpx solid rgba(255,255,255,0.3);
+    box-shadow: 0 8rpx 24rpx rgba(0,0,0,0.2);
   }
   
-  .edit-badge {
+  .avatar-edit-btn {
     position: absolute;
     bottom: 0;
     right: 0;
-    background: #19be6b;
-    width: 36rpx;
-    height: 36rpx;
+    width: 44rpx;
+    height: 44rpx;
+    background: #FFD600;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 2rpx solid #fff;
+    border: 4rpx solid #fff;
+    box-shadow: 0 4rpx 12rpx rgba(0,0,0,0.15);
   }
 }
 
-.user-meta {
-  flex: 1;
+.user-name {
+  font-size: 40rpx;
+  font-weight: bold;
+  color: #fff;
+  margin-bottom: 16rpx;
+  text-shadow: 0 2rpx 8rpx rgba(0,0,0,0.2);
+}
+
+.user-tags {
   display: flex;
-  flex-direction: column;
-  gap: 8rpx;
+  align-items: center;
+  gap: 16rpx;
   
-  .name-row {
+  .tag-item {
     display: flex;
     align-items: center;
-    gap: 12rpx;
+    gap: 8rpx;
+    padding: 8rpx 20rpx;
+    border-radius: 30rpx;
+    font-size: 22rpx;
+    font-weight: 500;
     
-    .nickname {
-      font-size: 36rpx;
-      font-weight: bold;
-      color: #303133;
+    &.primary {
+      background: rgba(255,255,255,0.2);
+      color: #fff;
+      backdrop-filter: blur(10px);
+      border: 1rpx solid rgba(255,255,255,0.1);
+    }
+    
+    &.plain {
+      background: rgba(0,0,0,0.1);
+      color: rgba(255,255,255,0.8);
     }
   }
+}
+
+.content-area {
+  position: relative;
+  padding: 0 30rpx;
+  padding-bottom: 180rpx;
+  margin-top: -60rpx;
+  z-index: 3;
+}
+
+.stats-card {
+  background: #fff;
+  border-radius: 24rpx;
+  padding: 36rpx 20rpx;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  box-shadow: 0 8rpx 32rpx rgba(46, 125, 50, 0.12);
+  margin-bottom: 30rpx;
+  border: 1rpx solid rgba(0,0,0,0.03);
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
   
-  .phone-text {
-    font-size: 24rpx;
+  .stat-num {
+    font-size: 44rpx;
+    font-weight: bold;
+    color: #303133;
+    font-family: 'DIN Alternate', sans-serif;
+  }
+  
+  .stat-label {
+    font-size: 22rpx;
+    color: #909399;
+    margin-top: 8rpx;
+    font-weight: 500;
+  }
+  
+  &.highlight {
+    .stat-num {
+      color: #2E7D32;
+    }
+    .stat-label {
+      color: #2E7D32;
+      opacity: 0.8;
+    }
+  }
+}
+
+.stat-divider {
+  width: 1rpx;
+  height: 50rpx;
+  background: #ebeef5;
+}
+
+.section-block {
+  background: #fff;
+  border-radius: 24rpx;
+  padding: 30rpx;
+  margin-bottom: 24rpx;
+  box-shadow: 0 4rpx 16rpx rgba(0,0,0,0.03);
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 28rpx;
+}
+
+.section-indicator {
+  width: 8rpx;
+  height: 36rpx;
+  background: #2E7D32;
+  border-radius: 4rpx;
+  margin-right: 16rpx;
+  
+  &.orange {
+    background: #E65100;
+  }
+}
+
+.section-title {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #303133;
+  margin-right: 16rpx;
+}
+
+.section-tag {
+  font-size: 20rpx;
+  color: #2E7D32;
+  background: rgba(46, 125, 50, 0.1);
+  padding: 6rpx 16rpx;
+  border-radius: 20rpx;
+  font-weight: 500;
+  
+  &.orange {
+    color: #E65100;
+    background: rgba(230, 81, 0, 0.1);
+  }
+}
+
+.service-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20rpx;
+  
+  &.two-col {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.service-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 20rpx;
+  padding: 24rpx;
+  background: #fafafa;
+  border-radius: 20rpx;
+  border: 1rpx solid rgba(0,0,0,0.03);
+  transition: all 0.3s;
+  
+  &:active {
+    transform: scale(0.98);
+    background: #f5f5f5;
+  }
+}
+
+.service-icon {
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  
+  &.orange {
+    background: #fff3e0;
+  }
+  
+  &.blue {
+    background: #e3f2fd;
+  }
+  
+  &.green {
+    background: #e8f5e9;
+  }
+  
+  &.purple {
+    background: #f3e5f5;
+  }
+  
+  &.cyan {
+    background: #e0f7fa;
+  }
+  
+  &.pink {
+    background: #fce4ec;
+  }
+}
+
+.service-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4rpx;
+  
+  .service-name {
+    font-size: 28rpx;
+    font-weight: bold;
+    color: #303133;
+  }
+  
+  .service-desc {
+    font-size: 22rpx;
     color: #909399;
   }
 }
 
-.coin-pill {
-  background: #fff7e6;
-  padding: 8rpx 20rpx;
-  border-radius: 30rpx;
+.achievement-card {
+  background: linear-gradient(135deg, #fffde7 0%, #fff8e1 100%);
+  border: 2rpx solid #ffecb3;
+  border-radius: 24rpx;
+  padding: 28rpx 24rpx;
   display: flex;
   align-items: center;
-  gap: 8rpx;
-  
-  .coin-val {
-    font-size: 24rpx;
-    color: #ff9c00;
-    font-weight: 600;
-  }
-}
-
-/* 面板卡片 */
-.panel-card {
-  background: #fff;
-  border-radius: 20rpx;
-  padding: 30rpx;
+  gap: 20rpx;
   margin-bottom: 24rpx;
-  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.03);
-  
-  .panel-header {
-    display: flex;
-    align-items: center;
-    margin-bottom: 30rpx;
-    
-    .panel-title {
-      font-size: 32rpx;
-      font-weight: 600;
-      color: #303133;
-      margin-right: 16rpx;
-      position: relative;
-      
-      &::after {
-        content: '';
-        position: absolute;
-        left: 0;
-        bottom: -4rpx;
-        width: 100%;
-        height: 6rpx;
-        background: rgba(25, 190, 107, 0.2);
-        border-radius: 4rpx;
-      }
-    }
-    
-    .panel-tag {
-      font-size: 20rpx;
-      color: #19be6b;
-      background: rgba(25, 190, 107, 0.1);
-      padding: 4rpx 10rpx;
-      border-radius: 6rpx;
-      
-      &.orange {
-        color: #ff9c00;
-        background: rgba(255, 156, 0, 0.1);
-      }
-    }
-  }
+  position: relative;
+  overflow: hidden;
 }
 
-/* Grid 样式 */
-.grid-box {
-  display: flex;
-  flex-wrap: wrap;
-  
-  &.left-align {
-    justify-content: flex-start;
-    gap: 40rpx;
-    
-    .grid-item {
-      width: auto;
-      min-width: 120rpx;
-    }
-  }
-  
-  .grid-item {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 16rpx;
-    min-width: 25%;
-    
-    &:active {
-      opacity: 0.8;
-      transform: scale(0.98);
-    }
-  }
-}
-
-.icon-circle {
-  width: 88rpx;
-  height: 88rpx;
-  border-radius: 30rpx;
+.achievement-icon {
+  width: 64rpx;
+  height: 64rpx;
+  background: #FFD600;
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 4rpx;
-  transition: all 0.3s;
+  box-shadow: 0 4rpx 12rpx rgba(255, 214, 0, 0.3);
+  z-index: 2;
+}
+
+.achievement-content {
+  flex: 1;
+  z-index: 2;
   
-  &.blue { background: #ecf5ff; }
-  &.orange { background: #fdf6ec; }
-  &.green { background: #dbf1e1; }
-  &.pink { background: #fef0f0; }
-  &.purple { background: #f4f4f5; } // Using gray for now, or mix a light purple
-  &.cyan { background: #e8fcf7; }
-}
-
-.grid-label {
-  font-size: 26rpx;
-  color: #606266;
-  font-weight: 500;
-}
-
-/* 菜单列表 */
-.menu-list {
-  .menu-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 32rpx 0;
-    border-bottom: 1rpx solid #f5f7fa;
+  .achievement-title {
+    font-size: 28rpx;
+    font-weight: bold;
+    color: #303133;
+    display: block;
+  }
+  
+  .achievement-desc {
+    font-size: 24rpx;
+    color: #606266;
+    margin-top: 4rpx;
+    display: block;
     
-    &:last-child, &.no-border {
-      border-bottom: none;
-    }
-    
-    .menu-left {
-      display: flex;
-      align-items: center;
-      gap: 20rpx;
-      
-      .menu-text {
-        font-size: 28rpx;
-        color: #303133;
-      }
-    }
-    
-    &:active {
-      background-color: #f9fafc;
-      margin: 0 -30rpx;
-      padding: 32rpx 30rpx;
+    .highlight-num {
+      color: #E65100;
+      font-weight: bold;
     }
   }
 }
 
-/* 弹窗样式 */
+.achievement-arrow {
+  z-index: 2;
+}
+
+.achievement-bg-icon {
+  position: absolute;
+  right: -20rpx;
+  bottom: -20rpx;
+  opacity: 0.15;
+  transform: rotate(15deg);
+}
+
+.menu-card {
+  background: #fff;
+  border-radius: 24rpx;
+  overflow: hidden;
+  box-shadow: 0 4rpx 16rpx rgba(0,0,0,0.03);
+  margin-bottom: 24rpx;
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  padding: 32rpx 30rpx;
+  border-bottom: 1rpx solid #f5f7fa;
+  
+  &:last-child {
+    border-bottom: none;
+  }
+  
+  &:active {
+    background: #f9fafc;
+  }
+  
+  .menu-icon {
+    width: 56rpx;
+    height: 56rpx;
+    background: #f5f7fa;
+    border-radius: 14rpx;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 24rpx;
+  }
+  
+  .menu-text {
+    flex: 1;
+    font-size: 28rpx;
+    font-weight: 500;
+    color: #303133;
+  }
+  
+  .menu-right {
+    display: flex;
+    align-items: center;
+    gap: 12rpx;
+    
+    .menu-value {
+      font-size: 26rpx;
+      color: #909399;
+    }
+  }
+  
+  &.logout {
+    .menu-icon {
+      background: #fef0f0;
+    }
+  }
+}
+
+.version-info {
+  text-align: center;
+  padding: 40rpx 0 20rpx;
+  
+  text {
+    font-size: 22rpx;
+    color: #c0c4cc;
+    font-weight: 500;
+    letter-spacing: 1rpx;
+  }
+}
+
 .edit-popup {
   width: 600rpx;
   background: #fff;
@@ -659,55 +1026,74 @@ onShow(() => {
 
 .form-item {
   margin-bottom: 30rpx;
+  
+  .form-label {
+    display: block;
+    font-size: 28rpx;
+    color: #606266;
+    margin-bottom: 16rpx;
+  }
+  
+  .form-input {
+    width: 100%;
+    height: 88rpx;
+    background: #f5f7fa;
+    border-radius: 16rpx;
+    padding: 0 24rpx;
+    font-size: 28rpx;
+    color: #303133;
+  }
 }
 
-.form-label {
-  display: block;
-  font-size: 28rpx;
-  color: #606266;
-  margin-bottom: 16rpx;
-}
-
-.form-input {
-  width: 100%;
-  height: 88rpx;
-  background: #f5f7fa;
-  border-radius: 12rpx;
-  padding: 0 24rpx;
-  font-size: 28rpx;
-  color: #303133;
-  box-sizing: border-box;
+.code-input-row {
+  display: flex;
+  gap: 20rpx;
+  
+  .code-input {
+    flex: 1;
+  }
+  
+  .code-btn {
+    width: 200rpx;
+    height: 88rpx;
+    background: #2E7D32;
+    color: #fff;
+    font-size: 26rpx;
+    border-radius: 16rpx;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    &[disabled] {
+      background: #c0c4cc;
+    }
+  }
 }
 
 .popup-buttons {
   display: flex;
   gap: 24rpx;
-  margin-top: 48rpx;
-}
-
-.popup-btn {
-  flex: 1;
-  height: 88rpx;
-  line-height: 88rpx;
-  border-radius: 44rpx;
-  font-size: 30rpx;
-  font-weight: 500;
-  border: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  margin-top: 40rpx;
   
-  &.cancel {
-    background: #f5f7fa;
-    color: #909399;
+  .popup-btn {
+    flex: 1;
+    height: 88rpx;
+    border-radius: 16rpx;
+    font-size: 30rpx;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    &.cancel {
+      background: #f5f7fa;
+      color: #606266;
+    }
+    
+    &.confirm {
+      background: #2E7D32;
+      color: #fff;
+    }
   }
-  
-  &.confirm {
-    background: linear-gradient(90deg, #19be6b, #2bd380);
-    color: #fff;
-    box-shadow: 0 6rpx 16rpx rgba(25, 190, 107, 0.3);
-  }
-  
-  &::after { border: none; }
 }
 </style>

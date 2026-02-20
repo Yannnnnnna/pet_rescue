@@ -12,6 +12,8 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.wei.pet.pet_rescue.common.Result;
+import com.wei.pet.pet_rescue.common.SmsService;
 import com.wei.pet.pet_rescue.entity.PetAdoption;
 import com.wei.pet.pet_rescue.entity.PetInfo;
 import com.wei.pet.pet_rescue.entity.SysUser;
@@ -59,6 +61,8 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
     private PetInfoMapper petInfoMapper;
     @Resource
     private PetAdoptionMapper petAdoptionMapper;
+    @Resource
+    private SmsService smsService;
 
     // 定义常量
     @Value("${wechat.app-id}")
@@ -371,6 +375,40 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
         vo.setDailyAdoptionData(adoptionData);
 
         return vo;
+    }
+    /**
+     * 通过短信验证码登录
+     * @param phone
+     * @param code
+     * @return
+     */
+    @Override
+    public String loginBySMS(String phone, String code) {
+
+        boolean isCodeValid = smsService.verifyCode(phone, code);
+
+        // 2. 如果校验失败（由于防重放机制，如果输入错一次，Redis里的也没了，或者已经过了5分钟过期了）
+        if (!isCodeValid) {
+            throw new RuntimeException("验证码错误或已过期");
+        }
+
+        // 3. 校验成功！接下来就是纯纯的业务逻辑了：
+        // (1) 去数据库查这个手机号存不存在？
+         SysUser user = this.getOne(new LambdaQueryWrapper<SysUser>()
+                .eq(SysUser::getPhone, phone));
+        // (2) 如果不存在，说明是新用户，直接执行注册逻辑（自动 insert 一条记录到数据库）
+         if (user == null) {
+             user = new SysUser();
+             user.setUsername(RandomUtil.randomString(6)); // 随机生成个账号
+             user.setNickname("新用户");
+             user.setRole(0); // 0代表普通用户
+             user.setAvatar("默认头像URL");
+             sysUserMapper.insert(user); // 插入数据库
+         }
+        //3. 生成该用户的登录状态 Token
+            StpUtil.login(user.getId());
+        // 4. 返回 Token 给前端
+        return StpUtil.getTokenValue();
     }
 
     /**

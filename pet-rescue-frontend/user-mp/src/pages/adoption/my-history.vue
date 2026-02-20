@@ -1,35 +1,59 @@
 <template>
   <view class="container">
-    <u-list @scrolltolower="loadMore" v-if="dataList.length > 0">
-      <u-list-item v-for="(item, index) in dataList" :key="index">
-        <view class="apply-card" @click="handleItemClick(item)">
-          <view class="card-header">
-            <text class="time">{{ item.createTime }}</text>
-            <u-tag :text="getStatusText(item.status)" :type="getStatusType(item.status)" size="mini"></u-tag>
-          </view>
-          
-          <view class="card-body">
-            <view class="info-row">
-              <text class="label">申请宠物ID:</text>
-              <text class="value">{{ item.petId }}</text>
-            </view>
-            <view class="info-row">
-              <text class="label">申请人:</text>
-              <text class="value">{{ item.realName }}</text>
-            </view>
-            <view class="info-row">
-              <text class="label">联系电话:</text>
-              <text class="value">{{ item.phone }}</text>
-            </view>
-          </view>
-          
-          <view class="card-footer" v-if="item.status === 2 && item.adminRemark">
-            <text class="reject-reason">驳回原因: {{ item.adminRemark }}</text>
-          </view>
+    <view class="nav-bar" :style="{ paddingTop: statusBarHeight + 'px' }">
+      <view class="nav-content">
+        <view class="back-btn" @click="goBack">
+          <uni-icons type="left" size="20" color="#333"></uni-icons>
         </view>
-      </u-list-item>
-    </u-list>
-    <u-empty v-else mode="list" icon="http://cdn.uviewui.com/uview/empty/list.png" text="暂无申请记录"></u-empty>
+        <text class="nav-title">申请记录</text>
+        <view class="placeholder"></view>
+      </view>
+    </view>
+
+    <view class="content-area" :style="{ marginTop: statusBarHeight + 44 + 'px' }">
+      <view class="section-header" v-if="dataList.length > 0">
+        <text class="section-title">最近申请 ({{ dataList.length }})</text>
+      </view>
+      
+      <u-list @scrolltolower="loadMore" v-if="dataList.length > 0">
+        <u-list-item v-for="(item, index) in dataList" :key="index">
+          <view class="apply-card" @click="handleItemClick(item)">
+            <view class="card-left">
+              <image :src="item.petInfo?.coverImg || item.petCover || '/static/logo.png'" mode="aspectFill" class="pet-img"></image>
+            </view>
+            <view class="card-right">
+              <view class="card-header">
+                <view class="title-area">
+                  <text class="pet-name">{{ item.petInfo?.name || item.petName || '宠物' }}</text>
+                  <text class="apply-no">申请编号: #{{ item.id }}</text>
+                </view>
+                <view class="status-tag" :class="getStatusClass(item.status)">
+                  {{ getStatusText(item.status) }}
+                </view>
+              </view>
+              <view class="card-info" v-if="item.petInfo">
+                <text class="info-item">{{ item.petInfo.breed || '未知品种' }}</text>
+                <text class="divider">·</text>
+                <text class="info-item">{{ item.petInfo.age || '未知年龄' }}</text>
+              </view>
+              <view class="card-footer">
+                <text class="time">{{ item.createTime }}</text>
+                <view class="detail-btn">
+                  <text class="btn-text">查看详情</text>
+                  <uni-icons type="right" size="12" color="#2E7D32"></uni-icons>
+                </view>
+              </view>
+            </view>
+          </view>
+          
+          <view class="reject-reason" v-if="item.status === 2 && item.adminRemark">
+            <uni-icons type="info" size="14" color="#ff4d4f"></uni-icons>
+            <text class="reason-text">驳回原因: {{ item.adminRemark }}</text>
+          </view>
+        </u-list-item>
+      </u-list>
+      <u-empty v-else mode="list" text="暂无申请记录" marginTop="100"></u-empty>
+    </view>
   </view>
 </template>
 
@@ -37,18 +61,25 @@
 import { ref } from 'vue'
 import { onLoad, onShow } from '@dcloudio/uni-app'
 import { getMyAdoptionApplications } from '@/api/adoption'
+import { getPetDetail } from '@/api/pet'
 
+const statusBarHeight = ref(44)
 const dataList = ref([])
 const pageNum = ref(1)
 const pageSize = ref(10)
 const total = ref(0)
 
 onLoad(() => {
+  const systemInfo = uni.getSystemInfoSync()
+  statusBarHeight.value = systemInfo.statusBarHeight || 44
   fetchData()
 })
 
+const goBack = () => {
+  uni.navigateBack()
+}
+
 onShow(() => {
-  // 每次显示页面时刷新第一页数据，以获取最新状态
   pageNum.value = 1
   fetchData()
 })
@@ -57,6 +88,18 @@ const handleItemClick = (item) => {
   uni.navigateTo({
     url: `/pages/adoption/application-detail?id=${item.id}`
   })
+}
+
+const fetchPetDetail = async (petId) => {
+  try {
+    const res = await getPetDetail(petId)
+    if (res.data) {
+      return res.data
+    }
+  } catch (error) {
+    console.error('获取宠物详情失败', error)
+  }
+  return null
 }
 
 const fetchData = async () => {
@@ -68,10 +111,22 @@ const fetchData = async () => {
     })
     
     if (res && res.data && res.data.records) {
+      const records = res.data.records
+      
+      const promises = records.map(async (item) => {
+        if (item.petId) {
+          const petInfo = await fetchPetDetail(item.petId)
+          return { ...item, petInfo }
+        }
+        return item
+      })
+      
+      const enrichedRecords = await Promise.all(promises)
+      
       if (pageNum.value === 1) {
-        dataList.value = res.data.records
+        dataList.value = enrichedRecords
       } else {
-        dataList.value = [...dataList.value, ...res.data.records]
+        dataList.value = [...dataList.value, ...enrichedRecords]
       }
       total.value = res.data.total
     }
@@ -90,69 +145,217 @@ const loadMore = () => {
   }
 }
 
-// 0-待审核 1-通过 2-驳回 3-已取消
 const getStatusText = (status) => {
-  const map = { 0: '待审核', 1: '已通过', 2: '已驳回', 3: '已取消', 4: '已领养' }
+  const map = { 0: '审核中', 1: '已通过', 2: '未通过', 3: '已取消', 4: '已领养' }
   return map[status] || '未知'
 }
 
-const getStatusType = (status) => {
-  const map = { 0: 'primary', 1: 'success', 2: 'error', 3: 'info' }
-  return map[status] || 'info'
+const getStatusClass = (status) => {
+  const map = { 0: 'pending', 1: 'passed', 2: 'rejected', 3: 'cancelled' }
+  return map[status] || 'pending'
 }
 </script>
 
 <style lang="scss" scoped>
 .container {
-  padding: 20rpx;
-  background-color: #f5f5f5;
+  background-color: #F9FAFB;
   min-height: 100vh;
+}
+
+.nav-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: #fff;
+  z-index: 100;
+  border-bottom: 1rpx solid #f0f0f0;
+  
+  .nav-content {
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 30rpx;
+  }
+  
+  .back-btn {
+    width: 60rpx;
+    height: 60rpx;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .nav-title {
+    font-size: 34rpx;
+    font-weight: bold;
+    color: #1F2937;
+  }
+  
+  .placeholder {
+    width: 60rpx;
+  }
+}
+
+.content-area {
+  padding: 24rpx;
+}
+
+.section-header {
+  margin-bottom: 20rpx;
+  
+  .section-title {
+    font-size: 24rpx;
+    font-weight: 600;
+    color: #6B7280;
+    text-transform: uppercase;
+    letter-spacing: 1rpx;
+  }
 }
 
 .apply-card {
   background: #fff;
-  border-radius: 16rpx;
-  padding: 24rpx;
-  margin-bottom: 20rpx;
+  border-radius: 24rpx;
+  padding: 28rpx;
+  margin-bottom: 16rpx;
+  display: flex;
+  gap: 24rpx;
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.04);
+  transition: all 0.3s;
+  
+  &:active {
+    transform: scale(0.98);
+  }
+}
+
+.card-left {
+  .pet-img {
+    width: 140rpx;
+    height: 140rpx;
+    border-radius: 16rpx;
+    background-color: #eee;
+  }
+}
+
+.card-right {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-width: 0;
 }
 
 .card-header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20rpx;
-  padding-bottom: 16rpx;
-  border-bottom: 1rpx solid #f0f0f0;
+  align-items: flex-start;
   
-  .time {
-    font-size: 24rpx;
-    color: #999;
+  .title-area {
+    flex: 1;
+    min-width: 0;
+    
+    .pet-name {
+      font-size: 32rpx;
+      font-weight: 600;
+      color: #1F2937;
+      display: block;
+    }
+    
+    .apply-no {
+      font-size: 22rpx;
+      color: #6B7280;
+      margin-top: 6rpx;
+      display: block;
+    }
+  }
+  
+  .status-tag {
+    font-size: 20rpx;
+    font-weight: 600;
+    padding: 8rpx 16rpx;
+    border-radius: 20rpx;
+    text-transform: uppercase;
+    letter-spacing: 0.5rpx;
+    flex-shrink: 0;
+    
+    &.pending {
+      background: rgba(255, 193, 7, 0.2);
+      color: #B45309;
+    }
+    
+    &.passed {
+      background: rgba(46, 125, 50, 0.1);
+      color: #2E7D32;
+    }
+    
+    &.rejected {
+      background: #f3f4f6;
+      color: #6B7280;
+    }
+    
+    &.cancelled {
+      background: #f3f4f6;
+      color: #9CA3AF;
+    }
   }
 }
 
-.info-row {
+.card-info {
   display: flex;
-  margin-bottom: 12rpx;
-  font-size: 28rpx;
+  align-items: center;
+  margin-top: 8rpx;
   
-  .label {
-    color: #666;
-    width: 160rpx;
+  .info-item {
+    font-size: 24rpx;
+    color: #6B7280;
   }
   
-  .value {
-    color: #333;
-    flex: 1;
+  .divider {
+    margin: 0 8rpx;
+    color: #D1D5DB;
   }
 }
 
 .card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   margin-top: 16rpx;
-  padding-top: 16rpx;
-  border-top: 1rpx solid #f0f0f0;
   
-  .reject-reason {
-    font-size: 26rpx;
+  .time {
+    font-size: 22rpx;
+    color: #9CA3AF;
+  }
+  
+  .detail-btn {
+    display: flex;
+    align-items: center;
+    padding: 10rpx 20rpx;
+    background: #2E7D32;
+    border-radius: 12rpx;
+    
+    .btn-text {
+      font-size: 22rpx;
+      font-weight: 600;
+      color: #fff;
+      margin-right: 4rpx;
+    }
+  }
+}
+
+.reject-reason {
+  background: #fff;
+  border-radius: 16rpx;
+  padding: 20rpx 28rpx;
+  margin-bottom: 16rpx;
+  margin-top: -8rpx;
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+  
+  .reason-text {
+    font-size: 24rpx;
     color: #ff4d4f;
   }
 }

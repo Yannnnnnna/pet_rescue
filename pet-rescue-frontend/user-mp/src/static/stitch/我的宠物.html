@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>我的爱宠 (卡片滑动版)</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary": "#f4c32f",
+              "background-light": "#f8f8f5",
+              "background-dark": "#221e10",
+              "forest-green": "#2d4a3e", 
+              "forest-light": "#eef5f2",
+            },
+            fontFamily: {
+              "display": ["Manrope", "sans-serif"]
+            },
+            borderRadius: {"DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-gray-800 dark:text-gray-100 antialiased selection:bg-primary/30">
+<div class="max-w-md mx-auto min-h-screen relative pb-24 bg-background-light dark:bg-background-dark overflow-hidden shadow-2xl">
+<header class="relative pt-12 pb-6 px-6 bg-forest-green text-white rounded-b-[2.5rem] shadow-lg z-10">
+<div class="flex items-center justify-between mb-8">
+<button class="p-2 rounded-full bg-white/10 backdrop-blur-sm hover:bg-white/20 transition-colors">
+<span class="material-icons-round text-white">arrow_back_ios_new</span>
+</button>
+<h1 class="text-xl font-bold tracking-wide">我的爱宠</h1>
+<button class="p-2 rounded-full bg-white/10 backdrop-blur-sm hover:bg-white/20 transition-colors relative">
+<span class="material-icons-round text-white">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-primary rounded-full border border-forest-green"></span>
+</button>
+</div>
+<div class="flex items-center justify-between">
+<div>
+<p class="text-white/70 text-sm font-medium mb-1">感谢您的爱心守护</p>
+<h2 class="text-3xl font-extrabold flex items-baseline gap-2">
+                        已守护 <span class="text-primary text-4xl">3</span> 只宝贝
+                    </h2>
+</div>
+<div class="w-16 h-16 rounded-full bg-white/10 flex items-center justify-center backdrop-blur-md border border-white/20">
+<span class="material-icons-round text-primary text-3xl">volunteer_activism</span>
+</div>
+</div>
+<div class="absolute -bottom-12 -right-12 w-48 h-48 bg-primary/10 rounded-full blur-3xl"></div>
+<div class="absolute top-0 left-0 w-full h-full overflow-hidden rounded-b-[2.5rem] pointer-events-none">
+<div class="absolute top-10 -left-10 w-32 h-32 bg-white/5 rounded-full blur-2xl"></div>
+</div>
+</header>
+<main class="pt-8 space-y-4">
+<div class="flex items-center justify-between px-6">
+<h3 class="text-lg font-bold text-forest-green dark:text-primary">成长记录</h3>
+<button class="text-sm font-bold text-primary hover:opacity-80 flex items-center gap-1">
+                    全部相册 <span class="material-icons-round text-sm">arrow_forward</span>
+</button>
+</div>
+<div class="relative w-full overflow-hidden">
+<div class="flex overflow-x-auto snap-x snap-mandatory hide-scrollbar pb-4 px-6 gap-4">
+<div class="snap-center shrink-0 w-full relative group">
+<div class="bg-white dark:bg-zinc-800 rounded-[2rem] p-5 shadow-xl border border-gray-100 dark:border-zinc-700 h-full flex flex-col relative overflow-hidden">
+<div class="relative w-full aspect-[4/3] rounded-[1.5rem] overflow-hidden mb-5">
+<img alt="Golden Retriever looking happy" class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500" data-alt="Golden Retriever looking happy" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD2CyePYC_bdrpzcZVGZJcf5RQz4JeM_Ktc2y5I7EGZgkUYVhcs4JooFWdYcJjDtTN3AoIvgHA3KlXLSDmPkXe723cKftdLp4OGID4l6VEG-CnIeDPZg1hIJlx_TtfA7AgCXUK2I6SeBAGTenpz4MTeVnjpD1cuO5yBoeux64Qel7Gy1JRYGIKghEAoHUpF1qXePzXrm03VXSs6WupzxdDfKk4iFbS5g1uL8gt4V46siWAEyS9hBezxt7r3_kF78-2CMuqJTWI34Ro"/>
+<div class="absolute top-3 right-3 bg-white/90 backdrop-blur-sm dark:bg-zinc-800/90 p-2 rounded-full shadow-sm">
+<div class="bg-blue-100 dark:bg-blue-900/30 p-1 rounded-full text-blue-600 dark:text-blue-400">
+<span class="material-icons-round text-lg block">male</span>
+</div>
+</div>
+<div class="absolute bottom-3 left-3 bg-forest-green/90 backdrop-blur-md text-white px-3 py-1.5 rounded-full text-xs font-bold shadow-lg flex items-center gap-1">
+<span class="material-icons-round text-primary text-sm">hourglass_bottom</span>
+                        已陪伴 128 天
+                    </div>
+</div>
+<div class="flex-1 flex flex-col">
+<div class="flex justify-between items-start mb-2">
+<div>
+<h3 class="text-2xl font-extrabold text-forest-green dark:text-white leading-tight">旺财</h3>
+<span class="inline-block mt-1 px-3 py-1 rounded-full bg-forest-light dark:bg-forest-green/30 text-forest-green dark:text-primary text-xs font-bold tracking-wide">
+                                金毛寻回犬
+                            </span>
+</div>
+<button class="text-gray-300 hover:text-gray-400 dark:text-gray-600 p-1">
+<span class="material-icons-round text-2xl">more_horiz</span>
+</button>
+</div>
+<div class="mt-4 mb-6">
+<div class="flex -space-x-2 overflow-hidden mb-2">
+<img alt="Dog playing" class="inline-block h-8 w-8 rounded-full ring-2 ring-white dark:ring-zinc-800 object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC_mgK_Tir3fccApzn7x8ovd3fA_2rn_ZpmE20vvVi1YtUmVhUF0hsNeL4aDd-HURvP_wE2Fl12B08_32KOFrSInuGBkmCsISMcZ4X4RIwoG2X_JleFiH55HAy0K86SQGcKpgTIqVg9uIQs6y46yaMsL8wP9B9Q2k0naFvGbztA9RC57OxzwMOsgLz-Ylawq1FYV_HLQANGT-MX-VkbMZhGvgjrxrQuPQVn8Ht5ttqU8SVO91CVe34tP36skGrutzYPepPLTGT1LzQ"/>
+<img alt="Dog sleeping" class="inline-block h-8 w-8 rounded-full ring-2 ring-white dark:ring-zinc-800 object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAQSArpWULC3FcRvbhpBtTt_lK_VzlUS6b15nB0rwaKPOTFw0En_T5hLe7gLKy8owXURmsJrZeBeHAJfa35vivap0LwyXPto2zBqFkX-0wGTVDsrmOQaPb4VnfmC7Q-7XjNhyHHiUPgWKKXdtauE_N00Ea26pyQ3Xx4RvYGgP8RWgrEMAP__AwXgDghyYp5pdTVOtlg5JhgDu67nw-_bI9AXC2FlJ_0n5AcPcQzJgoXtfg4uKjI8T1EY-YGIcJ_Zc2hbbBEos3obMI"/>
+<div class="h-8 w-8 rounded-full bg-gray-100 dark:bg-zinc-700 flex items-center justify-center ring-2 ring-white dark:ring-zinc-800">
+<span class="text-[10px] font-bold text-gray-500 dark:text-gray-300">+5</span>
+</div>
+</div>
+<p class="text-xs text-gray-400">最近更新：昨天下午公园玩耍</p>
+</div>
+<button class="w-full mt-auto bg-primary hover:bg-yellow-400 text-forest-green font-bold py-3.5 px-6 rounded-xl shadow-lg shadow-primary/20 flex items-center justify-center gap-2 transform active:scale-[0.98] transition-all">
+<span class="material-icons-round text-xl">edit_calendar</span>
+                        记录点滴
+                    </button>
+</div>
+</div>
+</div>
+<div class="snap-center shrink-0 w-full relative group">
+<div class="bg-white dark:bg-zinc-800 rounded-[2rem] p-5 shadow-xl border border-gray-100 dark:border-zinc-700 h-full flex flex-col relative overflow-hidden opacity-90 scale-[0.98]">
+<div class="relative w-full aspect-[4/3] rounded-[1.5rem] overflow-hidden mb-5">
+<img alt="Close up of a cute cat" class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500" data-alt="Close up of a cute cat" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA5jhSAcHxfD97_cjrZWcDtukV1H9D3WID83t85mLRXTddKGq9pJag_9VboC4K6qTdVoIeD7x30McxNjzO6prAsXMX2ng1D8DHmbHjCGk5lks7CI4IfL2LWN8O0VEhInRq0IpPSyxpzAPh7Tn_UZGSrwSRaknp5h1YSDklD_-0HmrB0J6zBW2Pn9z4SOTGGgbNz45ouF6qFoFpbyy8S0MYx_LiGXoArEUwLLJLJ5x4TeDY5SvFg9jE9e1goUinCVH1j9Z1gJBNGBSI"/>
+<div class="absolute top-3 right-3 bg-white/90 backdrop-blur-sm dark:bg-zinc-800/90 p-2 rounded-full shadow-sm">
+<div class="bg-pink-100 dark:bg-pink-900/30 p-1 rounded-full text-pink-600 dark:text-pink-400">
+<span class="material-icons-round text-lg block">female</span>
+</div>
+</div>
+<div class="absolute bottom-3 left-3 bg-forest-green/90 backdrop-blur-md text-white px-3 py-1.5 rounded-full text-xs font-bold shadow-lg flex items-center gap-1">
+<span class="material-icons-round text-primary text-sm">hourglass_bottom</span>
+                        已陪伴 45 天
+                    </div>
+</div>
+<div class="flex-1 flex flex-col">
+<div class="flex justify-between items-start mb-2">
+<div>
+<h3 class="text-2xl font-extrabold text-forest-green dark:text-white leading-tight">咪咪</h3>
+<span class="inline-block mt-1 px-3 py-1 rounded-full bg-forest-light dark:bg-forest-green/30 text-forest-green dark:text-primary text-xs font-bold tracking-wide">
+                                中华田园猫
+                            </span>
+</div>
+<button class="text-gray-300 hover:text-gray-400 dark:text-gray-600 p-1">
+<span class="material-icons-round text-2xl">more_horiz</span>
+</button>
+</div>
+<div class="mt-4 mb-6">
+<div class="flex items-center text-xs text-gray-400 font-medium h-8">
+<span class="material-icons-round text-sm mr-1 text-gray-300">history_edu</span>
+                            3天前更新
+                        </div>
+<p class="text-xs text-gray-400 mt-2"> </p>
+</div>
+<button class="w-full mt-auto bg-primary hover:bg-yellow-400 text-forest-green font-bold py-3.5 px-6 rounded-xl shadow-lg shadow-primary/20 flex items-center justify-center gap-2 transform active:scale-[0.98] transition-all">
+<span class="material-icons-round text-xl">edit_calendar</span>
+                        记录点滴
+                    </button>
+</div>
+</div>
+</div>
+<div class="snap-center shrink-0 w-full relative group">
+<div class="bg-white dark:bg-zinc-800 rounded-[2rem] p-5 shadow-xl border border-gray-100 dark:border-zinc-700 h-full flex flex-col relative overflow-hidden opacity-90 scale-[0.98]">
+<div class="relative w-full aspect-[4/3] rounded-[1.5rem] overflow-hidden mb-5">
+<img alt="White fluffy rabbit" class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500" data-alt="White fluffy rabbit" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDGo59BxmhjoawMB4rVDPt2Of6oqGRVMdjl81_umf_bGVc4kx0KMCS-iQRfBw6hH5_nKEwkwCNTwrKYTWA2_a3C-S-pm2zXieb3DQUa7SyKk2ukuoDH6wMOayXF-k0l8Jn0YwkvsuXYwpW7YxdYWAFZQSjZd7XP1R914JHBp0m6ZGjbdGyCJrxJH4qKjJ00wjyzgi_YREcZCneSAXiD1itHnr67UxZaJYfMuKn_xRHBbJwYE_YIdqfdshCvPFesl82wQ61lwckalmc"/>
+<div class="absolute top-3 right-3 bg-white/90 backdrop-blur-sm dark:bg-zinc-800/90 p-2 rounded-full shadow-sm">
+<div class="bg-blue-100 dark:bg-blue-900/30 p-1 rounded-full text-blue-600 dark:text-blue-400">
+<span class="material-icons-round text-lg block">male</span>
+</div>
+</div>
+<div class="absolute bottom-3 left-3 bg-forest-green/90 backdrop-blur-md text-white px-3 py-1.5 rounded-full text-xs font-bold shadow-lg flex items-center gap-1">
+<span class="material-icons-round text-primary text-sm">hourglass_bottom</span>
+                        已陪伴 12 天
+                    </div>
+</div>
+<div class="flex-1 flex flex-col">
+<div class="flex justify-between items-start mb-2">
+<div>
+<h3 class="text-2xl font-extrabold text-forest-green dark:text-white leading-tight">球球</h3>
+<span class="inline-block mt-1 px-3 py-1 rounded-full bg-forest-light dark:bg-forest-green/30 text-forest-green dark:text-primary text-xs font-bold tracking-wide">
+                                垂耳兔
+                            </span>
+</div>
+<button class="text-gray-300 hover:text-gray-400 dark:text-gray-600 p-1">
+<span class="material-icons-round text-2xl">more_horiz</span>
+</button>
+</div>
+<div class="mt-4 mb-6">
+<div class="flex items-center text-xs text-primary font-medium bg-primary/10 px-2 py-1 rounded w-fit">
+<span class="material-icons-round text-sm mr-1">vaccines</span>
+                            疫苗接种提醒
+                        </div>
+<p class="text-xs text-gray-400 mt-2"> </p>
+</div>
+<button class="w-full mt-auto bg-primary hover:bg-yellow-400 text-forest-green font-bold py-3.5 px-6 rounded-xl shadow-lg shadow-primary/20 flex items-center justify-center gap-2 transform active:scale-[0.98] transition-all">
+<span class="material-icons-round text-xl">edit_calendar</span>
+                        记录点滴
+                    </button>
+</div>
+</div>
+</div>
+<div class="snap-center shrink-0 w-16 flex items-center justify-center">
+<button class="w-12 h-full rounded-2xl border-2 border-dashed border-gray-300 dark:border-zinc-600 flex flex-col items-center justify-center text-gray-400 hover:text-primary hover:border-primary transition-colors">
+<span class="material-icons-round text-2xl">add</span>
+</button>
+</div>
+</div>
+<div class="flex justify-center items-center space-x-2 mt-2">
+<div class="w-6 h-2 rounded-full bg-forest-green transition-all duration-300"></div>
+<div class="w-2 h-2 rounded-full bg-gray-300 dark:bg-zinc-600 transition-all duration-300"></div>
+<div class="w-2 h-2 rounded-full bg-gray-300 dark:bg-zinc-600 transition-all duration-300"></div>
+</div>
+</div>
+</main>
+<nav class="absolute bottom-6 left-6 right-6 h-[4.5rem] bg-white dark:bg-zinc-800 rounded-full shadow-[0_8px_30px_rgb(0,0,0,0.12)] flex items-center justify-between px-2 z-20">
+<a class="flex-1 flex flex-col items-center justify-center text-gray-400 hover:text-forest-green dark:hover:text-primary transition-colors gap-1" href="#">
+<span class="material-icons-round text-2xl">home</span>
+<span class="text-[10px] font-bold">首页</span>
+</a>
+<a class="flex-1 flex flex-col items-center justify-center text-gray-400 hover:text-forest-green dark:hover:text-primary transition-colors gap-1" href="#">
+<span class="material-icons-round text-2xl">pets</span>
+<span class="text-[10px] font-bold">领养</span>
+</a>
+<div class="relative -top-6">
+<button class="w-14 h-14 bg-forest-green text-primary rounded-full shadow-lg shadow-forest-green/30 flex items-center justify-center transform hover:scale-105 transition-all border-4 border-background-light dark:border-background-dark">
+<span class="material-icons-round text-3xl">add_a_photo</span>
+</button>
+</div>
+<a class="flex-1 flex flex-col items-center justify-center text-forest-green dark:text-primary transition-colors gap-1" href="#">
+<span class="material-icons-round text-2xl">favorite</span>
+<span class="text-[10px] font-bold">我的</span>
+</a>
+<a class="flex-1 flex flex-col items-center justify-center text-gray-400 hover:text-forest-green dark:hover:text-primary transition-colors gap-1" href="#">
+<span class="material-icons-round text-2xl">person</span>
+<span class="text-[10px] font-bold">个人</span>
+</a>
+</nav>
+</div>
+
+</body></html>

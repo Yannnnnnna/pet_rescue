@@ -1,7 +1,16 @@
 <template>
   <view class="detail-container">
-    <!-- 文章头部 -->
-    <view class="article-header">
+    <view class="nav-bar" :style="{ paddingTop: statusBarHeight + 'px' }">
+      <view class="nav-content">
+        <view class="back-btn" @click="goBack">
+          <uni-icons type="left" size="20" color="#333"></uni-icons>
+        </view>
+        <text class="nav-title">文章详情</text>
+        <view class="placeholder"></view>
+      </view>
+    </view>
+
+    <view class="article-header" :style="{ marginTop: statusBarHeight + 44 + 'px' }">
       <view class="article-title">{{ articleDetail.title }}</view>
       <view class="author-info">
         <view class="author-meta">
@@ -58,7 +67,7 @@
         <view class="dialog-arrow"></view>
       </view>
       <view class="avatar-wrapper">
-        <image src="/static/ai-robot.png" class="ai-avatar-img" mode="aspectFit"></image>
+        <image src="../../static/AI助手图标.png" class="ai-avatar-img" mode="aspectFit"></image>
       </view>
     </view>
 
@@ -102,6 +111,8 @@ import MarkdownIt from 'markdown-it'
 const md = new MarkdownIt({ html: true, breaks: true, linkify: true })
 const renderMarkdown = (text) => text ? md.render(text) : ''
 
+const statusBarHeight = ref(44)
+
 const articleId = ref(null)
 const articleDetail = ref({
   id: 0,
@@ -134,12 +145,19 @@ const tagStyle = {
 }
 
 onLoad((options) => {
+  const systemInfo = uni.getSystemInfoSync()
+  statusBarHeight.value = systemInfo.statusBarHeight || 44
+  
   if (options.id) {
     articleId.value = options.id
     loadArticleDetail()
     checkFavoriteStatus()
   }
 })
+
+const goBack = () => {
+  uni.navigateBack()
+}
 
 onShareAppMessage(() => {
   return {
@@ -303,11 +321,47 @@ const formatTime = (time) => {
   padding-bottom: env(safe-area-inset-bottom);
 }
 
+.nav-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: #e6f2e6;
+  z-index: 100;
+  
+  .nav-content {
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 30rpx;
+  }
+  
+  .back-btn {
+    width: 60rpx;
+    height: 60rpx;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .nav-title {
+    font-size: 34rpx;
+    font-weight: bold;
+    color: #333;
+  }
+  
+  .placeholder {
+    width: 60rpx;
+  }
+}
+
 /* 文章头部 */
 .article-header {
   background: #e6f2e6;
   padding: 40rpx 30rpx 30rpx;
   margin-bottom: 0;
+}
 
   .article-title {
     font-size: 40rpx;
@@ -341,7 +395,7 @@ const formatTime = (time) => {
       }
     }
   }
-}
+
 
 /* 正文区域 */
 .article-content {

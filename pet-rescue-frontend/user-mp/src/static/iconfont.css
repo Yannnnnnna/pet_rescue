@@ -1,0 +1,134 @@
+@font-face {
+  font-family: "custom-icon"; /* Project id 5127450 */
+  src: url('https://at.alicdn.com/t/c/font_5127450_xk28x65x9ei.woff2?t=1771162276224') format('woff2'),
+       url('https://at.alicdn.com/t/c/font_5127450_xk28x65x9ei.woff?t=1771162276224') format('woff'),
+       url('https://at.alicdn.com/t/c/font_5127450_xk28x65x9ei.ttf?t=1771162276224') format('truetype');
+}
+
+.custom-icon {
+  font-family: "custom-icon" !important;
+  font-size: 16px;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  /* 👇👇👇 新增下面这段修复 uview-plus 字母溢出的黑科技 👇👇👇 */
+  display: inline-block;
+  text-indent: -9999px; /* 第一步：把原文字一脚踢出屏幕外 */
+  overflow: hidden; /* 第二步：把踢出去的文字隐藏掉 */
+  width: 1em; /* 宽度设为当前字体大小 */
+  height: 1em; /* 高度设为当前字体大小 */
+  line-height: 1em;
+  position: relative; /* 为图标定位做准备 */
+}
+
+/* 👇👇👇 新增伪元素复原逻辑 👇👇👇 */
+.custom-icon::before {
+  text-indent: 0; /* 第三步：把伪元素图标拉回屏幕中间 */
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  text-align: center;
+}
+/* 自定义图标 宠物救助 */
+.custom-icon-a-chongwujiuzhutubiaobaohanmaogouliangzhongdongwuxianghuyiweitixianjiuzhubaohanrenxingxiang:before {
+  content: "\e604";
+}
+/* 收藏 */
+.custom-icon-shoucang:before {
+  content: "\e660";
+}
+/* 咨询足迹 */
+.custom-icon-paw:before {
+  content: "\e63d";
+}
+/* 我发布的 */
+.custom-icon-wofabude:before {
+  content: "\e630";
+}
+/* 关于 */
+.custom-icon-guanyu:before {
+  content: "\eaf2";
+}
+/* 申请记录 */
+.custom-icon-shenqing:before {
+  content: "\e6a3";
+}
+/* 退出登录 */
+.custom-icon-tuichu:before {
+  content: "\e603";
+}
+/* 设置 */
+.custom-icon-shezhi:before {
+  content: "\e663";
+}
+/* 待办审核 */
+.custom-icon-daibanshenhe:before {
+  content: "\e636";
+}
+/* 我的宠物 */
+.custom-icon-wodechongwu:before {
+  content: "\e624";
+}
+/* 资讯 */
+.custom-icon-zixun:before {
+  content: "\e771";
+}
+/* 消息 */
+.custom-icon-xiaoxi:before {
+  content: "\e6b5";
+}
+/* 发布 */
+.custom-icon-fabu:before {
+  content: "\e65d";
+}
+/* 小鱼干 */
+.custom-icon-xiaoyugan:before {
+  content: "\e649";
+}
+/* ai */
+.custom-icon-jiqiren:before {
+  content: "\e6c0";
+}
+/* 壁纸 */
+.custom-icon-bizhi:before {
+  content: "\e600";
+}
+/* 消息选中 */
+.custom-icon-navbar_xiaoxi_xuanzhong:before {
+  content: "\e601";
+}
+/* 我的 */
+.custom-icon-wode:before {
+  content: "\e8bb";
+}
+/* 我的选中 */
+.custom-icon-wode1:before {
+  content: "\e8c6";
+}
+/* 领养流程 */
+.custom-icon-liucheng:before {
+  content: "\e610";
+}
+/* ai选中 */
+.custom-icon-jiqiren-xuanzhong:before {
+  content: "\e622";
+}
+/* 首页 */
+.custom-icon-shouye:before {
+  content: "\e602";
+}
+/* 首页选中 */
+.custom-icon-index-copy:before {
+  content: "\e623";
+}
+/* 养宠百科 */
+.custom-icon-chongwuziliaoguanli-gongzuotai:before {
+  content: "\eefd";
+}
+/* 日记 */
+.custom-icon-riji:before {
+  content: "\fb15";
+}
