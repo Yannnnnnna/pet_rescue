@@ -130,13 +130,48 @@ const formatViewCount = (count) => {
 .wallpaper-container {
   min-height: 100vh;
   background-color: #f5f5f5;
-  padding: 20rpx;
+}
+
+.nav-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: #fff;
+  z-index: 100;
+  
+  .nav-content {
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 30rpx;
+  }
+  
+  .back-btn {
+    width: 60rpx;
+    height: 60rpx;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .nav-title {
+    font-size: 34rpx;
+    font-weight: bold;
+    color: #333;
+  }
+  
+  .placeholder {
+    width: 60rpx;
+  }
 }
 
 .waterfall-list {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
+  padding: 20rpx;
 
   .left-col, .right-col {
     width: 48%;

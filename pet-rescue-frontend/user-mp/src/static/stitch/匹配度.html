@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>AI 智能匹配</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              colors: {
+                "forest-green": "#2E7D32", // Forest Green
+                "sunflower-yellow": "#FFC107", // Sunflower Yellow
+                "terracotta-orange": "#E65100", // Terracotta Orange
+                "accent-green": "#E8F5E9", // Light Green
+                "accent-yellow": "#FFFDE7", // Very Light Yellow
+                "background-light": "#F9FAFB",
+                "background-dark": "#121212",
+                "surface-light": "#ffffff",
+                "surface-dark": "#1E1E1E",
+              },
+              fontFamily: {
+                "display": ["Plus Jakarta Sans", "sans-serif"]
+              },
+              borderRadius: {"DEFAULT": "0.5rem", "lg": "1rem", "xl": "1.5rem", "2xl": "2rem", "full": "9999px"},
+            },
+          },
+        }
+    </script>
+<style>
+        .radar-chart {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            margin: 0 auto;
+        }
+        .radar-bg {
+            fill: none;
+            stroke: #e5e7eb;
+            stroke-width: 1;
+        }
+        .dark .radar-bg {
+            stroke: #4b5563;
+        }
+        .radar-area {
+            fill: rgba(46, 125, 50, 0.7);stroke: #2E7D32;
+            stroke-width: 2;
+        }
+        .bg-pattern {
+            background-image: radial-gradient(#2E7D32 1px, transparent 1px);
+            background-size: 24px 24px;
+            opacity: 0.05;
+        }
+        .dark .bg-pattern {
+            background-image: radial-gradient(#2E7D32 1px, transparent 1px);
+            opacity: 0.1;
+        }
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="font-display bg-background-light dark:bg-background-dark text-gray-800 dark:text-gray-100 h-screen flex flex-col overflow-hidden relative">
+<div class="absolute inset-0 bg-pattern pointer-events-none z-0"></div>
+<header class="relative z-10 px-4 pt-12 pb-4 bg-surface-light/95 dark:bg-surface-dark/95 backdrop-blur-md shadow-sm border-b border-gray-100 dark:border-gray-800">
+<div class="flex items-center justify-between">
+<button class="p-2 -ml-2 rounded-full hover:bg-green-50 dark:hover:bg-gray-800 transition-colors text-gray-600 dark:text-gray-300">
+<span class="material-icons">arrow_back</span>
+</button>
+<div class="flex flex-col items-center">
+<h1 class="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">
+<span class="material-icons text-forest-green text-xl">psychology</span>
+                    AI 智能匹配
+                </h1>
+<span class="text-xs text-forest-green font-medium flex items-center gap-1">
+<span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                    专家在线
+                </span>
+</div>
+<button class="p-2 -mr-2 rounded-full hover:bg-green-50 dark:hover:bg-gray-800 transition-colors text-gray-600 dark:text-gray-300">
+<span class="material-icons">more_horiz</span>
+</button>
+</div>
+</header>
+<main class="flex-1 overflow-y-auto no-scrollbar p-4 space-y-6 relative z-10">
+<div class="flex justify-center">
+<span class="text-xs text-gray-400 dark:text-gray-500 bg-gray-100 dark:bg-surface-dark px-3 py-1 rounded-full border border-gray-200 dark:border-gray-700">今天, 上午 10:23</span>
+</div>
+<div class="flex gap-3 items-end">
+<div class="w-10 h-10 rounded-full bg-white border border-gray-200 flex items-center justify-center flex-shrink-0 overflow-hidden ring-2 ring-green-50 dark:ring-surface-dark shadow-sm">
+<img class="w-full h-full object-cover" data-alt="Professional Pet Match Expert avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAxH26NaZCa1diN5ko-alBLCiC0Q2FoLOFEohhS4bjqJ1QX30AhztYYF5xGCxLoCNADAwRPcbHDnnoNp8fWwYZXZNbohZcsRC6SR9y2hr3gmYH31rENZMf6q4Hv6U628qHNjhIPtxBDv5GWlxZ0wSxKT8zOkOhRh45VTk2nsfQ_cRMBDtPw4s9Yo54UDAip9fir0UkP6GGG1KgrHdFG8e80ZkQvbtSAx5SnohPf1Hoq61ihtPCQKvpE8njo6KB1ewtSi93h-6CZorA"/>
+</div>
+<div class="flex flex-col gap-1 max-w-[85%]">
+<span class="text-xs text-gray-500 font-medium ml-1">PetMatch 专家</span>
+<div class="bg-white dark:bg-gray-800 p-4 rounded-2xl rounded-bl-none shadow-sm border border-gray-200 dark:border-gray-700 text-sm leading-relaxed text-gray-800 dark:text-gray-200">
+                    你好 Sarah! 🌿 我已经对比了你的生活方式和 <strong>Luna</strong> 的需求。这是为您生成的详细兼容性报告！
+                </div>
+</div>
+</div>
+<div class="flex gap-3 items-end">
+<div class="w-10 flex-shrink-0"></div>
+<div class="flex flex-col gap-1 w-full max-w-[85%]">
+<div class="bg-surface-light dark:bg-surface-dark p-5 rounded-2xl rounded-bl-none shadow-md border border-gray-100 dark:border-gray-800 relative overflow-hidden">
+<div class="absolute -top-10 -right-10 w-32 h-32 bg-forest-green/5 rounded-full blur-2xl"></div>
+<div class="absolute -bottom-10 -left-10 w-24 h-24 bg-sunflower-yellow/10 rounded-full blur-2xl"></div>
+<div class="flex justify-between items-center mb-4 relative z-10">
+<h3 class="font-bold text-gray-800 dark:text-white flex items-center gap-2">
+<span class="material-icons text-forest-green text-lg">analytics</span>
+                            匹配度分析
+                        </h3>
+<div class="bg-forest-green text-white px-3 py-1 rounded-full text-sm font-bold shadow-sm flex items-center gap-1">
+<span class="material-icons text-xs">verified</span>
+                            94% 匹配
+                        </div>
+</div>
+<div class="relative w-full h-48 flex items-center justify-center mb-4">
+<svg class="w-48 h-48 drop-shadow-sm" viewBox="0 0 100 100">
+<polygon class="radar-bg stroke-gray-200 dark:stroke-gray-700 fill-transparent" points="50,10 90,40 75,90 25,90 10,40"></polygon>
+<polygon class="radar-bg stroke-gray-200 dark:stroke-gray-700 fill-transparent" points="50,25 70,40 62.5,65 37.5,65 30,40"></polygon>
+<polygon class="radar-area stroke-forest-green" fill="rgba(46, 125, 50, 0.7)" points="50,15 85,42 70,85 30,85 15,42"></polygon>
+<text class="text-[6px] fill-gray-500 font-bold uppercase tracking-wide" text-anchor="middle" x="50" y="5">生活方式</text>
+<text class="text-[6px] fill-gray-500 font-bold uppercase tracking-wide" text-anchor="middle" x="95" y="40">精力程度</text>
+<text class="text-[6px] fill-gray-500 font-bold uppercase tracking-wide" text-anchor="middle" x="75" y="98">居住空间</text>
+<text class="text-[6px] fill-gray-500 font-bold uppercase tracking-wide" text-anchor="middle" x="25" y="98">养宠经验</text>
+<text class="text-[6px] fill-gray-500 font-bold uppercase tracking-wide" text-anchor="middle" x="5" y="40">预算规划</text>
+<circle class="fill-surface-light dark:fill-surface-dark stroke-forest-green stroke-2" cx="50" cy="55" r="11"></circle>
+<text class="text-[7px] font-bold fill-forest-green" text-anchor="middle" x="50" y="58">94%</text>
+</svg>
+</div>
+<div class="space-y-3 relative z-10 border-t border-gray-100 dark:border-gray-700 pt-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-green-50 dark:bg-green-900/20 text-forest-green flex items-center justify-center">
+<span class="material-icons text-sm">home</span>
+</div>
+<div class="flex-1">
+<div class="flex justify-between text-xs mb-1">
+<span class="font-medium text-gray-700 dark:text-gray-300">生活环境</span>
+<span class="text-forest-green font-bold">完美</span>
+</div>
+<div class="w-full h-1.5 bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden">
+<div class="h-full bg-forest-green w-[95%] rounded-full"></div>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-yellow-50 dark:bg-yellow-900/20 text-yellow-600 flex items-center justify-center">
+<span class="material-icons text-sm">schedule</span>
+</div>
+<div class="flex-1">
+<div class="flex justify-between text-xs mb-1">
+<span class="font-medium text-gray-700 dark:text-gray-300">作息匹配</span>
+<span class="text-yellow-600 font-bold">良好</span>
+</div>
+<div class="w-full h-1.5 bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden">
+<div class="h-full bg-sunflower-yellow w-[80%] rounded-full"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="flex gap-3 items-end">
+<div class="w-10 h-10 rounded-full bg-white border border-gray-200 flex items-center justify-center flex-shrink-0 overflow-hidden ring-2 ring-green-50 dark:ring-surface-dark shadow-sm">
+<img class="w-full h-full object-cover" data-alt="Professional Pet Match Expert avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuChkYS4hzXDT-OO8pL8y9OwPFNk5U4sQwcMKxFvbpNgpLmez52AdCrzh1_Ufo_fqA_XPI46WKoNtdWJ6oslBHWS1wuaka_CrIzYHqou8vf_UrwzKevhXGHvibxhdqAgbJZcEePZ-v6SoNBw8UrRd9fSworXobkoIhYNNSpLcnfnG5mZDli4unQ0w3huW37UDRnWZIERnx9uSuhd5cmJ2hmEaysqi-5MYF85uLcAMnJsMZIwt5shSfuhMX1xSSAOD26YRZ7YGvG9afQ"/>
+</div>
+<div class="flex flex-col gap-1 max-w-[85%]">
+<span class="text-xs text-gray-500 font-medium ml-1">PetMatch 专家</span>
+<div class="bg-white dark:bg-gray-800 p-4 rounded-2xl rounded-bl-none shadow-sm border border-gray-200 dark:border-gray-700 text-sm leading-relaxed text-gray-800 dark:text-gray-200">
+<p class="mb-2">Luna 非常安静，这与您偏好的公寓生活完全吻合！ 🏢✨</p>
+<p>不过，她一开始可能会有点害羞。根据您之前的养猫经验，这应该不是问题，但她需要一些耐心。</p>
+</div>
+</div>
+</div>
+<div class="h-24"></div>
+</main>
+<footer class="absolute bottom-0 w-full bg-surface-light dark:bg-surface-dark border-t border-gray-200 dark:border-gray-800 p-4 pb-8 z-20 shadow-[0_-5px_20px_rgba(0,0,0,0.02)]">
+<div class="flex flex-col gap-3 max-w-md mx-auto">
+<button class="w-full bg-forest-green hover:bg-green-800 text-white font-semibold py-4 px-6 rounded-xl shadow-lg shadow-green-900/10 flex items-center justify-center gap-2 transform transition active:scale-[0.98]">
+<span class="material-icons">calendar_today</span>
+                预约看宠 (Luna)
+            </button>
+<div class="grid grid-cols-2 gap-3">
+<button class="w-full bg-white dark:bg-surface-dark border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 font-medium py-3 px-4 rounded-xl flex items-center justify-center gap-2 hover:bg-gray-50 dark:hover:bg-gray-800 transition shadow-sm">
+<span class="material-icons text-sm text-forest-green">pets</span>
+                    查看主页
+                </button>
+<button class="w-full bg-white dark:bg-surface-dark border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 font-medium py-3 px-4 rounded-xl flex items-center justify-center gap-2 hover:bg-gray-50 dark:hover:bg-gray-800 transition shadow-sm">
+<span class="material-icons text-sm text-terracotta-orange">chat_bubble_outline</span>
+                    咨询详情
+                </button>
+</div>
+</div>
+</footer>
+
+</body></html>

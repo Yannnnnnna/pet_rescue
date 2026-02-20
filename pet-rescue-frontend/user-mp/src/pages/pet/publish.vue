@@ -1,9 +1,17 @@
 <template>
   <view class="container">
-    <view class="page-title">发布送养</view>
-    
-    <!-- 基本信息 -->
-    <view class="card">
+    <view class="nav-bar" :style="{ paddingTop: statusBarHeight + 'px' }">
+      <view class="nav-content">
+        <view class="back-btn" @click="goBack">
+          <uni-icons type="left" size="20" color="#333"></uni-icons>
+        </view>
+        <text class="nav-title">发布送养</text>
+        <view class="placeholder"></view>
+      </view>
+    </view>
+
+    <view class="content-area" :style="{ marginTop: statusBarHeight + 44 + 'px' }">
+      <view class="card">
       <view class="section-title">基本信息</view>
       
       <view class="form-item">
@@ -106,7 +114,7 @@
     <view class="btn-area">
       <button class="submit-btn" :loading="loading" @click="submit">立即发布</button>
     </view>
-
+    </view>
   </view>
 </template>
 
@@ -117,11 +125,21 @@ import { addPet } from '@/api/pet'
 import { uploadImage } from '@/api/user'
 import { cityData } from '@/utils/cityData'
 
+const statusBarHeight = ref(44)
 const loading = ref(false)
-const fileList = ref([]) // 存储图片URL字符串
+const fileList = ref([])
 
 const cityRange = ref([cityData.map(item => item.name), cityData[0].cities.map(item => item.name)])
 const cityIndex = ref([0, 0])
+
+onLoad(() => {
+  const systemInfo = uni.getSystemInfoSync()
+  statusBarHeight.value = systemInfo.statusBarHeight || 44
+})
+
+const goBack = () => {
+  uni.navigateBack()
+}
 
 const form = ref({
   name: '',
@@ -251,8 +269,46 @@ const submit = async () => {
 .container {
   min-height: 100vh;
   background-color: #f5f7fa;
-  padding: 30rpx;
   box-sizing: border-box;
+}
+
+.nav-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: #fff;
+  z-index: 100;
+  
+  .nav-content {
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 30rpx;
+  }
+  
+  .back-btn {
+    width: 60rpx;
+    height: 60rpx;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .nav-title {
+    font-size: 34rpx;
+    font-weight: bold;
+    color: #333;
+  }
+  
+  .placeholder {
+    width: 60rpx;
+  }
+}
+
+.content-area {
+  padding: 30rpx;
 }
 
 .page-title {

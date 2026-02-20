@@ -1,7 +1,16 @@
 <template>
   <view class="wiki-container">
-    <!-- 顶部搜索区 -->
-    <view class="search-bar" :style="{ paddingTop: statusBarHeight + 'px' }">
+    <view class="nav-bar" :style="{ paddingTop: statusBarHeight + 'px' }">
+      <view class="nav-content">
+        <view class="back-btn" @click="goBack">
+          <uni-icons type="left" size="20" color="#333"></uni-icons>
+        </view>
+        <text class="nav-title">宠物百科</text>
+        <view class="placeholder"></view>
+      </view>
+    </view>
+
+    <view class="search-bar" :style="{ marginTop: statusBarHeight + 44 + 'px' }">
       <view class="search-box" @click="handleSearch">
         <u-icon name="sousuo" custom-prefix="custom-icon" size="18" color="#999"></u-icon>
         <text class="placeholder">搜索关键词，如：猫咪感冒、新手养狗</text>
@@ -191,11 +200,46 @@ const formatTime = (time) => {
   background: linear-gradient(to bottom, #e6f2e6, #f5f5f5);
 }
 
+.nav-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: #e6f2e6;
+  z-index: 100;
+  
+  .nav-content {
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 30rpx;
+  }
+  
+  .back-btn {
+    width: 60rpx;
+    height: 60rpx;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .nav-title {
+    font-size: 34rpx;
+    font-weight: bold;
+    color: #333;
+  }
+  
+  .placeholder {
+    width: 60rpx;
+  }
+}
+
 /* 搜索栏 */
 .search-bar {
   position: sticky;
   top: 0;
-  z-index: 100;
+  z-index: 99;
   background: #e6f2e6;
   padding: 20rpx 30rpx;
 

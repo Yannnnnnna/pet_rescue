@@ -1,24 +1,36 @@
 <template>
   <view class="container">
-    <u-list @scrolltolower="loadMore" v-if="userList.length > 0">
-      <u-list-item v-for="(item, index) in userList" :key="index">
-        <view class="user-card" @click="handleUserClick(item)">
-          <view class="left-section">
-             <image :src="item.askUserAvatar || '/static/logo.png'" mode="aspectFill" class="avatar"></image>
-             <u-badge :value="item.msgCount" absolute :offset="[-5, -5]" type="error" v-if="item.msgCount > 0"></u-badge>
-          </view>
-          
-          <view class="right-section">
-            <view class="header">
-              <text class="nickname">{{ item.askUserNickname || '用户' + item.askUserId }}</text>
-              <text class="time">{{ formatTime(item.lastTime) }}</text>
-            </view>
-            <view class="message">{{ item.lastMessage || '暂无消息' }}</view>
-          </view>
+    <view class="nav-bar" :style="{ paddingTop: statusBarHeight + 'px' }">
+      <view class="nav-content">
+        <view class="back-btn" @click="goBack">
+          <uni-icons type="left" size="20" color="#333"></uni-icons>
         </view>
-      </u-list-item>
-    </u-list>
-    <u-empty v-else mode="message" text="暂无咨询记录" marginTop="100"></u-empty>
+        <text class="nav-title">咨询中心</text>
+        <view class="placeholder"></view>
+      </view>
+    </view>
+
+    <view class="content-area" :style="{ marginTop: statusBarHeight + 44 + 'px' }">
+      <u-list @scrolltolower="loadMore" v-if="userList.length > 0">
+        <u-list-item v-for="(item, index) in userList" :key="index">
+          <view class="user-card" @click="handleUserClick(item)">
+            <view class="left-section">
+              <image :src="item.askUserAvatar || '/static/logo.png'" mode="aspectFill" class="avatar"></image>
+              <u-badge :value="item.msgCount" absolute :offset="[-5, -5]" type="error" v-if="item.msgCount > 0"></u-badge>
+            </view>
+            
+            <view class="right-section">
+              <view class="header">
+                <text class="nickname">{{ item.askUserNickname || '用户' + item.askUserId }}</text>
+                <text class="time">{{ formatTime(item.lastTime) }}</text>
+              </view>
+              <view class="message">{{ item.lastMessage || '暂无消息' }}</view>
+            </view>
+          </view>
+        </u-list-item>
+      </u-list>
+      <u-empty v-else mode="message" text="暂无咨询记录" marginTop="100"></u-empty>
+    </view>
   </view>
 </template>
 
@@ -28,10 +40,14 @@ import { onLoad, onShow, onPullDownRefresh } from '@dcloudio/uni-app'
 import { getConsultationSummary } from '@/api/consultation'
 import dayjs from 'dayjs'
 
+const statusBarHeight = ref(44)
 const petId = ref(null)
 const userList = ref([])
 
 onLoad((options) => {
+  const systemInfo = uni.getSystemInfoSync()
+  statusBarHeight.value = systemInfo.statusBarHeight || 44
+  
   if (options.petId) {
     petId.value = options.petId
   }
@@ -53,6 +69,10 @@ onPullDownRefresh(() => {
   }
 })
 
+const goBack = () => {
+  uni.navigateBack()
+}
+
 const fetchData = async () => {
   uni.showLoading({ title: '加载中' })
   try {
@@ -69,8 +89,6 @@ const fetchData = async () => {
 }
 
 const handleUserClick = (item) => {
-  // Go to chat history with this specific user
-  // 这里传递 applicantId，复用 chat-history 页面
   uni.navigateTo({
     url: `/pages/message/chat-history?petId=${petId.value}&applicantId=${item.askUserId}`
   })
@@ -82,24 +100,63 @@ const formatTime = (time) => {
 }
 
 const loadMore = () => {
-  // Assuming API returns all data for now
 }
 </script>
 
 <style lang="scss" scoped>
 .container {
   min-height: 100vh;
-  background-color: #f5f5f5;
-  padding: 20rpx;
+  background-color: #F9FAFB;
+}
+
+.nav-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: #fff;
+  z-index: 100;
+  border-bottom: 1rpx solid #f0f0f0;
+  
+  .nav-content {
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 30rpx;
+  }
+  
+  .back-btn {
+    width: 60rpx;
+    height: 60rpx;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .nav-title {
+    font-size: 34rpx;
+    font-weight: bold;
+    color: #1F2937;
+  }
+  
+  .placeholder {
+    width: 60rpx;
+  }
+}
+
+.content-area {
+  padding: 24rpx;
 }
 
 .user-card {
   background: #fff;
-  border-radius: 12rpx;
-  padding: 30rpx;
+  border-radius: 24rpx;
+  padding: 32rpx;
   margin-bottom: 20rpx;
   display: flex;
   align-items: center;
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.04);
   transition: all 0.3s;
   
   &:active {
@@ -109,12 +166,12 @@ const loadMore = () => {
 
 .left-section {
   position: relative;
-  margin-right: 24rpx;
+  margin-right: 28rpx;
   
   .avatar {
     width: 100rpx;
     height: 100rpx;
-    border-radius: 12rpx;
+    border-radius: 20rpx;
     background-color: #eee;
   }
 }
@@ -124,7 +181,7 @@ const loadMore = () => {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  height: 100rpx;
+  min-height: 100rpx;
   
   .header {
     display: flex;
@@ -132,25 +189,25 @@ const loadMore = () => {
     align-items: center;
     
     .nickname {
-      font-size: 30rpx;
-      font-weight: bold;
-      color: #333;
+      font-size: 32rpx;
+      font-weight: 600;
+      color: #1F2937;
     }
     
     .time {
       font-size: 24rpx;
-      color: #999;
+      color: #9CA3AF;
     }
   }
   
   .message {
     font-size: 26rpx;
-    color: #666;
+    color: #6B7280;
     display: -webkit-box;
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 1;
     overflow: hidden;
-    margin-top: 10rpx;
+    margin-top: 12rpx;
   }
 }
 </style>
