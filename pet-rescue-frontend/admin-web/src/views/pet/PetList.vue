@@ -1,107 +1,134 @@
 <template>
   <div class="pet-list-container">
-
-    <el-card class="box-card">
-      <!-- 筛选区域 -->
-      <div class="filter-container">
-        <el-form :inline="true" :model="queryParams" class="demo-form-inline">
-          <el-form-item label="关键字">
-            <el-input v-model="queryParams.keyword" placeholder="昵称/品种" clearable @keyup.enter="handleSearch" />
-          </el-form-item>
-          <el-form-item label="城市">
-            <el-input v-model="queryParams.city" placeholder="城市" clearable @keyup.enter="handleSearch" />
-          </el-form-item>
-          <el-form-item label="类型">
-            <el-select v-model="queryParams.type" placeholder="全部类型" clearable style="width: 120px">
+    <div class="filter-card">
+      <div class="filter-row">
+        <div class="filter-grid">
+          <div class="filter-item">
+            <label class="filter-label">关键字</label>
+            <el-input v-model="queryParams.keyword" placeholder="昵称/品种" clearable @keyup.enter="handleSearch" class="filter-input" />
+          </div>
+          <div class="filter-item">
+            <label class="filter-label">城市</label>
+            <el-input v-model="queryParams.city" placeholder="城市" clearable @keyup.enter="handleSearch" class="filter-input" />
+          </div>
+          <div class="filter-item">
+            <label class="filter-label">类型</label>
+            <el-select v-model="queryParams.type" placeholder="全部类型" clearable class="filter-input">
               <el-option label="猫" :value="0" />
               <el-option label="狗" :value="1" />
               <el-option label="鸟类" :value="2" />
               <el-option label="异宠" :value="3" />
               <el-option label="其他" :value="4" />
             </el-select>
-          </el-form-item>
-          <el-form-item label="状态">
-            <el-select v-model="queryParams.status" placeholder="全部状态" clearable style="width: 120px">
+          </div>
+          <div class="filter-item">
+            <label class="filter-label">状态</label>
+            <el-select v-model="queryParams.status" placeholder="全部状态" clearable class="filter-input">
               <el-option label="待领养" :value="0" />
               <el-option label="申请中" :value="1" />
               <el-option label="已领养" :value="2" />
             </el-select>
-          </el-form-item>
-          <el-form-item>
-            <el-button type="primary" :icon="Search" @click="handleSearch">搜索</el-button>
-            <el-button :icon="Refresh" @click="handleReset">重置</el-button>
-            <el-button type="success" :icon="Plus" @click="handleAdd">新增宠物</el-button>
-          </el-form-item>
-        </el-form>
+          </div>
+        </div>
+        <div class="filter-actions">
+          <el-button type="primary" :icon="Search" @click="handleSearch" class="btn-search">搜索</el-button>
+          <el-button :icon="Refresh" @click="handleReset" class="btn-reset">重置</el-button>
+          <el-button type="success" :icon="Plus" @click="handleAdd" class="btn-add">新增宠物</el-button>
+        </div>
       </div>
+    </div>
 
-      <!-- 表格区域 -->
+    <div class="table-card">
       <el-table
         v-loading="loading"
         :data="petList"
         style="width: 100%"
-        border
-        stripe
+        class="data-table"
       >
         <el-table-column prop="id" label="ID" width="80" align="center" />
-        <el-table-column label="封面图" width="120" align="center">
+        <el-table-column label="封面图" width="100" align="center">
           <template #default="scope">
-            <el-image
-              style="width: 80px; height: 80px; border-radius: 8px"
-              :src="scope.row.coverImg"
-              :preview-src-list="[scope.row.coverImg]"
-              fit="cover"
-              preview-teleported
-            >
-              <template #error>
-                <div class="image-slot">
-                  <el-icon><Picture /></el-icon>
-                </div>
-              </template>
-            </el-image>
+            <div class="cover-wrapper">
+              <el-image
+                class="cover-image"
+                :src="scope.row.coverImg"
+                :preview-src-list="[scope.row.coverImg]"
+                fit="cover"
+                preview-teleported
+              >
+                <template #error>
+                  <div class="image-slot">
+                    <el-icon><Picture /></el-icon>
+                  </div>
+                </template>
+              </el-image>
+            </div>
           </template>
         </el-table-column>
-        <el-table-column prop="name" label="昵称" align="center" />
+        <el-table-column prop="name" label="昵称" align="center">
+          <template #default="scope">
+            <span class="pet-name">{{ scope.row.name || '无' }}</span>
+          </template>
+        </el-table-column>
         <el-table-column prop="breed" label="品种" align="center" />
         <el-table-column label="性别" width="80" align="center">
           <template #default="scope">
-            <el-tag :type="getSexTagType(scope.row.sex)" effect="plain">
+            <span :class="['gender-tag', scope.row.sex === 1 ? 'male' : 'female']">
               {{ getSexLabel(scope.row.sex) }}
-            </el-tag>
+            </span>
           </template>
         </el-table-column>
         <el-table-column label="状态" width="100" align="center">
           <template #default="scope">
-            <el-tag :type="getStatusTagType(scope.row.status)" effect="dark">
+            <span :class="['status-tag', getStatusClass(scope.row.status)]">
               {{ getStatusLabel(scope.row.status) }}
-            </el-tag>
+            </span>
           </template>
         </el-table-column>
         <el-table-column prop="city" label="城市" align="center" />
         <el-table-column prop="publisherId" label="发布人ID" width="100" align="center" />
         <el-table-column label="操作" width="200" align="center" fixed="right">
           <template #default="scope">
-            <el-button type="info" link :icon="View" @click="handleView(scope.row)">查看</el-button>
-            <el-button type="warning" link :icon="ChatDotRound" @click="handleConsultation(scope.row)">咨询记录</el-button>
-            <el-button type="primary" link :icon="Edit" @click="handleEdit(scope.row)">编辑</el-button>
-            <el-button type="danger" link :icon="Delete" @click="handleDelete(scope.row)">删除</el-button>
+            <div class="action-buttons">
+              <div class="action-row">
+                <el-button type="primary" link size="small" @click="handleView(scope.row)">
+                  <el-icon><View /></el-icon>
+                  <span>查看</span>
+                </el-button>
+                <el-button type="warning" link size="small" @click="handleConsultation(scope.row)">
+                  <el-icon><ChatDotRound /></el-icon>
+                  <span>咨询记录</span>
+                </el-button>
+              </div>
+              <div class="action-row">
+                <el-button type="primary" link size="small" @click="handleEdit(scope.row)">
+                  <el-icon><Edit /></el-icon>
+                  <span>编辑</span>
+                </el-button>
+                <el-button type="danger" link size="small" @click="handleDelete(scope.row)">
+                  <el-icon><Delete /></el-icon>
+                  <span>删除</span>
+                </el-button>
+              </div>
+            </div>
           </template>
         </el-table-column>
       </el-table>
 
-      <!-- 分页区域 -->
-      <div class="pagination-container">
+      <div class="pagination-wrapper">
+        <span class="total-text">共 {{ total }} 条</span>
         <el-pagination
           v-model:current-page="queryParams.pageNum"
           v-model:page-size="queryParams.pageSize"
           :page-sizes="[10, 20, 50, 100]"
-          layout="total, sizes, prev, pager, next, jumper"
+          layout="sizes, prev, pager, next, jumper"
           :total="total"
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
+          class="pagination"
         />
       </div>
-    </el-card>
+    </div>
 
     <!-- 新增/编辑弹窗 -->
     <el-dialog
@@ -929,6 +956,11 @@ const getStatusTagType = (val) => {
   return map[val] || 'info'
 }
 
+const getStatusClass = (val) => {
+  const map = { 0: 'available', 1: 'pending', 2: 'adopted' }
+  return map[val] || 'available'
+}
+
 onMounted(() => {
   fetchList()
 })
@@ -936,21 +968,139 @@ onMounted(() => {
 
 <style scoped>
 .pet-list-container {
-  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
-.box-card {
+.filter-card {
+  background: white;
+  padding: 16px 20px;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  border: 1px solid #f1f5f9;
+}
+
+.filter-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: flex-end;
+  justify-content: space-between;
+}
+
+.filter-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  flex: 1;
+}
+
+.filter-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.filter-label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #64748b;
+  white-space: nowrap;
+}
+
+.filter-input {
+  flex: 1;
+}
+
+.filter-input :deep(.el-input__wrapper) {
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  box-shadow: none;
+  transition: all 0.2s ease;
+}
+
+.filter-input :deep(.el-input__wrapper:focus-within) {
+  border-color: #10b981;
+  box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.1);
+}
+
+.filter-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.btn-search {
+  background: #3b82f6;
+  border-color: #3b82f6;
   border-radius: 8px;
 }
 
-.filter-container {
-  margin-bottom: 20px;
+.btn-search:hover {
+  background: #2563eb;
+  border-color: #2563eb;
 }
 
-.pagination-container {
-  margin-top: 20px;
-  display: flex;
-  justify-content: flex-end;
+.btn-reset {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  color: #64748b;
+}
+
+.btn-reset:hover {
+  background: #f8fafc;
+  color: #334155;
+}
+
+.btn-add {
+  background: #10b981;
+  border-color: #10b981;
+  border-radius: 8px;
+}
+
+.btn-add:hover {
+  background: #059669;
+  border-color: #059669;
+}
+
+.table-card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  border: 1px solid #f1f5f9;
+  overflow: hidden;
+}
+
+.data-table {
+  --el-table-border-color: #f1f5f9;
+  --el-table-header-bg-color: #f8fafc;
+  --el-table-header-text-color: #64748b;
+  --el-table-row-hover-bg-color: #f8fafc;
+}
+
+.data-table :deep(.el-table__header th) {
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.data-table :deep(.el-table__body td) {
+  font-size: 14px;
+  color: #334155;
+}
+
+.cover-wrapper {
+  width: 64px;
+  height: 64px;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid #e2e8f0;
+  margin: 0 auto;
+}
+
+.cover-image {
+  width: 100%;
+  height: 100%;
 }
 
 .image-slot {
@@ -959,41 +1109,128 @@ onMounted(() => {
   align-items: center;
   width: 100%;
   height: 100%;
-  background: #f5f7fa;
-  color: #909399;
+  background: #f8fafc;
+  color: #94a3b8;
   font-size: 20px;
 }
 
-/* 弹窗样式调整 */
+.pet-name {
+  font-weight: 500;
+  color: #1e293b;
+}
+
+.gender-tag {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  border: 1px solid;
+}
+
+.gender-tag.male {
+  background: #eff6ff;
+  color: #3b82f6;
+  border-color: #bfdbfe;
+}
+
+.gender-tag.female {
+  background: #fdf2f8;
+  color: #ec4899;
+  border-color: #fbcfe8;
+}
+
+.status-tag {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  border: 1px solid;
+}
+
+.status-tag.available {
+  background: #ecfdf5;
+  color: #10b981;
+  border-color: #a7f3d0;
+}
+
+.status-tag.pending {
+  background: #fffbeb;
+  color: #f59e0b;
+  border-color: #fde68a;
+}
+
+.status-tag.adopted {
+  background: #f1f5f9;
+  color: #64748b;
+  border-color: #e2e8f0;
+}
+
+.action-buttons {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.action-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.action-row .el-button {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+}
+
+.pagination-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-top: 1px solid #f1f5f9;
+}
+
+.total-text {
+  font-size: 12px;
+  color: #64748b;
+}
+
+.pagination {
+  display: flex;
+  align-items: center;
+}
+
 .pet-dialog .el-dialog__body {
   padding-top: 10px;
   padding-bottom: 10px;
 }
 
-/* 上传组件样式 */
 .avatar-uploader .el-upload {
-  border: 1px dashed var(--el-border-color);
-  border-radius: 6px;
+  border: 1px dashed #e2e8f0;
+  border-radius: 8px;
   cursor: pointer;
   position: relative;
   overflow: hidden;
-  transition: var(--el-transition-duration-fast);
+  transition: all 0.2s ease;
 }
 
 .avatar-uploader .el-upload:hover {
-  border-color: var(--el-color-primary);
+  border-color: #10b981;
 }
 
 .avatar-uploader-icon {
   font-size: 28px;
-  color: #8c939d;
+  color: #94a3b8;
   width: 120px;
   height: 120px;
-  text-align: center;
-  line-height: 120px;
   display: flex;
   justify-content: center;
   align-items: center;
+  background: #f8fafc;
 }
 
 .avatar {
@@ -1005,12 +1242,10 @@ onMounted(() => {
 
 .upload-tip {
   font-size: 12px;
-  color: #909399;
+  color: #94a3b8;
   margin-top: 5px;
-  line-height: 1.2;
 }
 
-/* 详情弹窗样式 */
 .pet-detail-dialog {
   border-radius: 16px;
   overflow: hidden;
@@ -1019,13 +1254,13 @@ onMounted(() => {
 .pet-detail-dialog .el-dialog__header {
   margin-right: 0;
   padding: 20px;
-  background-color: #fdf6ec;
-  border-bottom: 1px solid #faecd8;
+  background: linear-gradient(135deg, #ecfdf5 0%, #f0fdf4 100%);
+  border-bottom: 1px solid #d1fae5;
 }
 
 .pet-detail-dialog .el-dialog__title {
-  color: #d46b08;
-  font-weight: bold;
+  color: #059669;
+  font-weight: 700;
 }
 
 .detail-content {
@@ -1070,7 +1305,7 @@ onMounted(() => {
 .pet-name {
   margin: 0;
   font-size: 24px;
-  color: #303133;
+  color: #1e293b;
   font-weight: 700;
 }
 
@@ -1090,7 +1325,7 @@ onMounted(() => {
   display: flex;
   align-items: center;
   gap: 6px;
-  color: #909399;
+  color: #64748b;
   font-size: 14px;
 }
 
@@ -1106,7 +1341,7 @@ onMounted(() => {
 .description-text {
   white-space: pre-wrap;
   line-height: 1.6;
-  color: #606266;
+  color: #475569;
 }
 
 .detail-images-section {
@@ -1118,14 +1353,14 @@ onMounted(() => {
   align-items: center;
   gap: 12px;
   margin-bottom: 16px;
-  font-weight: bold;
-  color: #303133;
+  font-weight: 600;
+  color: #1e293b;
 }
 
 .title-line {
   flex: 1;
   height: 1px;
-  background: #ebeef5;
+  background: #e2e8f0;
 }
 
 .image-grid {
@@ -1147,36 +1382,31 @@ onMounted(() => {
 }
 
 .text-gray {
-  color: #909399;
+  color: #94a3b8;
 }
 
-.mx-1 {
-  margin-left: 0.25rem;
-  margin-right: 0.25rem;
-}
-
-/* 咨询记录样式 */
 .consultation-container {
   display: flex;
-  height: calc(100vh - 120px); /* 减去抽屉header的高度 */
-  border: 1px solid #e4e7ed;
-  border-radius: 4px;
+  height: calc(100vh - 120px);
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
   overflow: hidden;
 }
 
 .consultation-sidebar {
   width: 250px;
-  border-right: 1px solid #e4e7ed;
-  background-color: #f5f7fa;
+  border-right: 1px solid #e2e8f0;
+  background-color: #f8fafc;
   display: flex;
   flex-direction: column;
 }
 
 .sidebar-header {
   padding: 15px;
-  font-weight: bold;
-  border-bottom: 1px solid #e4e7ed;
+  font-weight: 600;
+  border-bottom: 1px solid #e2e8f0;
   background-color: #fff;
+  color: #334155;
 }
 
 .user-list {
@@ -1194,11 +1424,11 @@ onMounted(() => {
 }
 
 .user-item:hover {
-  background-color: #e6f7ff;
+  background-color: #f1f5f9;
 }
 
 .user-item.active {
-  background-color: #bae7ff;
+  background-color: #ecfdf5;
 }
 
 .user-info {
@@ -1213,11 +1443,12 @@ onMounted(() => {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  color: #334155;
 }
 
 .last-time {
   font-size: 12px;
-  color: #909399;
+  color: #94a3b8;
 }
 
 .msg-count {
@@ -1233,16 +1464,17 @@ onMounted(() => {
 
 .chat-header {
   padding: 15px;
-  border-bottom: 1px solid #e4e7ed;
-  font-weight: bold;
+  border-bottom: 1px solid #e2e8f0;
+  font-weight: 600;
   background-color: #fff;
+  color: #334155;
 }
 
 .chat-content {
   flex: 1;
   padding: 20px;
   overflow-y: auto;
-  background-color: #f5f5f5;
+  background-color: #f8fafc;
 }
 
 .chat-message {
@@ -1280,22 +1512,53 @@ onMounted(() => {
 .message-row.other .message-bubble {
   background-color: #fff;
   border-top-left-radius: 0;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
 .message-row.mine .message-bubble {
-  background-color: #95ec69;
+  background-color: #10b981;
   border-top-right-radius: 0;
 }
 
 .message-text {
   font-size: 14px;
   line-height: 1.5;
+  color: #334155;
+}
+
+.message-row.mine .message-text {
+  color: #fff;
 }
 
 .message-time {
   font-size: 12px;
-  color: #999;
+  color: #94a3b8;
   margin-top: 5px;
   text-align: right;
+}
+
+.message-row.mine .message-time {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+@media (max-width: 1200px) {
+  .filter-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .filter-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .filter-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .filter-actions {
+    justify-content: flex-end;
+  }
 }
 </style>

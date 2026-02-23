@@ -3,17 +3,17 @@ import { ElMessage } from 'element-plus'
 import JSONBig from 'json-bigint'
 import router from '../router'
 
-// 创建 axios 实例
+const JSONBigConfig = JSONBig({ storeAsString: true })
+
 const request = axios.create({
   baseURL: '/api',
-  timeout: 10000, // 请求超时时间
+  timeout: 10000,
   transformResponse: [function (data) {
+    if (!data) return data
+    if (typeof data !== 'string') return data
     try {
-      // 如果是字符串，尝试解析
-      // 使用 storeAsString: true 将大数字处理为字符串，避免精度丢失和 BigInt 序列化问题
-      return JSONBig({ storeAsString: true }).parse(data)
+      return JSONBigConfig.parse(data)
     } catch (err) {
-      // 解析失败则返回原数据
       return data
     }
   }]

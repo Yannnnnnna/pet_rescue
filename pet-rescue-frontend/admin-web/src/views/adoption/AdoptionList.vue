@@ -1,47 +1,45 @@
 <template>
   <div class="adoption-list-container">
-    <el-card class="box-card">
-      <div class="page-header">
-        <h2>全平台领养监管 (Adoption Supervision)</h2>
-      </div>
-      
-      <!-- Search Bar -->
-      <div class="filter-container">
-        <el-form :inline="true" :model="queryParams" class="demo-form-inline">
-          <el-form-item label="宠物昵称">
+    <div class="filter-card">
+      <div class="filter-row">
+        <div class="filter-grid">
+          <div class="filter-item">
+            <label class="filter-label">宠物昵称</label>
             <el-input 
               v-model="queryParams.petName" 
               placeholder="搜索宠物昵称" 
               clearable 
-              @keyup.enter="handleSearch" 
+              @keyup.enter="handleSearch"
+              class="filter-input"
             />
-          </el-form-item>
-          <el-form-item label="状态">
+          </div>
+          <div class="filter-item">
+            <label class="filter-label">状态</label>
             <el-select 
               v-model="queryParams.status" 
               placeholder="全部状态" 
               clearable 
-              style="width: 150px"
+              class="filter-input"
             >
               <el-option label="待审核" :value="0" />
               <el-option label="已通过" :value="1" />
               <el-option label="已驳回" :value="2" />
             </el-select>
-          </el-form-item>
-          <el-form-item>
-            <el-button type="primary" :icon="Search" @click="handleSearch">查询</el-button>
-            <el-button :icon="Refresh" @click="handleReset">重置</el-button>
-          </el-form-item>
-        </el-form>
+          </div>
+        </div>
+        <div class="filter-actions">
+          <el-button type="primary" :icon="Search" @click="handleSearch" class="btn-search">查询</el-button>
+          <el-button :icon="Refresh" @click="handleReset" class="btn-reset">重置</el-button>
+        </div>
       </div>
+    </div>
 
-      <!-- Main Table -->
+    <div class="table-card">
       <el-table 
         v-loading="loading" 
         :data="adoptionList" 
         style="width: 100%" 
-        border 
-        stripe
+        class="data-table"
       >
         <el-table-column prop="id" label="申请单号" width="100" align="center" />
         
@@ -49,7 +47,7 @@
           <template #default="scope">
             <div class="pet-info">
               <el-image 
-                style="width: 50px; height: 50px; border-radius: 4px; margin-right: 10px;"
+                class="pet-cover"
                 :src="scope.row.petCover" 
                 :preview-src-list="[scope.row.petCover]"
                 fit="cover"
@@ -60,34 +58,35 @@
           </template>
         </el-table-column>
 
-        <el-table-column label="送养人 (Owner)" align="center">
+        <el-table-column label="送养人" align="center">
           <template #default="scope">
-            <el-tag v-if="scope.row.ownerId === currentAdminId" type="success">官方自营</el-tag>
-            <el-tag v-else type="info">用户: {{ scope.row.ownerName }}</el-tag>
+            <span :class="['owner-tag', scope.row.ownerId === currentAdminId ? 'official' : 'user']">
+              {{ scope.row.ownerId === currentAdminId ? '官方自营' : scope.row.ownerName }}
+            </span>
           </template>
         </el-table-column>
 
-        <el-table-column label="申请人 (Applicant)" align="center">
+        <el-table-column label="申请人" align="center">
           <template #default="scope">
             <div class="applicant-info">
-              <div>{{ scope.row.applicantName }}</div>
-              <div class="phone-text">{{ scope.row.applicantPhone }}</div>
+              <div class="applicant-name">{{ scope.row.applicantName }}</div>
+              <div class="applicant-phone">{{ scope.row.applicantPhone }}</div>
             </div>
           </template>
         </el-table-column>
 
         <el-table-column label="当前状态" width="100" align="center">
           <template #default="scope">
-            <el-tag :type="getStatusTagType(scope.row.status)">
+            <span :class="['status-tag', getStatusClass(scope.row.status)]">
               {{ getStatusLabel(scope.row.status) }}
-            </el-tag>
+            </span>
           </template>
         </el-table-column>
 
         <el-table-column prop="createTime" label="申请时间" width="180" align="center">
-           <template #default="scope">
-            {{ formatTime(scope.row.createTime) }}
-           </template>
+          <template #default="scope">
+            <span class="time-text">{{ formatTime(scope.row.createTime) }}</span>
+          </template>
         </el-table-column>
 
         <el-table-column label="操作" width="120" align="center" fixed="right">
@@ -96,35 +95,40 @@
               v-if="scope.row.ownerId === currentAdminId && scope.row.status === 0"
               type="primary" 
               link 
+              size="small"
               @click="handleAudit(scope.row)"
             >
-              审核
+              <el-icon><Edit /></el-icon>
+              <span>审核</span>
             </el-button>
             <el-button 
               v-else
-              type="default" 
+              type="primary" 
               link 
+              size="small"
               @click="handleView(scope.row)"
             >
-              查看详情
+              <el-icon><View /></el-icon>
+              <span>查看</span>
             </el-button>
           </template>
         </el-table-column>
       </el-table>
 
-      <!-- Pagination -->
-      <div class="pagination-container">
+      <div class="pagination-wrapper">
+        <span class="total-text">共 {{ total }} 条</span>
         <el-pagination
           v-model:current-page="queryParams.pageNum"
           v-model:page-size="queryParams.pageSize"
           :page-sizes="[10, 20, 50, 100]"
-          layout="total, sizes, prev, pager, next, jumper"
+          layout="sizes, prev, pager, next, jumper"
           :total="total"
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
+          class="pagination"
         />
       </div>
-    </el-card>
+    </div>
 
     <!-- Detail Drawer -->
     <el-drawer
@@ -222,7 +226,7 @@
 
 <script setup>
 import { ref, reactive, onMounted } from 'vue'
-import { Search, Refresh } from '@element-plus/icons-vue'
+import { Search, Refresh, Edit, View } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
 import { getAdoptionList, getAdoptionDetail, auditAdoption, analyzeMatch } from '../../api/adoption'
 import { getMyInfo } from '../../api/user'
@@ -331,6 +335,16 @@ const getStatusLabel = (status) => {
   return map[status] || '未知'
 }
 
+const getStatusClass = (status) => {
+  const map = {
+    0: 'pending',
+    1: 'approved',
+    2: 'rejected',
+    3: 'cancelled'
+  }
+  return map[status] || 'pending'
+}
+
 const formatTime = (timeStr) => {
   if (!timeStr) return ''
   return timeStr.replace('T', ' ')
@@ -419,120 +433,337 @@ const submitAudit = async () => {
 
 <style scoped>
 .adoption-list-container {
-  padding: 20px;
-}
-.box-card {
-  min-height: calc(100vh - 120px);
-}
-.page-header {
-  margin-bottom: 20px;
-}
-.page-header h2 {
-  font-size: 18px;
-  color: #303133;
-  margin: 0;
-}
-.filter-container {
-  margin-bottom: 20px;
-}
-.pagination-container {
-  margin-top: 20px;
   display: flex;
-  justify-content: flex-end;
+  flex-direction: column;
+  gap: 20px;
 }
+
+.filter-card {
+  background: white;
+  padding: 16px 20px;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  border: 1px solid #f1f5f9;
+}
+
+.filter-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: flex-end;
+  justify-content: space-between;
+}
+
+.filter-grid {
+  display: flex;
+  gap: 16px;
+  flex: 1;
+}
+
+.filter-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.filter-label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #64748b;
+  white-space: nowrap;
+}
+
+.filter-input {
+  width: 200px;
+}
+
+.filter-input :deep(.el-input__wrapper) {
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  box-shadow: none;
+  transition: all 0.2s ease;
+}
+
+.filter-input :deep(.el-input__wrapper:focus-within) {
+  border-color: #10b981;
+  box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.1);
+}
+
+.filter-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.btn-search {
+  background: #3b82f6;
+  border-color: #3b82f6;
+  border-radius: 8px;
+}
+
+.btn-search:hover {
+  background: #2563eb;
+  border-color: #2563eb;
+}
+
+.btn-reset {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  color: #64748b;
+}
+
+.btn-reset:hover {
+  background: #f8fafc;
+  color: #334155;
+}
+
+.table-card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  border: 1px solid #f1f5f9;
+  overflow: hidden;
+}
+
+.data-table {
+  --el-table-border-color: #f1f5f9;
+  --el-table-header-bg-color: #f8fafc;
+  --el-table-header-text-color: #64748b;
+  --el-table-row-hover-bg-color: #f8fafc;
+}
+
+.data-table :deep(.el-table__header th) {
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.data-table :deep(.el-table__body td) {
+  font-size: 14px;
+  color: #334155;
+}
+
 .pet-info {
   display: flex;
   align-items: center;
+  justify-content: center;
+  gap: 10px;
 }
+
+.pet-cover {
+  width: 48px;
+  height: 48px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+}
+
 .pet-name {
-  font-weight: bold;
+  font-weight: 500;
+  color: #1e293b;
 }
-.phone-text {
+
+.owner-tag {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 6px;
   font-size: 12px;
-  color: #909399;
+  font-weight: 500;
+  border: 1px solid;
 }
+
+.owner-tag.official {
+  background: #ecfdf5;
+  color: #10b981;
+  border-color: #a7f3d0;
+}
+
+.owner-tag.user {
+  background: #f1f5f9;
+  color: #64748b;
+  border-color: #e2e8f0;
+}
+
+.applicant-info {
+  text-align: center;
+}
+
+.applicant-name {
+  font-weight: 500;
+  color: #1e293b;
+}
+
+.applicant-phone {
+  font-size: 12px;
+  color: #94a3b8;
+  margin-top: 2px;
+}
+
+.status-tag {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  border: 1px solid;
+}
+
+.status-tag.pending {
+  background: #fffbeb;
+  color: #f59e0b;
+  border-color: #fde68a;
+}
+
+.status-tag.approved {
+  background: #ecfdf5;
+  color: #10b981;
+  border-color: #a7f3d0;
+}
+
+.status-tag.rejected {
+  background: #fef2f2;
+  color: #ef4444;
+  border-color: #fecaca;
+}
+
+.status-tag.cancelled {
+  background: #f1f5f9;
+  color: #64748b;
+  border-color: #e2e8f0;
+}
+
+.time-text {
+  color: #64748b;
+  font-size: 13px;
+}
+
+.pagination-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-top: 1px solid #f1f5f9;
+}
+
+.total-text {
+  font-size: 12px;
+  color: #64748b;
+}
+
+.pagination {
+  display: flex;
+  align-items: center;
+}
+
+.drawer-content {
+  padding: 0 10px;
+}
+
 .info-block {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 20px;
 }
+
 .pet-card {
   display: flex;
   flex-direction: column;
   align-items: center;
 }
+
 .pet-detail-name {
   margin-top: 8px;
-  font-weight: bold;
+  font-weight: 600;
+  color: #1e293b;
 }
+
 .user-compare {
   flex: 1;
   margin-left: 20px;
 }
+
 .user-item {
   display: flex;
   justify-content: space-between;
   margin-bottom: 8px;
   font-size: 14px;
 }
+
 .user-item .label {
-  color: #909399;
+  color: #64748b;
 }
+
 .user-item .value {
-  font-weight: bold;
+  font-weight: 600;
+  color: #1e293b;
 }
+
 .ai-block {
   margin-top: 20px;
 }
+
 .ai-block h4 {
   display: flex;
   align-items: center;
   gap: 8px;
-  color: #409EFF;
+  color: #10b981;
+  font-weight: 600;
 }
+
+.ai-content {
+  margin-top: 12px;
+}
+
 .ai-result {
   display: flex;
   align-items: flex-start;
   gap: 20px;
-  background: #f0f9eb;
+  background: #ecfdf5;
   padding: 15px;
-  border-radius: 8px;
+  border-radius: 12px;
+  border: 1px solid #d1fae5;
 }
+
 .score-circle {
   display: flex;
   flex-direction: column;
   align-items: center;
   min-width: 120px;
 }
+
 .score-label {
   margin-top: -10px;
   font-size: 12px;
-  color: #606266;
+  color: #64748b;
 }
+
 .analysis-text {
   flex: 1;
   font-size: 14px;
   line-height: 1.6;
-  color: #303133;
+  color: #334155;
   white-space: pre-wrap;
-  text-align: justify;
 }
+
 .ai-empty {
   text-align: center;
-  color: #909399;
+  color: #94a3b8;
   padding: 20px;
 }
+
 .form-block h4, .action-block h4 {
   margin-bottom: 15px;
-  border-left: 4px solid #409EFF;
+  border-left: 4px solid #10b981;
   padding-left: 10px;
+  font-weight: 600;
+  color: #1e293b;
 }
+
 .experience-text {
   white-space: pre-wrap;
   max-height: 100px;
   overflow-y: auto;
 }
+
 .action-block {
   margin-top: 20px;
 }

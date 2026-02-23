@@ -1,99 +1,125 @@
 <template>
   <div class="profile-container">
-    <el-card class="box-card">
-      <el-tabs v-model="activeTab">
-        <el-tab-pane label="个人信息" name="info">
-          <div class="info-content">
-            <el-form
-              ref="infoFormRef"
-              :model="infoForm"
-              :rules="infoRules"
-              label-width="100px"
-              class="info-form"
-            >
-              <el-form-item label="头像" prop="avatar">
-                <el-upload
-                  class="avatar-uploader"
-                  action="/api/file/upload"
-                  :show-file-list="false"
-                  :on-success="handleAvatarSuccess"
-                  :before-upload="beforeAvatarUpload"
-                  :headers="uploadHeaders"
-                >
-                  <img v-if="infoForm.avatar" :src="infoForm.avatar" class="avatar" />
-                  <el-icon v-else class="avatar-uploader-icon"><Plus /></el-icon>
-                </el-upload>
-              </el-form-item>
-              
-              <el-form-item label="用户名">
-                <el-input v-model="username" disabled />
-              </el-form-item>
-
-              <el-form-item label="昵称" prop="nickname">
-                <el-input v-model="infoForm.nickname" placeholder="请输入昵称" />
-              </el-form-item>
-
-              <el-form-item label="手机号" prop="phone">
-                <el-input v-model="infoForm.phone" placeholder="请输入手机号" />
-              </el-form-item>
-
-              <el-form-item>
-                <el-button type="primary" :loading="loading" @click="submitInfo">保存修改</el-button>
-              </el-form-item>
-            </el-form>
+    <div class="profile-card">
+      <div class="profile-header">
+        <div class="header-content">
+          <div class="avatar-section">
+            <div class="avatar-wrapper">
+              <img v-if="infoForm.avatar" :src="infoForm.avatar" class="user-avatar" />
+              <div v-else class="avatar-placeholder">
+                <el-icon><User /></el-icon>
+              </div>
+            </div>
+            <div class="user-info">
+              <h2 class="user-name">{{ infoForm.nickname || username || '管理员' }}</h2>
+              <p class="user-role">系统管理员</p>
+            </div>
           </div>
-        </el-tab-pane>
-        
-        <el-tab-pane label="修改密码" name="password">
-          <div class="password-content">
-            <el-form
-              ref="passwordFormRef"
-              :model="passwordForm"
-              :rules="passwordRules"
-              label-width="100px"
-              class="password-form"
-            >
-              <el-form-item label="旧密码" prop="oldPassword">
-                <el-input
-                  v-model="passwordForm.oldPassword"
-                  type="password"
-                  placeholder="请输入旧密码"
-                  show-password
-                />
-              </el-form-item>
+        </div>
+      </div>
 
-              <el-form-item label="新密码" prop="newPassword">
-                <el-input
-                  v-model="passwordForm.newPassword"
-                  type="password"
-                  placeholder="请输入新密码"
-                  show-password
-                />
-              </el-form-item>
+      <div class="profile-body">
+        <el-tabs v-model="activeTab" class="profile-tabs">
+          <el-tab-pane label="个人信息" name="info">
+            <div class="info-content">
+              <el-form
+                ref="infoFormRef"
+                :model="infoForm"
+                :rules="infoRules"
+                label-width="100px"
+                class="info-form"
+              >
+                <el-form-item label="头像" prop="avatar">
+                  <el-upload
+                    class="avatar-uploader"
+                    action="/api/file/upload"
+                    :show-file-list="false"
+                    :on-success="handleAvatarSuccess"
+                    :before-upload="beforeAvatarUpload"
+                    :headers="uploadHeaders"
+                  >
+                    <img v-if="infoForm.avatar" :src="infoForm.avatar" class="avatar-preview" />
+                    <div v-else class="avatar-upload-placeholder">
+                      <el-icon><Plus /></el-icon>
+                      <span>上传头像</span>
+                    </div>
+                  </el-upload>
+                  <div class="upload-tip">支持 JPG、PNG 格式，大小不超过 20MB</div>
+                </el-form-item>
+                
+                <el-form-item label="用户名">
+                  <el-input v-model="username" disabled class="form-input" />
+                </el-form-item>
 
-              <el-form-item label="确认密码" prop="confirmPassword">
-                <el-input
-                  v-model="passwordForm.confirmPassword"
-                  type="password"
-                  placeholder="请再次输入新密码"
-                  show-password
-                />
-              </el-form-item>
+                <el-form-item label="昵称" prop="nickname">
+                  <el-input v-model="infoForm.nickname" placeholder="请输入昵称" class="form-input" />
+                </el-form-item>
 
-              <el-form-item>
-                <el-button type="primary" :loading="loading" @click="submitPassword">修改密码</el-button>
-              </el-form-item>
-            </el-form>
-          </div>
-        </el-tab-pane>
-      </el-tabs>
-    </el-card>
+                <el-form-item label="手机号" prop="phone">
+                  <el-input v-model="infoForm.phone" placeholder="请输入手机号" class="form-input" />
+                </el-form-item>
+
+                <el-form-item>
+                  <el-button type="primary" :loading="loading" @click="submitInfo" class="btn-save">保存修改</el-button>
+                </el-form-item>
+              </el-form>
+            </div>
+          </el-tab-pane>
+          
+          <el-tab-pane label="修改密码" name="password">
+            <div class="password-content">
+              <el-form
+                ref="passwordFormRef"
+                :model="passwordForm"
+                :rules="passwordRules"
+                label-width="100px"
+                class="password-form"
+              >
+                <el-form-item label="旧密码" prop="oldPassword">
+                  <el-input
+                    v-model="passwordForm.oldPassword"
+                    type="password"
+                    placeholder="请输入旧密码"
+                    show-password
+                    class="form-input"
+                  />
+                </el-form-item>
+
+                <el-form-item label="新密码" prop="newPassword">
+                  <el-input
+                    v-model="passwordForm.newPassword"
+                    type="password"
+                    placeholder="请输入新密码"
+                    show-password
+                    class="form-input"
+                  />
+                </el-form-item>
+
+                <el-form-item label="确认密码" prop="confirmPassword">
+                  <el-input
+                    v-model="passwordForm.confirmPassword"
+                    type="password"
+                    placeholder="请再次输入新密码"
+                    show-password
+                    class="form-input"
+                  />
+                </el-form-item>
+
+                <el-form-item>
+                  <el-button type="primary" :loading="loading" @click="submitPassword" class="btn-save">修改密码</el-button>
+                </el-form-item>
+              </el-form>
+            </div>
+          </el-tab-pane>
+        </el-tabs>
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup>
 import { ref, reactive, onMounted } from 'vue'
-import { Plus } from '@element-plus/icons-vue'
+import { Plus, User } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
 import { getMyInfo, updateUserInfo, updatePassword } from '../api/user'
 import { useUserStore } from '../stores/user'
@@ -243,41 +269,193 @@ onMounted(() => {
 
 <style scoped>
 .profile-container {
+  display: flex;
+  justify-content: center;
   padding: 20px;
 }
-.box-card {
-  min-height: 500px;
+
+.profile-card {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  border: 1px solid #f1f5f9;
+  overflow: hidden;
+  width: 100%;
+  max-width: 800px;
 }
+
+.profile-header {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  padding: 30px 40px;
+}
+
+.header-content {
+  display: flex;
+  align-items: center;
+}
+
+.avatar-section {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.avatar-wrapper {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.user-avatar {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.avatar-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f1f5f9;
+  color: #94a3b8;
+  font-size: 32px;
+}
+
+.user-info {
+  color: white;
+}
+
+.user-name {
+  font-size: 24px;
+  font-weight: 600;
+  margin: 0 0 4px 0;
+}
+
+.user-role {
+  font-size: 14px;
+  opacity: 0.9;
+  margin: 0;
+}
+
+.profile-body {
+  padding: 20px 40px 30px;
+}
+
+.profile-tabs :deep(.el-tabs__header) {
+  margin-bottom: 24px;
+}
+
+.profile-tabs :deep(.el-tabs__nav-wrap::after) {
+  display: none;
+}
+
+.profile-tabs :deep(.el-tabs__active-bar) {
+  background-color: #10b981;
+}
+
+.profile-tabs :deep(.el-tabs__item) {
+  font-size: 15px;
+  font-weight: 500;
+  color: #64748b;
+  padding: 0 20px;
+}
+
+.profile-tabs :deep(.el-tabs__item.is-active) {
+  color: #10b981;
+}
+
+.profile-tabs :deep(.el-tabs__item:hover) {
+  color: #10b981;
+}
+
 .info-content, .password-content {
-  padding: 20px;
   max-width: 500px;
 }
 
-.avatar-uploader .avatar {
-  width: 100px;
-  height: 100px;
-  display: block;
-  border-radius: 50%;
+.info-form, .password-form {
+  margin-top: 10px;
 }
-.avatar-uploader .el-upload {
-  border: 1px dashed var(--el-border-color);
+
+.form-input :deep(.el-input__wrapper) {
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  box-shadow: none;
+  transition: all 0.2s ease;
+}
+
+.form-input :deep(.el-input__wrapper:focus-within) {
+  border-color: #10b981;
+  box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.1);
+}
+
+.form-input :deep(.el-input.is-disabled .el-input__wrapper) {
+  background: #f8fafc;
+  border-color: #e2e8f0;
+}
+
+.avatar-uploader {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.avatar-preview {
+  width: 80px;
+  height: 80px;
   border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #e2e8f0;
+}
+
+.avatar-upload-placeholder {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  border: 2px dashed #e2e8f0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  color: #94a3b8;
+  font-size: 12px;
   cursor: pointer;
-  position: relative;
-  overflow: hidden;
-  transition: var(--el-transition-duration-fast);
+  transition: all 0.2s ease;
 }
-.avatar-uploader .el-upload:hover {
-  border-color: var(--el-color-primary);
+
+.avatar-upload-placeholder:hover {
+  border-color: #10b981;
+  color: #10b981;
 }
-.avatar-uploader-icon {
-  font-size: 28px;
-  color: #8c939d;
-  width: 100px;
-  height: 100px;
-  text-align: center;
-  line-height: 100px;
-  border: 1px dashed #d9d9d9;
-  border-radius: 50%;
+
+.avatar-upload-placeholder .el-icon {
+  font-size: 20px;
+}
+
+.upload-tip {
+  font-size: 12px;
+  color: #94a3b8;
+  margin-top: 8px;
+}
+
+.btn-save {
+  background: #10b981;
+  border-color: #10b981;
+  border-radius: 8px;
+  padding: 10px 24px;
+  font-weight: 500;
+}
+
+.btn-save:hover {
+  background: #059669;
+  border-color: #059669;
 }
 </style>

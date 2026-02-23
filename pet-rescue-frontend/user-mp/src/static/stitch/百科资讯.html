@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>资讯与百科中心 - Information &amp; Encyclopedia Center</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary": "#11d432",
+              "background-light": "#f6f8f6",
+              "background-dark": "#102213",
+            },
+            fontFamily: {
+              "display": ["Manrope", "sans-serif"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        /* Custom scrollbar hiding for horizontal scroll areas */
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+        .scrollbar-hide {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display antialiased text-slate-800 dark:text-slate-100 min-h-screen flex flex-col">
+<!-- Header & Search -->
+<header class="sticky top-0 z-50 bg-background-light/95 dark:bg-background-dark/95 backdrop-blur-sm border-b border-primary/10 pt-safe-top">
+<div class="px-4 py-3">
+<div class="flex items-center justify-between mb-4">
+<h1 class="text-xl font-bold tracking-tight">百科与动态</h1>
+<button class="p-2 rounded-full hover:bg-primary/10 transition-colors">
+<span class="material-icons text-primary">notifications_none</span>
+</button>
+</div>
+<div class="relative group">
+<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+<span class="material-icons text-slate-400 group-focus-within:text-primary transition-colors text-lg">search</span>
+</div>
+<input class="block w-full pl-10 pr-3 py-2.5 border-none rounded-lg leading-5 bg-white dark:bg-white/5 text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary/50 sm:text-sm shadow-sm" placeholder="搜索文章、活动或公告..." type="text"/>
+</div>
+</div>
+<!-- Tabs -->
+<div class="flex overflow-x-auto scrollbar-hide px-4 gap-6 border-b border-primary/5">
+<button class="flex-none pb-3 border-b-2 border-primary text-primary font-bold text-sm">
+                百科文章
+            </button>
+<button class="flex-none pb-3 border-b-2 border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 font-medium text-sm transition-colors">
+                公益活动
+            </button>
+<button class="flex-none pb-3 border-b-2 border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 font-medium text-sm transition-colors">
+                社区公告
+            </button>
+<button class="flex-none pb-3 border-b-2 border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 font-medium text-sm transition-colors">
+                萌宠壁纸
+            </button>
+</div>
+</header>
+<!-- Main Content Area -->
+<main class="flex-1 overflow-y-auto px-4 py-4 space-y-8">
+<!-- Section 1: Encyclopedia Articles (Active Tab Content) -->
+<section>
+<div class="flex items-center justify-between mb-4">
+<h2 class="text-lg font-bold text-slate-900 dark:text-white">推荐阅读</h2>
+<a class="text-xs font-semibold text-primary hover:text-primary/80" href="#">查看全部</a>
+</div>
+<div class="space-y-4">
+<!-- Article Card 1 -->
+<article class="flex bg-white dark:bg-white/5 rounded-xl shadow-sm overflow-hidden hover:shadow-md transition-shadow cursor-pointer">
+<div class="w-24 h-24 sm:w-32 sm:h-auto flex-shrink-0 relative">
+<img alt="Happy dog looking at camera in park" class="absolute inset-0 w-full h-full object-cover" data-alt="Happy dog looking at camera in park" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC6Cq2D7gSERBxcHXfRK19r7eZVxL6QQJXZF_QTfNxMjKsXAJqh2D2QG3WUOHyRH1tp88ln27h7v3IiT50i8TL_wravzE-cWI8dODdokIiXpBQCp3HnJogK7BHPamXJxgdJiNawvjoRYYDM5VSmkon4wHcFxzemEMrr8v91HMMi50kGlrbn_K2IF7y0cRkrOM-fsgL5z5uC9tTeKAZb5luCQllQ74Z6XDDDDZTohjvZt_eVTjTZsZB8E17F-lxhDkZZko-TsbcWUFM"/>
+</div>
+<div class="p-3 flex flex-col justify-between flex-1">
+<div>
+<span class="inline-block px-2 py-0.5 rounded text-[10px] font-bold bg-primary/10 text-primary mb-1">新手指南</span>
+<h3 class="text-sm font-bold text-slate-900 dark:text-white line-clamp-2 leading-tight">新手养狗全攻略：带它回家的第一天该做什么？</h3>
+</div>
+<div class="flex items-center justify-between mt-2">
+<span class="text-xs text-slate-400 dark:text-slate-500">3分钟阅读</span>
+<span class="text-xs text-slate-400 dark:text-slate-500">2小时前</span>
+</div>
+</div>
+</article>
+<!-- Article Card 2 -->
+<article class="flex bg-white dark:bg-white/5 rounded-xl shadow-sm overflow-hidden hover:shadow-md transition-shadow cursor-pointer">
+<div class="w-24 h-24 sm:w-32 sm:h-auto flex-shrink-0 relative">
+<img alt="Cat looking intensely with green eyes" class="absolute inset-0 w-full h-full object-cover" data-alt="Cat looking intensely with green eyes" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAs46TmhARQSo7-87to5YZ6-eszSMhC3ZZOFPtsOq1tC7C_S8-Yp_uRwc3gNY62SIDl1_dZ4NvEENGym7fnNtIRY0eB9J-DTi3qK8vmmwLo_mGY5NPWEz2EwBiVIDmcxrbyRTkzYiyZaKPtkw-A3dZ_hKbD5OnPbGJK672dvN3Zb4YvQo0HBSw0R7N6bUsAhcDRt1qhg1Z_J9Ci_AnzHX-qtlfqX3BkYt_QnEs0n5I77JiwT3iNbw6NP4fPkGtnb2TKudxuridrf-M"/>
+</div>
+<div class="p-3 flex flex-col justify-between flex-1">
+<div>
+<span class="inline-block px-2 py-0.5 rounded text-[10px] font-bold bg-orange-100 text-orange-600 dark:bg-orange-900/30 dark:text-orange-400 mb-1">猫咪行为</span>
+<h3 class="text-sm font-bold text-slate-900 dark:text-white line-clamp-2 leading-tight">读懂喵星人：尾巴摇摆背后的情绪密码</h3>
+</div>
+<div class="flex items-center justify-between mt-2">
+<span class="text-xs text-slate-400 dark:text-slate-500">5分钟阅读</span>
+<span class="text-xs text-slate-400 dark:text-slate-500">昨天</span>
+</div>
+</div>
+</article>
+<!-- Article Card 3 -->
+<article class="flex bg-white dark:bg-white/5 rounded-xl shadow-sm overflow-hidden hover:shadow-md transition-shadow cursor-pointer">
+<div class="w-24 h-24 sm:w-32 sm:h-auto flex-shrink-0 relative">
+<img alt="Small dog eating healthy food" class="absolute inset-0 w-full h-full object-cover" data-alt="Small dog eating healthy food" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBmxUtVLofyVWrQo0czxMx0Kswn0NsBX9d0mgUM2TUnptr3JNAVhwLMXhdbCWwgHfvJ4hbgM9nQmwxS8bWE8seD3k0Y-xbFIV-RCko_Y_99l92aB4NZs0xsPIIdHTNwL0eHEih0supc-bF9tS1LzCyvddB-nk7kYaU_0KjpLjRiWRI6aIN2ZXPF6IA96SXqGaQpRyv3v3ZVU9Dk3G1D-2oD64IsiW6AkTNfr3kk4V3Mdt7Xd09Ael5h-03UqSE1Tky59CgO3bopAqs"/>
+</div>
+<div class="p-3 flex flex-col justify-between flex-1">
+<div>
+<span class="inline-block px-2 py-0.5 rounded text-[10px] font-bold bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400 mb-1">健康饮食</span>
+<h3 class="text-sm font-bold text-slate-900 dark:text-white line-clamp-2 leading-tight">夏季宠物饮食安全：哪些水果狗狗绝对不能吃？</h3>
+</div>
+<div class="flex items-center justify-between mt-2">
+<span class="text-xs text-slate-400 dark:text-slate-500">4分钟阅读</span>
+<span class="text-xs text-slate-400 dark:text-slate-500">3天前</span>
+</div>
+</div>
+</article>
+</div>
+</section>
+<!-- Section 2: Upcoming Events (Preview of Tab 2) -->
+<section>
+<div class="flex items-center justify-between mb-4">
+<h2 class="text-lg font-bold text-slate-900 dark:text-white">近期公益</h2>
+<a class="text-xs font-semibold text-primary hover:text-primary/80" href="#">查看全部</a>
+</div>
+<div class="bg-white dark:bg-white/5 rounded-xl shadow-sm overflow-hidden group">
+<div class="relative h-40">
+<img alt="Dogs playing together in a park" class="absolute inset-0 w-full h-full object-cover" data-alt="Dogs playing together in a park" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBBXQAfdLwmhJGiXKrnZo28Tc5y1l4CFFcNLXOSnaIZMtokwjV-AoggUhqzxIXnBLZEb5Ucqmjz2V3NmxBmo9bfEN6OltL3doUS29krxePErZRb1G4fgUxrLVVzeSJS3hCUvOtoYENVwAN7IHa1ZN-CkPxQA-goe8R0XKd4fUlTz5mN3HpXMwInmxxzbjQOUXx1QF9yIvw6_hP8WYi_eJ0-YS3imAdXQbTvGpHXjqwpWmfRC769D46R6MyQ-kpkVMu74QdgvLv1Aso"/>
+<div class="absolute top-3 left-3 bg-white dark:bg-slate-900 rounded-lg px-2 py-1 text-center shadow-sm">
+<span class="block text-xs uppercase font-bold text-slate-400">8月</span>
+<span class="block text-lg font-extrabold text-primary leading-none">12</span>
+</div>
+<div class="absolute bottom-3 right-3">
+<span class="bg-primary text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-lg">报名中</span>
+</div>
+</div>
+<div class="p-4">
+<h3 class="text-base font-bold text-slate-900 dark:text-white mb-2">周末领养日：遇见你的专属毛孩子</h3>
+<div class="flex items-center text-slate-500 dark:text-slate-400 text-xs mb-3 space-x-4">
+<div class="flex items-center">
+<span class="material-icons text-sm mr-1">schedule</span>
+<span>14:00 - 17:00</span>
+</div>
+<div class="flex items-center">
+<span class="material-icons text-sm mr-1">place</span>
+<span>朝阳公园 · 南门草坪</span>
+</div>
+</div>
+<div class="w-full h-px bg-slate-100 dark:bg-white/10 mb-3"></div>
+<div class="flex items-center justify-between">
+<div class="flex -space-x-2">
+<img alt="User avatar" class="w-6 h-6 rounded-full border-2 border-white dark:border-slate-800 object-cover" data-alt="User avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC0_xZj7qJ3hZI-_BsT2LXFjk3_k_UGB-lK8kO2lkMFIk6faLdZOD1hJ8aLLnXhcl8MONAqo_kQhJHf3IBZKZuo6aGuMjoBhFEcDy0yO7Ruc-TQ0blv0kx2NX89LAI-oCuTsaJk1zp-jv1CYpLHdNG_WYrxytOBYE4PuR7DxfHT1s4ykqiIMEarna2wjNTvI-sWIlqPgCB_eM-0XzKOhW1LxVWwaZWP7PqeGp0Wum5l4DG7W3uv2kD1x_Xf47lbLxbIF765PX22VB4"/>
+<img alt="User avatar" class="w-6 h-6 rounded-full border-2 border-white dark:border-slate-800 object-cover" data-alt="User avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBrzG7dOi_2yVPHZ3EhydPoWW2iZ1-SD0oBqLmreNfhrY7a9WdTlQSVaZWbPCOaub-O9KVdP0J0H0-cqW77nBLMm6zSRitlQmxHSooO5RfQbGjzsRSl6u5bRvndKIKFmpZG29YIdkf75mq8h8E1GOtaG8Qan1xuxrzp9R2Ka_ZxRZouI_q0uQ_uEynpbgc9CyOY6AYFQba98-uofsiQte_hzzxNKzn82Cc4POM0CH6Z1swDLzvlrL_d_nXWL-Xex6vep7dF6E_s3rg"/>
+<img alt="User avatar" class="w-6 h-6 rounded-full border-2 border-white dark:border-slate-800 object-cover" data-alt="User avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBn0w4z_yHt8oc5wgSoaEOUXrvqEGQjjAfCAIOtbdRjfkvkEMebV_BJxx4gdKmxuobDuroSeohDbpqQBWHHCu2jGW6FODJcbYCxHMc-vzNvoGy4S2LQHEnayY6k_MxPMGgaPI5IzFt26doVssUoyi4xvjNNJl030_9DSrecbibhZXf2azo1L-0JrPUB_yhBLK2A0TqBjVBPkpMxKrnimxFMgHW2VIM0w-JOhPwZ0CHa1TiMBfhKSSv5XyBnt7jV8ORP1PpSAyi1rLk"/>
+<div class="w-6 h-6 rounded-full border-2 border-white dark:border-slate-800 bg-slate-100 dark:bg-slate-700 flex items-center justify-center text-[10px] font-bold text-slate-500">+42</div>
+</div>
+<span class="text-xs text-primary font-bold">58人已报名</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Section 3: Announcements (Preview of Tab 3) -->
+<section>
+<div class="flex items-center justify-between mb-4">
+<h2 class="text-lg font-bold text-slate-900 dark:text-white">社区公告</h2>
+</div>
+<div class="bg-primary/5 dark:bg-primary/10 rounded-xl p-4 border border-primary/10">
+<ul class="space-y-4">
+<li class="flex items-start">
+<div class="bg-white dark:bg-white/10 p-1.5 rounded-full mr-3 shadow-sm flex-shrink-0">
+<span class="material-icons text-primary text-sm">campaign</span>
+</div>
+<div>
+<p class="text-sm font-semibold text-slate-900 dark:text-white">救助站开放日时间调整通知</p>
+<p class="text-xs text-slate-500 dark:text-slate-400 mt-1 line-clamp-1">因内部设施维护，本周六开放日推迟至下午...</p>
+</div>
+</li>
+<div class="h-px bg-primary/10 w-full ml-10"></div>
+<li class="flex items-start">
+<div class="bg-white dark:bg-white/10 p-1.5 rounded-full mr-3 shadow-sm flex-shrink-0">
+<span class="material-icons text-orange-500 text-sm">volunteer_activism</span>
+</div>
+<div>
+<p class="text-sm font-semibold text-slate-900 dark:text-white">新志愿者招募计划启动</p>
+<p class="text-xs text-slate-500 dark:text-slate-400 mt-1 line-clamp-1">我们需要更多爱心人士加入我们的行列！</p>
+</div>
+</li>
+</ul>
+</div>
+</section>
+<!-- Section 4: Wallpapers (Preview of Tab 4) -->
+<section class="pb-6">
+<div class="flex items-center justify-between mb-4">
+<h2 class="text-lg font-bold text-slate-900 dark:text-white">萌宠壁纸</h2>
+<a class="text-xs font-semibold text-primary hover:text-primary/80" href="#">更多壁纸</a>
+</div>
+<div class="grid grid-cols-2 gap-3">
+<!-- Wallpaper 1 -->
+<div class="relative group rounded-xl overflow-hidden aspect-[3/4]">
+<img alt="Golden Retriever puppy portrait" class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" data-alt="Golden Retriever puppy portrait" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC4qbfFcNoCi0Vmlt52goI2-B0JcqgEv_1JebATZDtZfxwOVsGKb4QrzjNcDcuwYz5q1hot2dZo07Sv8bAfVinnBgNv4nI9CUVAGM45pSgYaijq10wuTtYlG4z4Ua23A3KeMPkopABzPKP3RHjW70EYiVa1G4LY_17sCoT-XhzbezVqbGrDFqvXQeEdPOOxhzSY1DrTPqU3Me-p5F5EibNR-yggMTioRc_7jQ9YoGXScUOK_T0Dhzefg57QM78CRFzTHOWfQee9pAg"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end justify-center pb-4">
+<button class="bg-white/90 text-primary rounded-full p-2 hover:bg-white transition-colors">
+<span class="material-icons text-lg">file_download</span>
+</button>
+</div>
+</div>
+<!-- Wallpaper 2 -->
+<div class="relative group rounded-xl overflow-hidden aspect-[3/4]">
+<img alt="Cute cat sitting in a box" class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" data-alt="Cute cat sitting in a box" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCF2f4cHaSE3I4U9A464zqiLWiOnqxZ0tDCW75JnLffgD8gC23LdK95LS7hUdNfYaZQPkGt32BoYvx8s5lFH5-Caln1BhSv5dykqAiEFM-1l5FszJnJLrqdcQDhvE-toxx9rbF6HPC5um17zz3552PABQEY_94q7vFQytIjBdVeTMeD5wsagQx9aNooa0OHtxoGUBnGtK9ktYE6zGacIBvw6y4GEOgouigNMztHVICkKLhXgxTFpSvzKpVpoTBUqLUbwpZ52wgX2UQ"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end justify-center pb-4">
+<button class="bg-white/90 text-primary rounded-full p-2 hover:bg-white transition-colors">
+<span class="material-icons text-lg">file_download</span>
+</button>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Bottom Navigation -->
+<nav class="bg-white dark:bg-background-dark border-t border-slate-200 dark:border-white/5 pb-safe-bottom">
+<div class="flex justify-around items-center h-16">
+<a class="flex flex-col items-center justify-center w-full h-full space-y-1 text-slate-400 dark:text-slate-500 hover:text-primary transition-colors" href="#">
+<span class="material-icons text-2xl">home</span>
+<span class="text-[10px] font-medium">首页</span>
+</a>
+<a class="flex flex-col items-center justify-center w-full h-full space-y-1 text-slate-400 dark:text-slate-500 hover:text-primary transition-colors" href="#">
+<span class="material-icons text-2xl">pets</span>
+<span class="text-[10px] font-medium">领养</span>
+</a>
+<a class="flex flex-col items-center justify-center w-full h-full space-y-1 text-primary" href="#">
+<span class="material-icons text-2xl">article</span>
+<span class="text-[10px] font-medium">百科</span>
+</a>
+<a class="flex flex-col items-center justify-center w-full h-full space-y-1 text-slate-400 dark:text-slate-500 hover:text-primary transition-colors" href="#">
+<span class="material-icons text-2xl">person</span>
+<span class="text-[10px] font-medium">我的</span>
+</a>
+</div>
+</nav>
+</body></html>

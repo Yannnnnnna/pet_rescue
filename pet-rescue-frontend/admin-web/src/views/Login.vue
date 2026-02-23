@@ -1,8 +1,13 @@
 <template>
   <div class="login-container">
+    <div class="login-bg-overlay"></div>
+    
     <div class="login-box">
       <div class="login-header">
-        <div class="logo-text">🐾 萌宠救援后台管理</div>
+        <div class="logo-icons">
+          <img src="../assets/logo.png" alt="logo" class="login-logo-img" />
+        </div>
+        <h1 class="logo-text">青檐安舍</h1>
         <p class="sub-text">Welcome Back!</p>
       </div>
       
@@ -17,8 +22,12 @@
           <el-input
             v-model="loginForm.username"
             placeholder="请输入用户名"
-            :prefix-icon="User"
-          />
+            class="login-input"
+          >
+            <template #prefix>
+              <el-icon class="input-icon"><User /></el-icon>
+            </template>
+          </el-input>
         </el-form-item>
         
         <el-form-item prop="password">
@@ -26,21 +35,23 @@
             v-model="loginForm.password"
             type="password"
             placeholder="请输入密码"
-            :prefix-icon="Lock"
             show-password
+            class="login-input"
             @keyup.enter="handleLogin"
-          />
+          >
+            <template #prefix>
+              <el-icon class="input-icon"><Lock /></el-icon>
+            </template>
+          </el-input>
         </el-form-item>
         
         <el-form-item>
           <el-button
             :loading="loading"
-            type="primary"
             class="login-btn"
             @click="handleLogin"
-            round
           >
-            登 录
+            {{ loading ? '登录中...' : '登 录' }}
           </el-button>
         </el-form-item>
       </el-form>
@@ -87,14 +98,8 @@ const handleLogin = async () => {
         if (success) {
           ElMessage.success('登录成功')
           router.push('/admin')
-        } else {
-          // If the store action returns false (should not happen if it throws on error)
-          // But handling it just in case
         }
       } catch (error) {
-        // Error handling is partly done in request.js (interceptor), 
-        // but we can catch specific errors here if needed.
-        // Usually the interceptor shows the error message.
       } finally {
         loading.value = false
       }
@@ -105,86 +110,160 @@ const handleLogin = async () => {
 
 <style scoped>
 .login-container {
-  height: 100vh;
+  min-height: 100vh;
   width: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
-  /* Pet related background image */
   background-image: url('https://images.unsplash.com/photo-1450778869180-41d0601e046e?ixlib=rb-4.0.3&auto=format&fit=crop&w=1950&q=80');
   background-size: cover;
   background-position: center;
   position: relative;
+  overflow: hidden;
 }
 
-/* Overlay for better text contrast/blur effect */
-.login-container::before {
-  content: '';
+.login-bg-overlay {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.3);
-  backdrop-filter: blur(4px);
+  inset: 0;
+  background: rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(2px);
 }
 
 .login-box {
   position: relative;
-  width: 400px;
-  padding: 40px;
+  z-index: 10;
+  width: 100%;
+  max-width: 420px;
   background: rgba(255, 255, 255, 0.9);
-  border-radius: 16px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-  backdrop-filter: blur(10px);
-  animation: slideUp 0.5s ease-out;
+  backdrop-filter: blur(12px);
+  border-radius: 20px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  padding: 40px;
+  margin: 20px;
+  animation: fadeInZoom 0.3s ease-out;
+}
+
+@keyframes fadeInZoom {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 .login-header {
   text-align: center;
-  margin-bottom: 30px;
+  margin-bottom: 32px;
+}
+
+.logo-icons {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.login-logo-img {
+  width: 64px;
+  height: 64px;
+  object-fit: contain;
 }
 
 .logo-text {
-  font-size: 28px;
-  font-weight: bold;
-  color: #303133;
-  margin-bottom: 10px;
+  font-size: 24px;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0 0 8px 0;
+  letter-spacing: 0.5px;
 }
 
 .sub-text {
-  color: #909399;
+  color: #94a3b8;
   font-size: 14px;
+  font-weight: 300;
+  margin: 0;
 }
 
 .login-form {
-  margin-top: 20px;
+  margin-top: 24px;
+}
+
+.login-form :deep(.el-form-item) {
+  margin-bottom: 20px;
+}
+
+.login-input :deep(.el-input__wrapper) {
+  background: #f8fafc;
+  border: none;
+  border-radius: 10px;
+  box-shadow: none;
+  padding: 4px 12px;
+  transition: all 0.3s ease;
+}
+
+.login-input :deep(.el-input__wrapper:focus-within) {
+  background: white;
+  box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.3);
+}
+
+.login-input :deep(.el-input__inner) {
+  color: #334155;
+  font-size: 14px;
+}
+
+.login-input :deep(.el-input__inner::placeholder) {
+  color: #94a3b8;
+}
+
+.input-icon {
+  color: #94a3b8;
+  font-size: 18px;
+  transition: color 0.3s ease;
+}
+
+.login-input:focus-within .input-icon {
+  color: #10b981;
 }
 
 .login-btn {
   width: 100%;
-  font-weight: bold;
+  height: 48px;
+  font-weight: 600;
+  font-size: 15px;
   letter-spacing: 2px;
-  margin-top: 10px;
-  height: 45px;
+  border: none;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #84cc16 0%, #10b981 100%);
+  box-shadow: 0 10px 25px -5px rgba(16, 185, 129, 0.4);
+  transition: all 0.3s ease;
+  margin-top: 8px;
 }
 
-@keyframes slideUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+.login-btn:hover {
+  background: linear-gradient(135deg, #82d616 0%, #0fd991 100%);
+  box-shadow: 0 15px 30px -5px rgba(16, 185, 129, 0.5);
+  transform: translateY(-1px);
 }
 
-/* Responsive adjustments */
+.login-btn:active {
+  transform: translateY(0);
+}
+
+.login-btn.is-loading {
+  background: linear-gradient(135deg, #84cc16 0%, #10b981 100%);
+}
+
 @media (max-width: 480px) {
   .login-box {
-    width: 90%;
-    padding: 20px;
+    padding: 32px 24px;
+    margin: 16px;
+  }
+  
+  .logo-text {
+    font-size: 20px;
   }
 }
 </style>
