@@ -1,12 +1,23 @@
 
 <template>
   <view class="chat-page">
+    <view class="nav-bar" :style="{ paddingTop: statusBarHeight + 'px' }">
+      <view class="nav-content">
+        <view class="back-btn" @click="goBack">
+          <uni-icons type="left" size="20" color="#333"></uni-icons>
+        </view>
+        <text class="nav-title">AI助手</text>
+        <view class="placeholder"></view>
+      </view>
+    </view>
+
     <scroll-view 
       class="msg-list" 
       scroll-y 
       :scroll-top="scrollTop" 
       :scroll-into-view="scrollIntoView"
       @scrolltoupper="loadMoreHistory"
+      :style="{ marginTop: statusBarHeight + 44 + 'px' }"
     >
       <view class="msg-item" v-for="(msg, index) in msgList" :key="msg.id || index" :id="'msg-' + index">
         <!-- AI 消息 -->
@@ -132,12 +143,20 @@ const requestTask = ref(null)
 const selectedPet = ref(null)
 const myPets = ref([])
 const showPetPickerFlag = ref(false)
+const statusBarHeight = ref(20)
 
 const renderMarkdown = (text) => {
   return text ? md.render(text) : ''
 }
 
+const goBack = () => {
+  uni.navigateBack()
+}
+
 onLoad(async (options) => {
+  const systemInfo = uni.getSystemInfoSync()
+  statusBarHeight.value = systemInfo.statusBarHeight || 20
+  
   if (options.sessionId) {
     sessionId.value = options.sessionId
   }
@@ -311,11 +330,47 @@ $uni-text-color-placeholder: #999; // 占位文字颜色
   background-color: $uni-bg-color;
 }
 
+.nav-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: #fff;
+  z-index: 100;
+  border-bottom: 1rpx solid #f0f0f0;
+  
+  .nav-content {
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 30rpx;
+  }
+  
+  .back-btn {
+    width: 60rpx;
+    height: 60rpx;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .nav-title {
+    font-size: 34rpx;
+    font-weight: bold;
+    color: #1F2937;
+  }
+  
+  .placeholder {
+    width: 60rpx;
+  }
+}
+
 .msg-list {
   flex: 1;
   padding: 20rpx;
   box-sizing: border-box;
-  height: 0; // 关键
+  height: 0;
 }
 
 .msg-item {

@@ -461,7 +461,7 @@ const scrollToBottom = () => {
   display: flex;
   flex-direction: column;
   height: 100vh;
-  background-color: #f4f4f4;
+  background-color: #F8FAF8;
 }
 
 .chat-header {
@@ -471,7 +471,7 @@ const scrollToBottom = () => {
   padding: 20rpx 30rpx;
   padding-top: var(--status-bar-height);
   background-color: #fff;
-  border-bottom: 1rpx solid #e5e5e5;
+  border-bottom: 1rpx solid #f0f0f0;
   position: sticky;
   top: 0;
   z-index: 10;
@@ -483,7 +483,7 @@ const scrollToBottom = () => {
   .nickname {
     font-size: 34rpx;
     font-weight: bold;
-    color: #333;
+    color: #1F2937;
   }
 }
 
@@ -504,7 +504,7 @@ const scrollToBottom = () => {
   display: flex;
   align-items: flex-start;
   margin-bottom: 40rpx;
-  gap: 20rpx;
+  gap: 16rpx;
 
   .avatar {
     width: 80rpx;
@@ -529,19 +529,21 @@ const scrollToBottom = () => {
   }
 
   &.left {
+    justify-content: flex-start;
     .bubble {
       background-color: #fff;
-      color: #333;
-      border-top-left-radius: 0;
+      color: #1F2937;
+      border-top-left-radius: 4rpx;
+      box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.04);
     }
   }
 
   &.right {
-    flex-direction: row-reverse;
+    justify-content: flex-end;
     .bubble {
-      background-color: #005339; // 主题绿色
+      background: linear-gradient(135deg, #2E7D32 0%, #43A047 100%);
       color: #fff;
-      border-top-right-radius: 0;
+      border-top-right-radius: 4rpx;
     }
   }
 }
@@ -551,7 +553,7 @@ const scrollToBottom = () => {
   padding: 20rpx 30rpx;
   padding-bottom: calc(20rpx + constant(safe-area-inset-bottom));
   padding-bottom: calc(20rpx + env(safe-area-inset-bottom));
-  border-top: 1rpx solid #e5e5e5;
+  border-top: 1rpx solid #f0f0f0;
   transition: bottom 0.2s ease-in-out;
   position: fixed;
   bottom: 0;
@@ -566,7 +568,7 @@ const scrollToBottom = () => {
 
   .chat-input {
     flex: 1;
-    background-color: #f4f4f4;
+    background-color: #F9FAFB;
     border-radius: 40rpx;
     padding: 18rpx 30rpx;
     font-size: 28rpx;
@@ -575,7 +577,7 @@ const scrollToBottom = () => {
   }
 
   .send-btn {
-    background-color: #005339;
+    background: linear-gradient(135deg, #2E7D32 0%, #43A047 100%);
     color: #fff;
     border: none;
     border-radius: 40rpx;
@@ -586,7 +588,7 @@ const scrollToBottom = () => {
     flex-shrink: 0;
 
     &[disabled] {
-      background-color: #a3d4c4;
+      background: #D1D5DB;
       color: #fff;
     }
     

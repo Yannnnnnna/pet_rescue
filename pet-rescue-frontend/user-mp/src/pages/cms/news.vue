@@ -1,16 +1,30 @@
 <template>
   <view class="news-container">
-    <view class="tabs-wrapper">
-      <u-tabs 
-        :list="tabList" 
-        :current="currentTab" 
-        @change="handleTabChange"
-        active-color="#19be6b"
-        line-color="#19be6b"
-      ></u-tabs>
+    <view class="nav-bar" :style="{ paddingTop: statusBarHeight + 'px' }">
+      <view class="nav-content">
+        <view class="back-btn" @click="goBack">
+          <uni-icons type="left" size="20" color="#333"></uni-icons>
+        </view>
+        <text class="nav-title">资讯中心</text>
+        <view class="placeholder"></view>
+      </view>
     </view>
 
-    <view class="content-wrapper">
+    <view class="tabs-wrapper" :style="{ marginTop: statusBarHeight + 44 + 'px' }">
+      <view class="custom-tabs">
+        <view 
+          v-for="(item, index) in tabList" 
+          :key="index"
+          class="tab-item"
+          :class="{ active: currentTab === index }"
+          @click="handleTabChange({ index })"
+        >
+          {{ item.name }}
+        </view>
+      </view>
+    </view>
+
+    <view class="content-wrapper" :style="{ paddingTop: (statusBarHeight + 88) + 'px' }">
       <view v-if="currentTab === 0">
         <view 
           v-for="item in noticeList" 
@@ -19,9 +33,15 @@
           @click="goDetail(item)"
         >
           <view class="notice-content">
+            <view class="notice-tag">公告</view>
             <view class="notice-title">{{ item.title }}</view>
             <view class="notice-summary">{{ item.summary }}</view>
-            <view class="notice-time">{{ formatTime(item.createTime) }}</view>
+            <view class="notice-meta">
+              <view class="meta-item">
+                <uni-icons type="calendar" size="14" color="#9CA3AF"></uni-icons>
+                <text>{{ formatTime(item.createTime) }}</text>
+              </view>
+            </view>
           </view>
           <image :src="item.coverImg" mode="aspectFill" class="notice-thumb"></image>
         </view>
@@ -44,11 +64,11 @@
           <view class="activity-info">
             <view class="activity-title">{{ item.title }}</view>
             <view class="activity-meta">
-              <u-icon name="clock" size="14" color="#999"></u-icon>
+              <uni-icons type="calendar" size="14" color="#9CA3AF"></uni-icons>
               <text class="activity-time">{{ formatTime(item.activityStartTime) }}</text>
             </view>
             <view class="activity-meta">
-              <u-icon name="map" size="14" color="#999"></u-icon>
+              <uni-icons type="location" size="14" color="#9CA3AF"></uni-icons>
               <text class="activity-address">{{ item.activityAddress || '线上活动' }}</text>
             </view>
           </view>
@@ -66,6 +86,7 @@ import { ref } from 'vue'
 import { onLoad, onReachBottom } from '@dcloudio/uni-app'
 import { getArticleList } from '@/api/article'
 
+const statusBarHeight = ref(20)
 const tabList = ref([
   { name: '公告' },
   { name: '活动' }
@@ -78,6 +99,8 @@ const pageNum = ref(1)
 const pageSize = ref(10)
 
 onLoad(() => {
+  const systemInfo = uni.getSystemInfoSync()
+  statusBarHeight.value = systemInfo.statusBarHeight || 20
   loadData(true)
 })
 
@@ -141,6 +164,10 @@ const goDetail = (item) => {
   })
 }
 
+const goBack = () => {
+  uni.navigateBack()
+}
+
 const getStatusText = (item) => {
   if (!item.activityEndTime) return '进行中'
   const now = new Date()
@@ -168,7 +195,7 @@ const formatTime = (time) => {
 <style lang="scss" scoped>
 .news-container {
   min-height: 100vh;
-  background-color: #f5f5f5;
+  background-color: #F9FAFB;
 }
 
 .nav-bar {
@@ -178,6 +205,7 @@ const formatTime = (time) => {
   right: 0;
   background: #fff;
   z-index: 100;
+  border-bottom: 1rpx solid #f0f0f0;
   
   .nav-content {
     height: 44px;
@@ -198,7 +226,7 @@ const formatTime = (time) => {
   .nav-title {
     font-size: 34rpx;
     font-weight: bold;
-    color: #333;
+    color: #1F2937;
   }
   
   .placeholder {
@@ -208,37 +236,83 @@ const formatTime = (time) => {
 
 .tabs-wrapper {
   background: #fff;
-  position: sticky;
-  top: 0;
+  position: fixed;
+  left: 0;
+  right: 0;
   z-index: 99;
+  border-bottom: 1rpx solid #f0f0f0;
+}
+
+.custom-tabs {
+  display: flex;
+  padding: 0 30rpx;
+  
+  .tab-item {
+    flex: 1;
+    text-align: center;
+    padding: 24rpx 0;
+    font-size: 28rpx;
+    color: #6B7280;
+    font-weight: 500;
+    position: relative;
+    
+    &.active {
+      color: #2E7D32;
+      font-weight: bold;
+      
+      &::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 48rpx;
+        height: 6rpx;
+        background: #2E7D32;
+        border-radius: 3rpx;
+      }
+    }
+  }
 }
 
 .content-wrapper {
-  padding: 20rpx;
+  padding: 24rpx;
 }
 
 .notice-card {
   display: flex;
   background: #fff;
-  border-radius: 16rpx;
-  padding: 20rpx;
+  border-radius: 20rpx;
+  padding: 24rpx;
   margin-bottom: 20rpx;
-  box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.04);
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.04);
 
   .notice-content {
     flex: 1;
     margin-right: 20rpx;
 
+    .notice-tag {
+      display: inline-block;
+      padding: 4rpx 12rpx;
+      border-radius: 8rpx;
+      font-size: 20rpx;
+      font-weight: bold;
+      background: #E8F5E9;
+      color: #2E7D32;
+      margin-bottom: 12rpx;
+    }
+
     .notice-title {
       font-size: 30rpx;
       font-weight: bold;
-      color: #333;
+      color: #1F2937;
       margin-bottom: 12rpx;
+      line-height: 1.4;
     }
 
     .notice-summary {
       font-size: 26rpx;
-      color: #666;
+      color: #6B7280;
       line-height: 1.6;
       margin-bottom: 12rpx;
       display: -webkit-box;
@@ -247,31 +321,42 @@ const formatTime = (time) => {
       overflow: hidden;
     }
 
-    .notice-time {
-      font-size: 24rpx;
-      color: #999;
+    .notice-meta {
+      display: flex;
+      align-items: center;
+      
+      .meta-item {
+        display: flex;
+        align-items: center;
+        gap: 6rpx;
+        
+        text {
+          font-size: 22rpx;
+          color: #9CA3AF;
+        }
+      }
     }
   }
 
   .notice-thumb {
-    width: 160rpx;
-    height: 120rpx;
-    border-radius: 12rpx;
+    width: 180rpx;
+    height: 140rpx;
+    border-radius: 16rpx;
     flex-shrink: 0;
   }
 }
 
 .activity-card {
   background: #fff;
-  border-radius: 16rpx;
+  border-radius: 20rpx;
   overflow: hidden;
   margin-bottom: 20rpx;
-  box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.04);
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.04);
   position: relative;
 
   .activity-cover {
     width: 100%;
-    height: 400rpx;
+    height: 360rpx;
     display: block;
   }
 
@@ -285,35 +370,36 @@ const formatTime = (time) => {
     font-weight: bold;
 
     &.status-active {
-      background: #19be6b;
+      background: #2E7D32;
       color: #fff;
     }
 
     &.status-ended {
-      background: #999;
+      background: #9CA3AF;
       color: #fff;
     }
   }
 
   .activity-info {
-    padding: 20rpx;
+    padding: 24rpx;
 
     .activity-title {
       font-size: 32rpx;
       font-weight: bold;
-      color: #333;
+      color: #1F2937;
       margin-bottom: 16rpx;
+      line-height: 1.4;
     }
 
     .activity-meta {
       display: flex;
       align-items: center;
-      font-size: 24rpx;
-      color: #999;
       margin-bottom: 8rpx;
+      gap: 8rpx;
 
-      text {
-        margin-left: 6rpx;
+      .activity-time, .activity-address {
+        font-size: 24rpx;
+        color: #6B7280;
       }
     }
   }

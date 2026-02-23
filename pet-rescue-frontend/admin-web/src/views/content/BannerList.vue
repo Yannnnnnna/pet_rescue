@@ -1,32 +1,39 @@
 <template>
   <div class="banner-list-container">
-    <el-card class="box-card">
-      <div class="filter-container">
-        <el-button type="primary" :icon="Plus" @click="handleAdd">新增轮播图</el-button>
-        <el-button :icon="Refresh" @click="fetchList">刷新</el-button>
+    <div class="filter-card">
+      <div class="filter-row">
+        <div class="page-title">轮播图管理</div>
+        <div class="filter-actions">
+          <el-button type="primary" :icon="Plus" @click="handleAdd" class="btn-add">新增轮播图</el-button>
+          <el-button :icon="Refresh" @click="fetchList" class="btn-reset">刷新</el-button>
+        </div>
       </div>
+    </div>
 
-      <el-table v-loading="loading" :data="bannerList" border style="width: 100%">
+    <div class="table-card">
+      <el-table v-loading="loading" :data="bannerList" class="data-table">
         <el-table-column prop="sortOrder" label="排序" width="80" align="center">
           <template #default="scope">
-            <span v-if="!scope.row.isEditing">{{ scope.row.sortOrder }}</span>
+            <span v-if="!scope.row.isEditing" class="sort-value">{{ scope.row.sortOrder }}</span>
             <el-input-number v-else v-model="scope.row.editSortOrder" :min="0" :max="999" size="small" controls-position="right" />
           </template>
         </el-table-column>
         <el-table-column label="图片" width="180" align="center">
           <template #default="scope">
-            <el-image
-              style="width: 160px; height: 90px; border-radius: 4px"
-              :src="scope.row.imgUrl"
-              :preview-src-list="[scope.row.imgUrl]"
-              fit="cover"
-              preview-teleported
-            />
+            <div class="image-wrapper">
+              <el-image
+                class="banner-image"
+                :src="scope.row.imgUrl"
+                :preview-src-list="[scope.row.imgUrl]"
+                fit="cover"
+                preview-teleported
+              />
+            </div>
           </template>
         </el-table-column>
         <el-table-column prop="targetUrl" label="跳转路径" min-width="350">
           <template #default="scope">
-             <div v-if="!scope.row.isEditing">{{ scope.row.targetUrl || '无' }}</div>
+             <div v-if="!scope.row.isEditing" class="target-url">{{ scope.row.targetUrl || '无' }}</div>
              <div v-else class="edit-row-container">
                <el-select 
                  v-model="scope.row.editBusinessType" 
@@ -67,9 +74,9 @@
         </el-table-column>
         <el-table-column label="状态" width="100" align="center">
           <template #default="scope">
-            <el-tag v-if="!scope.row.isEditing" :type="scope.row.status === 1 ? 'success' : 'info'">
+            <span v-if="!scope.row.isEditing" :class="['status-tag', scope.row.status === 1 ? 'active' : 'inactive']">
               {{ scope.row.status === 1 ? '显示' : '隐藏' }}
-            </el-tag>
+            </span>
             <el-switch
               v-else
               v-model="scope.row.editStatus"
@@ -81,23 +88,35 @@
         </el-table-column>
         <el-table-column prop="createTime" label="创建时间" width="180" align="center">
           <template #default="scope">
-            {{ formatDate(scope.row.createTime) }}
+            <span class="time-text">{{ formatDate(scope.row.createTime) }}</span>
           </template>
         </el-table-column>
         <el-table-column label="操作" width="150" align="center" fixed="right">
           <template #default="scope">
             <template v-if="!scope.row.isEditing">
-              <el-button type="primary" link :icon="Edit" @click="handleEditRow(scope.row)">编辑</el-button>
-              <el-button type="danger" link :icon="Delete" @click="handleDelete(scope.row)">删除</el-button>
+              <el-button type="primary" link size="small" @click="handleEditRow(scope.row)">
+                <el-icon><Edit /></el-icon>
+                <span>编辑</span>
+              </el-button>
+              <el-button type="danger" link size="small" @click="handleDelete(scope.row)">
+                <el-icon><Delete /></el-icon>
+                <span>删除</span>
+              </el-button>
             </template>
             <template v-else>
-               <el-button type="success" link :icon="Check" @click="handleSaveRow(scope.row)">保存</el-button>
-               <el-button type="info" link :icon="Close" @click="handleCancelRow(scope.row)">取消</el-button>
+              <el-button type="success" link size="small" @click="handleSaveRow(scope.row)">
+                <el-icon><Check /></el-icon>
+                <span>保存</span>
+              </el-button>
+              <el-button type="info" link size="small" @click="handleCancelRow(scope.row)">
+                <el-icon><Close /></el-icon>
+                <span>取消</span>
+              </el-button>
             </template>
           </template>
         </el-table-column>
       </el-table>
-    </el-card>
+    </div>
 
     <!-- 新增弹窗 (仅保留新增功能) -->
     <el-dialog
@@ -266,26 +285,21 @@ const handleEditRow = (row) => {
   if (!row.targetUrl) {
     row.editBusinessType = 'none'
   } else if (row.targetUrl.includes('/pages/wiki/detail')) {
-     // 新路径：公告/活动/文章
-     // 由于路径一样，我们这里可能无法准确知道是哪种类型，
-     // 默认回显为 'article'，用户可以自己改。
      row.editBusinessType = 'article' 
      const match = row.targetUrl.match(/id=(\d+)/)
-     if (match) row.editContentId = parseInt(match[1])
+     if (match) row.editContentId = match[1]
   } else if (row.targetUrl.includes('/pages/notice/detail')) {
-    // 兼容旧路径
     row.editBusinessType = 'notice'
     const match = row.targetUrl.match(/id=(\d+)/)
-    if (match) row.editContentId = parseInt(match[1])
+    if (match) row.editContentId = match[1]
   } else if (row.targetUrl.includes('/pages/activity/detail')) {
-    // 兼容旧路径
     row.editBusinessType = 'activity'
     const match = row.targetUrl.match(/id=(\d+)/)
-    if (match) row.editContentId = parseInt(match[1])
+    if (match) row.editContentId = match[1]
   } else if (row.targetUrl.includes('/pages/pet/detail')) {
     row.editBusinessType = 'pet'
     const match = row.targetUrl.match(/id=(\d+)/)
-    if (match) row.editContentId = parseInt(match[1])
+    if (match) row.editContentId = match[1]
   } else {
     row.editBusinessType = 'none'
   }
@@ -535,14 +549,143 @@ onMounted(() => {
 
 <style scoped>
 .banner-list-container {
-  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
-.filter-container {
-  margin-bottom: 20px;
+
+.filter-card {
+  background: white;
+  padding: 16px 20px;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  border: 1px solid #f1f5f9;
 }
+
+.filter-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.page-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.filter-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.btn-add {
+  background: #10b981;
+  border-color: #10b981;
+  border-radius: 8px;
+}
+
+.btn-add:hover {
+  background: #059669;
+  border-color: #059669;
+}
+
+.btn-reset {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  color: #64748b;
+}
+
+.btn-reset:hover {
+  background: #f8fafc;
+  color: #334155;
+}
+
+.table-card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  border: 1px solid #f1f5f9;
+  overflow: hidden;
+}
+
+.data-table {
+  --el-table-border-color: #f1f5f9;
+  --el-table-header-bg-color: #f8fafc;
+  --el-table-header-text-color: #64748b;
+  --el-table-row-hover-bg-color: #f8fafc;
+}
+
+.data-table :deep(.el-table__header th) {
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.data-table :deep(.el-table__body td) {
+  font-size: 14px;
+  color: #334155;
+}
+
+.sort-value {
+  font-weight: 600;
+  color: #3b82f6;
+}
+
+.image-wrapper {
+  display: flex;
+  justify-content: center;
+}
+
+.banner-image {
+  width: 160px;
+  height: 90px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+}
+
+.target-url {
+  color: #64748b;
+  font-size: 13px;
+  word-break: break-all;
+}
+
+.edit-row-container {
+  display: flex;
+  align-items: center;
+}
+
+.status-tag {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  border: 1px solid;
+}
+
+.status-tag.active {
+  background: #ecfdf5;
+  color: #10b981;
+  border-color: #a7f3d0;
+}
+
+.status-tag.inactive {
+  background: #f1f5f9;
+  color: #64748b;
+  border-color: #e2e8f0;
+}
+
+.time-text {
+  color: #64748b;
+  font-size: 13px;
+}
+
 .form-tip {
   font-size: 12px;
-  color: #909399;
+  color: #94a3b8;
   line-height: 1.5;
   margin-top: 5px;
 }

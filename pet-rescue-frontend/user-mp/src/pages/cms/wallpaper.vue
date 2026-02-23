@@ -1,6 +1,16 @@
 <template>
   <view class="wallpaper-container">
-    <view class="waterfall-list">
+    <view class="nav-bar" :style="{ paddingTop: statusBarHeight + 'px' }">
+      <view class="nav-content">
+        <view class="back-btn" @click="goBack">
+          <uni-icons type="left" size="20" color="#333"></uni-icons>
+        </view>
+        <text class="nav-title">萌宠壁纸</text>
+        <view class="placeholder"></view>
+      </view>
+    </view>
+
+    <view class="waterfall-list" :style="{ paddingTop: (statusBarHeight + 44) + 'px' }">
       <view class="left-col">
         <view 
           v-for="item in leftList" 
@@ -8,11 +18,16 @@
           class="wallpaper-card"
           @click="previewImage(item)"
         >
-          <image :src="item.coverImg" mode="widthFix" class="cover"></image>
+          <view class="img-wrapper">
+            <image :src="item.coverImg" mode="aspectFill" class="cover"></image>
+            <view class="download-btn" @click.stop="downloadImage(item)">
+              <uni-icons type="download" size="18" color="#fff"></uni-icons>
+            </view>
+          </view>
           <view class="info">
             <view class="title">{{ item.title }}</view>
             <view class="view-count">
-              <u-icon name="eye" size="12" color="#999"></u-icon>
+              <uni-icons type="eye" size="12" color="#9CA3AF"></uni-icons>
               <text>{{ formatViewCount(item.viewCount) }}</text>
             </view>
           </view>
@@ -25,11 +40,16 @@
           class="wallpaper-card"
           @click="previewImage(item)"
         >
-          <image :src="item.coverImg" mode="widthFix" class="cover"></image>
+          <view class="img-wrapper">
+            <image :src="item.coverImg" mode="aspectFill" class="cover"></image>
+            <view class="download-btn" @click.stop="downloadImage(item)">
+              <uni-icons type="download" size="18" color="#fff"></uni-icons>
+            </view>
+          </view>
           <view class="info">
             <view class="title">{{ item.title }}</view>
             <view class="view-count">
-              <u-icon name="eye" size="12" color="#999"></u-icon>
+              <uni-icons type="eye" size="12" color="#9CA3AF"></uni-icons>
               <text>{{ formatViewCount(item.viewCount) }}</text>
             </view>
           </view>
@@ -46,6 +66,7 @@ import { ref } from 'vue'
 import { onLoad, onReachBottom } from '@dcloudio/uni-app'
 import { getArticleList } from '@/api/article'
 
+const statusBarHeight = ref(20)
 const wallpaperList = ref([])
 const leftList = ref([])
 const rightList = ref([])
@@ -54,6 +75,8 @@ const pageNum = ref(1)
 const pageSize = ref(10)
 
 onLoad(() => {
+  const systemInfo = uni.getSystemInfoSync()
+  statusBarHeight.value = systemInfo.statusBarHeight || 20
   loadData(true)
 })
 
@@ -102,6 +125,10 @@ const loadData = async (reset = false) => {
   }
 }
 
+const goBack = () => {
+  uni.navigateBack()
+}
+
 const previewImage = (item) => {
   const imageUrl = item.wallpaperUrl || item.coverImg
   if (!imageUrl) {
@@ -117,6 +144,53 @@ const previewImage = (item) => {
   })
 }
 
+const downloadImage = (item) => {
+  const imageUrl = item.wallpaperUrl || item.coverImg
+  if (!imageUrl) {
+    uni.showToast({
+      title: '图片地址不存在',
+      icon: 'none'
+    })
+    return
+  }
+  
+  uni.showLoading({
+    title: '保存中...'
+  })
+  
+  uni.downloadFile({
+    url: imageUrl,
+    success: (res) => {
+      if (res.statusCode === 200) {
+        uni.saveImageToPhotosAlbum({
+          filePath: res.tempFilePath,
+          success: () => {
+            uni.hideLoading()
+            uni.showToast({
+              title: '保存成功',
+              icon: 'success'
+            })
+          },
+          fail: () => {
+            uni.hideLoading()
+            uni.showToast({
+              title: '保存失败',
+              icon: 'none'
+            })
+          }
+        })
+      }
+    },
+    fail: () => {
+      uni.hideLoading()
+      uni.showToast({
+        title: '下载失败',
+        icon: 'none'
+      })
+    }
+  })
+}
+
 const formatViewCount = (count) => {
   if (!count) return '0'
   if (count >= 1000) {
@@ -129,7 +203,7 @@ const formatViewCount = (count) => {
 <style lang="scss" scoped>
 .wallpaper-container {
   min-height: 100vh;
-  background-color: #f5f5f5;
+  background-color: #F9FAFB;
 }
 
 .nav-bar {
@@ -139,6 +213,7 @@ const formatViewCount = (count) => {
   right: 0;
   background: #fff;
   z-index: 100;
+  border-bottom: 1rpx solid #f0f0f0;
   
   .nav-content {
     height: 44px;
@@ -159,7 +234,7 @@ const formatViewCount = (count) => {
   .nav-title {
     font-size: 34rpx;
     font-weight: bold;
-    color: #333;
+    color: #1F2937;
   }
   
   .placeholder {
@@ -171,7 +246,8 @@ const formatViewCount = (count) => {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  padding: 20rpx;
+  padding: 24rpx;
+  padding-bottom: 40rpx;
 
   .left-col, .right-col {
     width: 48%;
@@ -181,24 +257,50 @@ const formatViewCount = (count) => {
 
   .wallpaper-card {
     background: #fff;
-    border-radius: 16rpx;
+    border-radius: 20rpx;
     overflow: hidden;
     margin-bottom: 20rpx;
-    box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.04);
+    box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.04);
 
-    .cover {
+    .img-wrapper {
+      position: relative;
       width: 100%;
-      display: block;
+      
+      .cover {
+        width: 100%;
+        height: 400rpx;
+        display: block;
+      }
+      
+      .download-btn {
+        position: absolute;
+        bottom: 16rpx;
+        right: 16rpx;
+        width: 56rpx;
+        height: 56rpx;
+        border-radius: 50%;
+        background: rgba(46, 125, 50, 0.9);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        transition: opacity 0.3s;
+      }
+    }
+    
+    &:active .download-btn {
+      opacity: 1;
     }
 
     .info {
-      padding: 16rpx;
+      padding: 16rpx 20rpx;
 
       .title {
         font-size: 26rpx;
         font-weight: bold;
-        color: #333;
-        margin-bottom: 12rpx;
+        color: #1F2937;
+        margin-bottom: 8rpx;
+        line-height: 1.4;
         display: -webkit-box;
         -webkit-box-orient: vertical;
         -webkit-line-clamp: 2;
@@ -208,11 +310,11 @@ const formatViewCount = (count) => {
       .view-count {
         display: flex;
         align-items: center;
-        font-size: 22rpx;
-        color: #999;
-
+        gap: 6rpx;
+        
         text {
-          margin-left: 4rpx;
+          font-size: 22rpx;
+          color: #9CA3AF;
         }
       }
     }

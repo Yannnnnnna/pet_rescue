@@ -1,63 +1,71 @@
 <template>
   <div class="app-container">
-    <!-- 搜索栏 -->
-    <el-card class="filter-container" shadow="never">
-      <el-form :inline="true" :model="queryParams" size="default">
-        <el-form-item label="宠物ID">
-          <el-input v-model="queryParams.petId" placeholder="请输入宠物ID" clearable @keyup.enter="handleSearch" />
-        </el-form-item>
-        <el-form-item label="发布人ID">
-          <el-input v-model="queryParams.userId" placeholder="请输入发布人ID" clearable @keyup.enter="handleSearch" />
-        </el-form-item>
-        <el-form-item label="审核状态">
-          <el-select v-model="queryParams.auditStatus" placeholder="全部" clearable style="width: 120px">
-            <el-option label="待审核" :value="0" />
-            <el-option label="已通过" :value="1" />
-            <el-option label="已驳回" :value="2" />
-          </el-select>
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" :icon="Search" @click="handleSearch">搜索</el-button>
-          <el-button :icon="Refresh" @click="resetQuery">重置</el-button>
-        </el-form-item>
-      </el-form>
-    </el-card>
+    <div class="filter-card">
+      <div class="filter-row">
+        <div class="filter-grid">
+          <div class="filter-item">
+            <label class="filter-label">宠物ID</label>
+            <el-input v-model="queryParams.petId" placeholder="请输入宠物ID" clearable @keyup.enter="handleSearch" class="filter-input" />
+          </div>
+          <div class="filter-item">
+            <label class="filter-label">发布人ID</label>
+            <el-input v-model="queryParams.userId" placeholder="请输入发布人ID" clearable @keyup.enter="handleSearch" class="filter-input" />
+          </div>
+          <div class="filter-item">
+            <label class="filter-label">审核状态</label>
+            <el-select v-model="queryParams.auditStatus" placeholder="全部" clearable class="filter-input">
+              <el-option label="待审核" :value="0" />
+              <el-option label="已通过" :value="1" />
+              <el-option label="已驳回" :value="2" />
+            </el-select>
+          </div>
+        </div>
+        <div class="filter-actions">
+          <el-button type="primary" :icon="Search" @click="handleSearch" class="btn-search">搜索</el-button>
+          <el-button :icon="Refresh" @click="resetQuery" class="btn-reset">重置</el-button>
+        </div>
+      </div>
+    </div>
 
-    <!-- 数据列表 -->
-    <el-card class="table-container" shadow="never">
+    <div class="table-card">
       <el-table
         v-loading="loading"
         :data="tableData"
-        border
-        style="width: 100%"
+        class="data-table"
       >
         <el-table-column prop="id" label="ID" width="80" align="center" />
         <el-table-column prop="petId" label="宠物ID" width="100" align="center" />
         <el-table-column prop="userId" label="发布人ID" width="100" align="center" />
-        <el-table-column prop="content" label="内容摘要" min-width="200" show-overflow-tooltip />
+        <el-table-column prop="content" label="内容摘要" min-width="200" show-overflow-tooltip>
+          <template #default="scope">
+            <span class="content-text">{{ scope.row.content }}</span>
+          </template>
+        </el-table-column>
         <el-table-column label="图片预览" width="120" align="center">
           <template #default="scope">
-            <el-image
-              v-if="getFirstImage(scope.row.images)"
-              style="width: 50px; height: 50px"
-              :src="getFirstImage(scope.row.images)"
-              :preview-src-list="getAllImages(scope.row.images)"
-              fit="cover"
-              preview-teleported
-            />
-            <span v-else>无图</span>
+            <div class="image-preview">
+              <el-image
+                v-if="getFirstImage(scope.row.images)"
+                class="preview-image"
+                :src="getFirstImage(scope.row.images)"
+                :preview-src-list="getAllImages(scope.row.images)"
+                fit="cover"
+                preview-teleported
+              />
+              <span v-else class="no-image">无图</span>
+            </div>
           </template>
         </el-table-column>
         <el-table-column prop="createTime" label="发布时间" width="160" align="center">
-            <template #default="scope">
-                {{ formatDate(scope.row.createTime) }}
-            </template>
+          <template #default="scope">
+            <span class="time-text">{{ formatDate(scope.row.createTime) }}</span>
+          </template>
         </el-table-column>
         <el-table-column prop="auditStatus" label="状态" width="100" align="center">
           <template #default="scope">
-            <el-tag :type="getStatusType(scope.row.auditStatus)">
+            <span :class="['status-tag', getStatusClass(scope.row.auditStatus)]">
               {{ getStatusText(scope.row.auditStatus) }}
-            </el-tag>
+            </span>
           </template>
         </el-table-column>
         <el-table-column label="操作" width="150" align="center" fixed="right">
@@ -77,24 +85,24 @@
             >
               查看
             </el-button>
-            <!-- 删除按钮预留，目前API未明确提供删除接口，但可以使用驳回代替或者添加删除逻辑 -->
-            <!-- <el-button size="small" type="danger" link>删除</el-button> -->
           </template>
         </el-table-column>
       </el-table>
 
-      <div class="pagination-container">
+      <div class="pagination-wrapper">
+        <span class="total-text">共 {{ total }} 条</span>
         <el-pagination
           v-model:current-page="queryParams.pageNum"
           v-model:page-size="queryParams.pageSize"
           :page-sizes="[10, 20, 50, 100]"
-          layout="total, sizes, prev, pager, next, jumper"
+          layout="sizes, prev, pager, next, jumper"
           :total="total"
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
+          class="pagination"
         />
       </div>
-    </el-card>
+    </div>
 
     <!-- 审核/详情弹窗 -->
     <el-dialog
@@ -294,6 +302,15 @@ const getStatusText = (status) => {
   return map[status] || '未知'
 }
 
+const getStatusClass = (status) => {
+  const map = {
+    0: 'pending',
+    1: 'approved',
+    2: 'rejected'
+  }
+  return map[status] || 'pending'
+}
+
 const loadPetInfo = async (petId) => {
   if (!petId) {
     currentPet.value = null
@@ -359,56 +376,233 @@ onMounted(() => {
 
 <style scoped>
 .app-container {
-  padding: 20px;
-}
-.filter-container {
-  margin-bottom: 20px;
-}
-.table-container {
-  margin-bottom: 20px;
-}
-.pagination-container {
-  margin-top: 20px;
   display: flex;
-  justify-content: flex-end;
+  flex-direction: column;
+  gap: 20px;
 }
+
+.filter-card {
+  background: white;
+  padding: 16px 20px;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  border: 1px solid #f1f5f9;
+}
+
+.filter-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: flex-end;
+  justify-content: space-between;
+}
+
+.filter-grid {
+  display: flex;
+  gap: 16px;
+  flex: 1;
+}
+
+.filter-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.filter-label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #64748b;
+  white-space: nowrap;
+}
+
+.filter-input {
+  width: 160px;
+}
+
+.filter-input :deep(.el-input__wrapper) {
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  box-shadow: none;
+  transition: all 0.2s ease;
+}
+
+.filter-input :deep(.el-input__wrapper:focus-within) {
+  border-color: #10b981;
+  box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.1);
+}
+
+.filter-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.btn-search {
+  background: #3b82f6;
+  border-color: #3b82f6;
+  border-radius: 8px;
+}
+
+.btn-search:hover {
+  background: #2563eb;
+  border-color: #2563eb;
+}
+
+.btn-reset {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  color: #64748b;
+}
+
+.btn-reset:hover {
+  background: #f8fafc;
+  color: #334155;
+}
+
+.table-card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  border: 1px solid #f1f5f9;
+  overflow: hidden;
+}
+
+.data-table {
+  --el-table-border-color: #f1f5f9;
+  --el-table-header-bg-color: #f8fafc;
+  --el-table-header-text-color: #64748b;
+  --el-table-row-hover-bg-color: #f8fafc;
+}
+
+.data-table :deep(.el-table__header th) {
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.data-table :deep(.el-table__body td) {
+  font-size: 14px;
+  color: #334155;
+}
+
+.content-text {
+  color: #475569;
+  line-height: 1.5;
+}
+
+.image-preview {
+  display: flex;
+  justify-content: center;
+}
+
+.preview-image {
+  width: 50px;
+  height: 50px;
+  border-radius: 6px;
+  border: 1px solid #e2e8f0;
+}
+
+.no-image {
+  color: #94a3b8;
+  font-size: 12px;
+}
+
+.time-text {
+  color: #64748b;
+  font-size: 13px;
+}
+
+.status-tag {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  border: 1px solid;
+}
+
+.status-tag.pending {
+  background: #fffbeb;
+  color: #f59e0b;
+  border-color: #fde68a;
+}
+
+.status-tag.approved {
+  background: #ecfdf5;
+  color: #10b981;
+  border-color: #a7f3d0;
+}
+
+.status-tag.rejected {
+  background: #fef2f2;
+  color: #ef4444;
+  border-color: #fecaca;
+}
+
+.pagination-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-top: 1px solid #f1f5f9;
+}
+
+.total-text {
+  font-size: 12px;
+  color: #64748b;
+}
+
+.pagination {
+  display: flex;
+  align-items: center;
+}
+
 .section-title {
   font-size: 16px;
   font-weight: 600;
   margin-bottom: 15px;
-  border-left: 4px solid #409eff;
+  border-left: 4px solid #10b981;
   padding-left: 10px;
+  color: #1e293b;
 }
+
 .diary-content {
-  background: #f8f9fa;
+  background: #f8fafc;
   padding: 15px;
-  border-radius: 4px;
+  border-radius: 8px;
   line-height: 1.6;
   min-height: 100px;
   white-space: pre-wrap;
   margin-bottom: 10px;
+  border: 1px solid #e2e8f0;
+  color: #334155;
 }
+
 .publish-info {
   font-size: 12px;
-  color: #909399;
+  color: #64748b;
   text-align: right;
 }
+
 .image-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
   gap: 10px;
 }
+
 .gallery-image {
   width: 100%;
   height: 150px;
-  border-radius: 4px;
-  border: 1px solid #ebeef5;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
 }
+
 .pet-info {
   margin-bottom: 20px;
 }
+
 .no-data {
-  color: #909399;
+  color: #94a3b8;
   font-size: 14px;
   text-align: center;
   padding: 20px 0;

@@ -1,94 +1,129 @@
 <template>
   <div class="article-list-container">
-    <el-card class="box-card">
-      <!-- 筛选区域 -->
-      <div class="filter-container">
-        <el-form :inline="true" :model="queryParams" class="demo-form-inline">
-          <el-form-item label="关键字">
-            <el-input v-model="queryParams.keyword" placeholder="标题/摘要" clearable @keyup.enter="handleSearch" />
-          </el-form-item>
-          <el-form-item label="类型">
-            <el-select v-model="queryParams.type" placeholder="全部类型" clearable style="width: 120px">
+    <div class="filter-card">
+      <div class="filter-row">
+        <div class="filter-grid">
+          <div class="filter-item">
+            <label class="filter-label">关键字</label>
+            <el-input v-model="queryParams.keyword" placeholder="标题/摘要" clearable @keyup.enter="handleSearch" class="filter-input" />
+          </div>
+          <div class="filter-item">
+            <label class="filter-label">类型</label>
+            <el-select v-model="queryParams.type" placeholder="全部类型" clearable class="filter-input">
               <el-option label="养宠百科" :value="0" />
               <el-option label="救助公告" :value="1" />
               <el-option label="活动" :value="2" />
               <el-option label="壁纸" :value="3" />
             </el-select>
-          </el-form-item>
-          <el-form-item label="分类">
-             <el-input v-model="queryParams.category" placeholder="分类筛选" clearable @keyup.enter="handleSearch" />
-          </el-form-item>
-          <el-form-item>
-            <el-button type="primary" :icon="Search" @click="handleSearch">搜索</el-button>
-            <el-button :icon="Refresh" @click="handleReset">重置</el-button>
-            <el-button type="success" :icon="Plus" @click="handleAdd">新增</el-button>
-          </el-form-item>
-        </el-form>
+          </div>
+          <div class="filter-item">
+            <label class="filter-label">分类</label>
+            <el-input v-model="queryParams.category" placeholder="分类筛选" clearable @keyup.enter="handleSearch" class="filter-input" />
+          </div>
+        </div>
+        <div class="filter-actions">
+          <el-button type="primary" :icon="Search" @click="handleSearch" class="btn-search">搜索</el-button>
+          <el-button :icon="Refresh" @click="handleReset" class="btn-reset">重置</el-button>
+          <el-button type="success" :icon="Plus" @click="handleAdd" class="btn-add">新增</el-button>
+        </div>
       </div>
+    </div>
 
-      <!-- 表格区域 -->
+    <div class="table-card">
       <el-table
         v-loading="loading"
         :data="articleList"
         style="width: 100%"
-        border
-        stripe
+        class="data-table"
       >
-        <el-table-column label="封面图" width="120">
+        <el-table-column label="封面图" width="100" align="center">
           <template #default="scope">
-            <el-image
-              style="width: 80px; height: 80px; border-radius: 4px"
-              :src="scope.row.coverImg"
-              :preview-src-list="[scope.row.coverImg]"
-              fit="cover"
-              preview-teleported
-            >
-              <template #error>
-                <div class="image-slot">
-                  <el-icon><Picture /></el-icon>
-                </div>
-              </template>
-            </el-image>
+            <div class="cover-wrapper">
+              <el-image
+                class="cover-image"
+                :src="scope.row.coverImg"
+                :preview-src-list="[scope.row.coverImg]"
+                fit="cover"
+                preview-teleported
+              >
+                <template #error>
+                  <div class="image-slot">
+                    <el-icon><Picture /></el-icon>
+                  </div>
+                </template>
+              </el-image>
+            </div>
           </template>
         </el-table-column>
-        <el-table-column prop="title" label="标题" min-width="200" align="left" show-overflow-tooltip />
+        <el-table-column prop="title" label="标题" min-width="200" align="left" show-overflow-tooltip>
+          <template #default="scope">
+            <span class="article-title-text">{{ scope.row.title }}</span>
+          </template>
+        </el-table-column>
         <el-table-column label="类型" width="100" align="center">
           <template #default="scope">
-            <el-tag :type="getTypeTagType(scope.row.type)" effect="plain">
+            <span :class="['type-tag', getTypeClass(scope.row.type)]">
               {{ getTypeLabel(scope.row.type) }}
-            </el-tag>
+            </span>
           </template>
         </el-table-column>
-        <el-table-column prop="category" label="分类" width="120" align="center" />
-        <el-table-column prop="viewCount" label="浏览量" width="100" align="center" sortable="custom" />
+        <el-table-column prop="category" label="分类" width="120" align="center">
+          <template #default="scope">
+            <span>{{ scope.row.category || '-' }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column prop="viewCount" label="浏览量" width="100" align="center" sortable="custom">
+          <template #default="scope">
+            <span class="view-count">{{ scope.row.viewCount || 0 }}</span>
+          </template>
+        </el-table-column>
         <el-table-column label="创建时间" width="180" align="center">
           <template #default="scope">
-            {{ formatTime(scope.row.createTime) }}
+            <span class="time-text">{{ formatTime(scope.row.createTime) }}</span>
           </template>
         </el-table-column>
         <el-table-column label="操作" width="200" align="center" fixed="right">
           <template #default="scope">
-            <el-button type="info" link :icon="View" @click="handleView(scope.row)">查看</el-button>
-            <el-button type="primary" link :icon="Edit" @click="handleEdit(scope.row)">编辑</el-button>
-            <el-button type="success" link :icon="Monitor" @click="handleSetBanner(scope.row)">设为轮播</el-button>
-            <el-button type="danger" link :icon="Delete" @click="handleDelete(scope.row)">删除</el-button>
+            <div class="action-buttons">
+              <div class="action-row">
+                <el-button type="primary" link size="small" @click="handleView(scope.row)">
+                  <el-icon><View /></el-icon>
+                  <span>查看</span>
+                </el-button>
+                <el-button type="primary" link size="small" @click="handleEdit(scope.row)">
+                  <el-icon><Edit /></el-icon>
+                  <span>编辑</span>
+                </el-button>
+              </div>
+              <div class="action-row">
+                <el-button type="success" link size="small" @click="handleSetBanner(scope.row)">
+                  <el-icon><Monitor /></el-icon>
+                  <span>设为轮播</span>
+                </el-button>
+                <el-button type="danger" link size="small" @click="handleDelete(scope.row)">
+                  <el-icon><Delete /></el-icon>
+                  <span>删除</span>
+                </el-button>
+              </div>
+            </div>
           </template>
         </el-table-column>
       </el-table>
 
-      <!-- 分页区域 -->
-      <div class="pagination-container">
+      <div class="pagination-wrapper">
+        <span class="total-text">共 {{ total }} 条</span>
         <el-pagination
           v-model:current-page="queryParams.pageNum"
           v-model:page-size="queryParams.pageSize"
           :page-sizes="[10, 20, 50, 100]"
-          layout="total, sizes, prev, pager, next, jumper"
+          layout="sizes, prev, pager, next, jumper"
           :total="total"
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
+          class="pagination"
         />
       </div>
-    </el-card>
+    </div>
 
     <!-- 查看详情弹窗 (简易版，只展示基本信息和内容) -->
     <el-dialog
@@ -205,13 +240,20 @@ const getTypeTagType = (type) => {
     1: 'danger',    // 红色
     2: 'warning',   // 黄色
     3: 'success'    // 紫色(ElementPlus Success是绿色，可以用color自定义，或者用 info)
-    // 用户提到：壁纸-紫色，百科-蓝色
   }
-  // 如果想严格对应颜色，可以返回 '' 然后在style里写class，或者直接用 success/warning 等预设
-  // 这里暂时用 element 预设
-  if (type === 3) return 'success' // 壁纸
-  if (type === 0) return '' // default blue
+  if (type === 3) return 'success'
+  if (type === 0) return ''
   return map[type] || 'info'
+}
+
+const getTypeClass = (type) => {
+  const map = {
+    0: 'encyclopedia',
+    1: 'notice',
+    2: 'activity',
+    3: 'wallpaper'
+  }
+  return map[type] || 'encyclopedia'
 }
 
 const fetchList = async () => {
@@ -340,17 +382,138 @@ onMounted(() => {
 
 <style scoped>
 .article-list-container {
-  padding: 20px;
-}
-
-.filter-container {
-  margin-bottom: 20px;
-}
-
-.pagination-container {
-  margin-top: 20px;
   display: flex;
-  justify-content: flex-end;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.filter-card {
+  background: white;
+  padding: 16px 20px;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  border: 1px solid #f1f5f9;
+}
+
+.filter-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: flex-end;
+  justify-content: space-between;
+}
+
+.filter-grid {
+  display: flex;
+  gap: 16px;
+  flex: 1;
+}
+
+.filter-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.filter-label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #64748b;
+  white-space: nowrap;
+}
+
+.filter-input {
+  width: 180px;
+}
+
+.filter-input :deep(.el-input__wrapper) {
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  box-shadow: none;
+  transition: all 0.2s ease;
+}
+
+.filter-input :deep(.el-input__wrapper:focus-within) {
+  border-color: #10b981;
+  box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.1);
+}
+
+.filter-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.btn-search {
+  background: #3b82f6;
+  border-color: #3b82f6;
+  border-radius: 8px;
+}
+
+.btn-search:hover {
+  background: #2563eb;
+  border-color: #2563eb;
+}
+
+.btn-reset {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  color: #64748b;
+}
+
+.btn-reset:hover {
+  background: #f8fafc;
+  color: #334155;
+}
+
+.btn-add {
+  background: #10b981;
+  border-color: #10b981;
+  border-radius: 8px;
+}
+
+.btn-add:hover {
+  background: #059669;
+  border-color: #059669;
+}
+
+.table-card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  border: 1px solid #f1f5f9;
+  overflow: hidden;
+}
+
+.data-table {
+  --el-table-border-color: #f1f5f9;
+  --el-table-header-bg-color: #f8fafc;
+  --el-table-header-text-color: #64748b;
+  --el-table-row-hover-bg-color: #f8fafc;
+}
+
+.data-table :deep(.el-table__header th) {
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.data-table :deep(.el-table__body td) {
+  font-size: 14px;
+  color: #334155;
+}
+
+.cover-wrapper {
+  width: 64px;
+  height: 64px;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid #e2e8f0;
+  margin: 0 auto;
+}
+
+.cover-image {
+  width: 100%;
+  height: 100%;
 }
 
 .image-slot {
@@ -359,9 +522,95 @@ onMounted(() => {
   align-items: center;
   width: 100%;
   height: 100%;
-  background: #f5f7fa;
-  color: #909399;
+  background: #f8fafc;
+  color: #94a3b8;
   font-size: 20px;
+}
+
+.article-title-text {
+  font-weight: 500;
+  color: #1e293b;
+}
+
+.type-tag {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  border: 1px solid;
+}
+
+.type-tag.encyclopedia {
+  background: #eff6ff;
+  color: #3b82f6;
+  border-color: #bfdbfe;
+}
+
+.type-tag.notice {
+  background: #fef2f2;
+  color: #ef4444;
+  border-color: #fecaca;
+}
+
+.type-tag.activity {
+  background: #fffbeb;
+  color: #f59e0b;
+  border-color: #fde68a;
+}
+
+.type-tag.wallpaper {
+  background: #f5f3ff;
+  color: #8b5cf6;
+  border-color: #ddd6fe;
+}
+
+.view-count {
+  font-weight: 600;
+  color: #f59e0b;
+}
+
+.time-text {
+  color: #64748b;
+  font-size: 13px;
+}
+
+.action-buttons {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.action-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.action-row .el-button {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+}
+
+.pagination-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-top: 1px solid #f1f5f9;
+}
+
+.total-text {
+  font-size: 12px;
+  color: #64748b;
+}
+
+.pagination {
+  display: flex;
+  align-items: center;
 }
 
 .article-detail {
@@ -371,13 +620,14 @@ onMounted(() => {
 .article-title {
   text-align: center;
   margin-bottom: 15px;
-  color: #303133;
+  color: #1e293b;
+  font-weight: 700;
 }
 
 .article-meta {
   text-align: center;
   margin-bottom: 20px;
-  color: #909399;
+  color: #64748b;
   font-size: 13px;
 }
 
@@ -386,13 +636,14 @@ onMounted(() => {
 }
 
 .article-summary {
-  background-color: #f4f4f5;
-  padding: 10px;
-  border-radius: 4px;
-  color: #606266;
+  background-color: #f8fafc;
+  padding: 12px;
+  border-radius: 8px;
+  color: #475569;
   margin-bottom: 15px;
   font-size: 14px;
   line-height: 1.6;
+  border: 1px solid #e2e8f0;
 }
 
 .article-cover {
@@ -402,28 +653,29 @@ onMounted(() => {
 
 .article-content {
   line-height: 1.8;
-  color: #333;
+  color: #334155;
   font-size: 16px;
 }
-/* Handle rich text content images */
+
 :deep(.article-content img) {
   max-width: 100%;
   height: auto;
 }
 
 .activity-info {
-  background-color: #f0f9eb;
+  background-color: #ecfdf5;
   padding: 15px;
-  border-radius: 4px;
+  border-radius: 8px;
   margin-bottom: 20px;
-  color: #67c23a;
-  border: 1px solid #e1f3d8;
+  color: #059669;
+  border: 1px solid #d1fae5;
 }
 
 .info-item {
   margin-bottom: 8px;
   font-size: 14px;
 }
+
 .info-item:last-child {
   margin-bottom: 0;
 }

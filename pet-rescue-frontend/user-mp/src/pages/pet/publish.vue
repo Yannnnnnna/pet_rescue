@@ -12,108 +12,150 @@
 
     <view class="content-area" :style="{ marginTop: statusBarHeight + 44 + 'px' }">
       <view class="card">
-      <view class="section-title">基本信息</view>
-      
-      <view class="form-item">
-        <view class="label required">昵称</view>
-        <input class="input" v-model="form.name" placeholder="请输入宠物昵称" />
-      </view>
-      
-      <view class="form-item">
-        <view class="label required">种类</view>
-        <picker :range="typeActions" range-key="name" @change="selectType" :value="form.type">
-          <view class="picker-view">
-            <text v-if="typeName" class="picker-text">{{ typeName }}</text>
-            <text v-else class="placeholder">请选择种类</text>
-            <text class="arrow">></text>
+        <view class="section-header">
+          <view class="icon-box">
+            <uni-icons type="info" size="18" color="#2E7D32"></uni-icons>
           </view>
-        </picker>
-      </view>
-      
-      <view class="form-item">
-        <view class="label">品种</view>
-        <input class="input" v-model="form.breed" placeholder="请输入品种(如:橘猫)" />
-      </view>
-      
-      <view class="form-item">
-        <view class="label">性别</view>
-        <radio-group @change="handleSexChange" class="radio-group">
-          <label class="radio-label">
-            <radio :value="1" :checked="form.sex === 1" color="#19be6b" style="transform:scale(0.8)" /> 公
-          </label>
-          <label class="radio-label">
-            <radio :value="0" :checked="form.sex === 0" color="#19be6b" style="transform:scale(0.8)" /> 母
-          </label>
-          <label class="radio-label">
-            <radio :value="2" :checked="form.sex === 2" color="#19be6b" style="transform:scale(0.8)" /> 未知
-          </label>
-        </radio-group>
-      </view>
-      
-      <view class="form-item">
-        <view class="label">年龄</view>
-        <input class="input" v-model="form.age" placeholder="请输入年龄(如:3个月)" />
-      </view>
-    </view>
-
-    <!-- 详细信息 -->
-    <view class="card">
-      <view class="section-title">详细信息</view>
-      
-      <view class="form-item row-between">
-        <view class="label">绝育状态</view>
-        <switch :checked="form.isSterilized === 1" @change="handleSterilizedChange" color="#19be6b" style="transform:scale(0.8)" />
-      </view>
-      
-      <view class="form-item row-between">
-        <view class="label">疫苗状态</view>
-        <switch :checked="form.isVaccinated === 1" @change="handleVaccinatedChange" color="#19be6b" style="transform:scale(0.8)" />
-      </view>
-      
-      <view class="form-item">
-        <view class="label">标签</view>
-        <input class="input" v-model="form.tags" placeholder="多个标签用逗号分隔(如:粘人,安静)" />
-      </view>
-      
-      <view class="form-item">
-        <view class="label">所在城市</view>
-        <picker mode="multiSelector" :range="cityRange" :value="cityIndex" @change="handleCityChange" @columnchange="handleCityColumnChange">
-          <view class="picker-view">
-            <text v-if="form.province && form.city" class="picker-text">{{ form.province }} {{ form.city }}</text>
-            <text v-else class="placeholder">请选择所在城市</text>
-            <text class="arrow">></text>
+          <text class="section-title">基本信息</text>
+        </view>
+        
+        <view class="form-item">
+          <view class="label required">昵称</view>
+          <input class="input" v-model="form.name" placeholder="请输入宠物昵称" placeholder-class="placeholder-text" />
+        </view>
+        
+        <view class="form-item">
+          <view class="label required">种类</view>
+          <picker :range="typeActions" range-key="name" @change="selectType" :value="form.type">
+            <view class="picker-view">
+              <text v-if="typeName" class="picker-text">{{ typeName }}</text>
+              <text v-else class="placeholder-text">请选择种类</text>
+              <uni-icons type="right" size="14" color="#9CA3AF"></uni-icons>
+            </view>
+          </picker>
+        </view>
+        
+        <view class="form-item">
+          <view class="label">品种</view>
+          <input class="input" v-model="form.breed" placeholder="请输入品种(如:橘猫)" placeholder-class="placeholder-text" />
+        </view>
+        
+        <view class="form-item">
+          <view class="label">性别</view>
+          <view class="radio-group">
+            <view 
+              class="radio-item" 
+              :class="{ active: form.sex === 1 }"
+              @click="form.sex = 1"
+            >
+              <view class="radio-circle">
+                <view class="radio-dot" v-if="form.sex === 1"></view>
+              </view>
+              <text>公</text>
+            </view>
+            <view 
+              class="radio-item" 
+              :class="{ active: form.sex === 0 }"
+              @click="form.sex = 0"
+            >
+              <view class="radio-circle">
+                <view class="radio-dot" v-if="form.sex === 0"></view>
+              </view>
+              <text>母</text>
+            </view>
+            <view 
+              class="radio-item" 
+              :class="{ active: form.sex === 2 }"
+              @click="form.sex = 2"
+            >
+              <view class="radio-circle">
+                <view class="radio-dot" v-if="form.sex === 2"></view>
+              </view>
+              <text>未知</text>
+            </view>
           </view>
-        </picker>
-      </view>
-      
-      <view class="form-item">
-        <view class="label">详细地址</view>
-        <input class="input" v-model="form.address" placeholder="请输入详细地址" />
+        </view>
+        
+        <view class="form-item">
+          <view class="label">年龄</view>
+          <input class="input" v-model="form.age" placeholder="请输入年龄(如:3个月)" placeholder-class="placeholder-text" />
+        </view>
       </view>
 
-      <view class="form-item vertical">
-        <view class="label required">详细介绍</view>
-        <textarea class="textarea" v-model="form.description" placeholder="请描述宠物的性格、救助经历等" maxlength="2000" auto-height></textarea>
-      </view>
-    </view>
+      <view class="card">
+        <view class="section-header">
+          <view class="icon-box bg-yellow">
+            <uni-icons type="flag" size="18" color="#F59E0B"></uni-icons>
+          </view>
+          <text class="section-title">详细信息</text>
+        </view>
+        
+        <view class="form-item switch-item">
+          <view class="label">绝育状态</view>
+          <switch :checked="form.isSterilized === 1" @change="handleSterilizedChange" color="#2E7D32" style="transform:scale(0.8)" />
+        </view>
+        
+        <view class="form-item switch-item">
+          <view class="label">疫苗状态</view>
+          <switch :checked="form.isVaccinated === 1" @change="handleVaccinatedChange" color="#2E7D32" style="transform:scale(0.8)" />
+        </view>
+        
+        <view class="form-item">
+          <view class="label">标签</view>
+          <input class="input" v-model="form.tags" placeholder="多个标签用逗号分隔(如:粘人,安静)" placeholder-class="placeholder-text" />
+        </view>
+        
+        <view class="form-item">
+          <view class="label">所在城市</view>
+          <picker mode="multiSelector" :range="cityRange" :value="cityIndex" @change="handleCityChange" @columnchange="handleCityColumnChange">
+            <view class="picker-view">
+              <text v-if="form.province && form.city" class="picker-text">{{ form.province }} {{ form.city }}</text>
+              <text v-else class="placeholder-text">请选择所在城市</text>
+              <uni-icons type="right" size="14" color="#9CA3AF"></uni-icons>
+            </view>
+          </picker>
+        </view>
+        
+        <view class="form-item">
+          <view class="label">详细地址</view>
+          <input class="input" v-model="form.address" placeholder="请输入详细地址" placeholder-class="placeholder-text" />
+        </view>
 
-    <!-- 图片上传 -->
-    <view class="card">
-      <view class="section-title">照片上传 (第一张为封面)</view>
-      <view class="img-grid">
-         <view class="img-item" v-for="(url, index) in fileList" :key="index">
-           <image :src="url" mode="aspectFill" class="grid-img"></image>
-           <view class="del-btn" @click.stop="deletePic(index)">×</view>
-         </view>
-         <view class="img-item upload-btn" @click="chooseImage" v-if="fileList.length < 9">
-            <text class="plus">+</text>
-         </view>
+        <view class="form-item vertical">
+          <view class="label required">详细介绍</view>
+          <textarea class="textarea" v-model="form.description" placeholder="请描述宠物的性格、救助经历等" maxlength="2000" auto-height placeholder-class="placeholder-text"></textarea>
+        </view>
       </view>
-    </view>
 
-    <view class="btn-area">
-      <button class="submit-btn" :loading="loading" @click="submit">立即发布</button>
-    </view>
+      <view class="card">
+        <view class="section-header">
+          <view class="icon-box bg-orange">
+            <uni-icons type="image" size="18" color="#E64A19"></uni-icons>
+          </view>
+          <text class="section-title">照片上传</text>
+          <text class="section-tip">第一张为封面</text>
+        </view>
+        <view class="img-grid">
+          <view class="img-item" v-for="(url, index) in fileList" :key="index">
+            <image :src="url" mode="aspectFill" class="grid-img"></image>
+            <view class="del-btn" @click.stop="deletePic(index)">
+              <uni-icons type="close" size="12" color="#fff"></uni-icons>
+            </view>
+            <view class="cover-tag" v-if="index === 0">封面</view>
+          </view>
+          <view class="img-item upload-btn" @click="chooseImage" v-if="fileList.length < 9">
+            <uni-icons type="plusempty" size="32" color="#9CA3AF"></uni-icons>
+            <text class="upload-text">添加照片</text>
+          </view>
+        </view>
+      </view>
+
+      <view class="btn-area">
+        <button class="submit-btn" :loading="loading" @click="submit">
+          <uni-icons type="paperplane" size="18" color="#fff" style="margin-right: 8rpx;"></uni-icons>
+          立即发布
+        </button>
+      </view>
     </view>
   </view>
 </template>
@@ -145,7 +187,7 @@ const form = ref({
   name: '',
   type: null,
   breed: '',
-  sex: 2, // 默认未知
+  sex: 2,
   age: '',
   isSterilized: 0,
   isVaccinated: 0,
@@ -205,7 +247,6 @@ const handleCityChange = (e) => {
   form.value.city = cityData[provinceIndex].cities[cityIndexValue].name
 }
 
-// 图片上传处理
 const chooseImage = () => {
   uni.chooseImage({
     count: 9 - fileList.value.length,
@@ -213,8 +254,8 @@ const chooseImage = () => {
       uni.showLoading({ title: '上传中' })
       try {
         for (let path of res.tempFilePaths) {
-           const url = await uploadImage(path)
-           fileList.value.push(url)
+          const url = await uploadImage(path)
+          fileList.value.push(url)
         }
       } catch (e) {
         console.error(e)
@@ -246,7 +287,6 @@ const submit = async () => {
     return
   }
 
-  // 提取图片
   form.value.coverImg = fileList.value[0]
   form.value.detailImgList = fileList.value
 
@@ -268,7 +308,7 @@ const submit = async () => {
 <style lang="scss" scoped>
 .container {
   min-height: 100vh;
-  background-color: #f5f7fa;
+  background-color: #F8FAF8;
   box-sizing: border-box;
 }
 
@@ -279,6 +319,7 @@ const submit = async () => {
   right: 0;
   background: #fff;
   z-index: 100;
+  border-bottom: 1rpx solid #f0f0f0;
   
   .nav-content {
     height: 44px;
@@ -299,7 +340,7 @@ const submit = async () => {
   .nav-title {
     font-size: 34rpx;
     font-weight: bold;
-    color: #333;
+    color: #1F2937;
   }
   
   .placeholder {
@@ -308,38 +349,58 @@ const submit = async () => {
 }
 
 .content-area {
-  padding: 30rpx;
-}
-
-.page-title {
-  font-size: 36rpx;
-  font-weight: bold;
-  color: #333;
-  margin-bottom: 30rpx;
-  padding-left: 10rpx;
+  padding: 32rpx;
 }
 
 .card {
   background: #fff;
-  border-radius: 20rpx;
-  padding: 30rpx;
-  margin-bottom: 30rpx;
-  box-shadow: 0 4rpx 16rpx rgba(0,0,0,0.05);
+  border-radius: 32rpx;
+  padding: 32rpx;
+  margin-bottom: 24rpx;
+  box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.04);
 }
 
-.section-title {
-  font-size: 30rpx;
-  font-weight: bold;
-  margin-bottom: 30rpx;
-  border-left: 8rpx solid #19be6b;
-  padding-left: 16rpx;
-  color: #333;
+.section-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 28rpx;
+  
+  .icon-box {
+    width: 48rpx;
+    height: 48rpx;
+    border-radius: 14rpx;
+    background: #E8F5E9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 16rpx;
+    
+    &.bg-yellow {
+      background: #FFF9C4;
+    }
+    
+    &.bg-orange {
+      background: #FFE0B2;
+    }
+  }
+  
+  .section-title {
+    font-size: 32rpx;
+    font-weight: bold;
+    color: #1F2937;
+  }
+  
+  .section-tip {
+    font-size: 22rpx;
+    color: #9CA3AF;
+    margin-left: 16rpx;
+  }
 }
 
 .form-item {
-  margin-bottom: 30rpx;
-  border-bottom: 1rpx solid #f5f5f5;
-  padding-bottom: 20rpx;
+  margin-bottom: 28rpx;
+  padding-bottom: 24rpx;
+  border-bottom: 1rpx solid #F3F4F6;
   
   &:last-child {
     border-bottom: none;
@@ -348,86 +409,139 @@ const submit = async () => {
   }
   
   &.vertical {
-    display: block;
     .label {
       margin-bottom: 16rpx;
     }
   }
   
-  &.row-between {
+  &.switch-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 1rpx solid #f5f5f5;
-    padding-bottom: 20rpx;
+    padding-bottom: 24rpx;
+    border-bottom: 1rpx solid #F3F4F6;
+    
+    .label {
+      margin-bottom: 0;
+    }
   }
   
   .label {
     font-size: 28rpx;
-    color: #333;
-    margin-bottom: 12rpx;
+    color: #374151;
+    margin-bottom: 16rpx;
     display: block;
     font-weight: 500;
     
     &.required::after {
       content: '*';
-      color: #ff4d4f;
+      color: #EF4444;
       margin-left: 4rpx;
     }
   }
   
   .input {
-    height: 80rpx;
+    height: 88rpx;
     font-size: 28rpx;
-    color: #333;
+    color: #1F2937;
     width: 100%;
+    background: #F9FAFB;
+    border-radius: 16rpx;
+    padding: 0 24rpx;
+    box-sizing: border-box;
   }
   
   .picker-view {
-    height: 80rpx;
+    height: 88rpx;
     display: flex;
     align-items: center;
     justify-content: space-between;
+    background: #F9FAFB;
+    border-radius: 16rpx;
+    padding: 0 24rpx;
     
     .picker-text {
       font-size: 28rpx;
-      color: #333;
+      color: #1F2937;
     }
     
-    .placeholder {
+    .placeholder-text {
       font-size: 28rpx;
-      color: #999;
-    }
-    
-    .arrow {
-      color: #ccc;
-      font-size: 24rpx;
+      color: #9CA3AF;
     }
   }
   
   .textarea {
     width: 100%;
-    min-height: 160rpx;
-    background: #f8f8f8;
-    border-radius: 12rpx;
-    padding: 20rpx;
+    min-height: 200rpx;
+    background: #F9FAFB;
+    border-radius: 16rpx;
+    padding: 24rpx;
     font-size: 28rpx;
-    color: #333;
+    color: #1F2937;
     box-sizing: border-box;
-    margin-top: 10rpx;
+    line-height: 1.6;
   }
+}
+
+.placeholder-text {
+  color: #9CA3AF;
 }
 
 .radio-group {
   display: flex;
   flex-wrap: wrap;
+  gap: 24rpx;
   
-  .radio-label {
+  .radio-item {
     display: flex;
     align-items: center;
-    margin-right: 40rpx;
-    font-size: 28rpx;
-    color: #666;
+    padding: 16rpx 28rpx;
+    background: #F9FAFB;
+    border-radius: 16rpx;
+    border: 2rpx solid transparent;
+    transition: all 0.2s;
+    
+    &.active {
+      background: #E8F5E9;
+      border-color: #2E7D32;
+      
+      .radio-circle {
+        border-color: #2E7D32;
+        
+        .radio-dot {
+          background: #2E7D32;
+        }
+      }
+      
+      text {
+        color: #2E7D32;
+        font-weight: 500;
+      }
+    }
+    
+    .radio-circle {
+      width: 36rpx;
+      height: 36rpx;
+      border-radius: 50%;
+      border: 2rpx solid #D1D5DB;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 12rpx;
+      
+      .radio-dot {
+        width: 20rpx;
+        height: 20rpx;
+        border-radius: 50%;
+        background: #2E7D32;
+      }
+    }
+    
+    text {
+      font-size: 28rpx;
+      color: #6B7280;
+    }
   }
 }
 
@@ -440,20 +554,21 @@ const submit = async () => {
     width: 200rpx;
     height: 200rpx;
     position: relative;
-    border-radius: 12rpx;
+    border-radius: 20rpx;
     overflow: hidden;
     
     &.upload-btn {
-      background: #f8f8f8;
+      background: #F9FAFB;
       display: flex;
+      flex-direction: column;
       justify-content: center;
       align-items: center;
-      border: 1px dashed #ddd;
+      border: 2rpx dashed #D1D5DB;
       
-      .plus {
-        font-size: 60rpx;
-        color: #ccc;
-        font-weight: 300;
+      .upload-text {
+        font-size: 22rpx;
+        color: #9CA3AF;
+        margin-top: 8rpx;
       }
     }
     
@@ -464,32 +579,47 @@ const submit = async () => {
     
     .del-btn {
       position: absolute;
-      top: 0;
-      right: 0;
+      top: 8rpx;
+      right: 8rpx;
       width: 40rpx;
       height: 40rpx;
-      background: rgba(0,0,0,0.5);
-      color: #fff;
+      background: rgba(0, 0, 0, 0.5);
+      border-radius: 50%;
       display: flex;
       justify-content: center;
       align-items: center;
-      border-bottom-left-radius: 12rpx;
-      font-size: 24rpx;
+    }
+    
+    .cover-tag {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: linear-gradient(90deg, #2E7D32, #43A047);
+      color: #fff;
+      font-size: 20rpx;
+      text-align: center;
+      padding: 6rpx 0;
     }
   }
 }
 
 .btn-area {
-  margin-top: 60rpx;
+  margin-top: 48rpx;
   padding-bottom: 60rpx;
   
   .submit-btn {
-    background: linear-gradient(90deg, #19be6b, #20d67a);
+    background: linear-gradient(135deg, #2E7D32 0%, #43A047 100%);
     color: #fff;
-    border-radius: 45rpx;
+    border-radius: 24rpx;
     font-size: 32rpx;
     font-weight: bold;
-    box-shadow: 0 8rpx 20rpx rgba(25, 190, 107, 0.3);
+    height: 96rpx;
+    line-height: 96rpx;
+    box-shadow: 0 8rpx 24rpx rgba(46, 125, 50, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
     
     &::after {
       border: none;
@@ -497,6 +627,7 @@ const submit = async () => {
     
     &:active {
       opacity: 0.9;
+      transform: scale(0.98);
     }
   }
 }

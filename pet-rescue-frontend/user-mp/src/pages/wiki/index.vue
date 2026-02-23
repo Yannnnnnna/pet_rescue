@@ -10,70 +10,61 @@
       </view>
     </view>
 
-    <view class="search-bar" :style="{ marginTop: statusBarHeight + 44 + 'px' }">
-      <view class="search-box" @click="handleSearch">
-        <u-icon name="sousuo" custom-prefix="custom-icon" size="18" color="#999"></u-icon>
-        <text class="placeholder">搜索关键词，如：猫咪感冒、新手养狗</text>
+    <view class="header-section" :style="{ marginTop: statusBarHeight + 44 + 'px' }">
+      <view class="search-bar" @click="handleSearch">
+        <uni-icons type="search" size="18" color="#2E7D32"></uni-icons>
+        <text class="placeholder">搜索文章、活动或公告...</text>
+      </view>
+
+      <view class="category-tabs">
+        <scroll-view scroll-x class="tabs-scroll" show-scrollbar="false">
+          <view 
+            v-for="(item, index) in categoryList" 
+            :key="index"
+            class="tab-item"
+            :class="{ active: currentCategory === item.value }"
+            @click="handleCategoryChange(item)"
+          >
+            {{ item.name }}
+          </view>
+        </scroll-view>
       </view>
     </view>
 
-    <!-- 分类导航栏 -->
-    <view class="category-tabs">
-      <scroll-view scroll-x class="tabs-scroll" show-scrollbar="false">
+    <view class="content-section">
+      <view class="section-header">
+        <text class="section-title">推荐阅读</text>
+        <text class="view-all">查看全部</text>
+      </view>
+
+      <view class="article-list">
         <view 
-          v-for="(item, index) in categoryList" 
-          :key="index"
-          class="tab-item"
-          :class="{ active: currentCategory === item.value }"
-          @click="handleCategoryChange(item)"
+          v-for="item in articleList" 
+          :key="item.id" 
+          class="article-card"
+          @click="goDetail(item)"
         >
-          {{ item.name }}
-        </view>
-      </scroll-view>
-    </view>
-
-    <!-- 轮播推荐区 -->
-    <view class="banner-section" v-if="featuredList.length > 0">
-      <swiper class="banner-swiper" circular indicator-dots autoplay interval="4000" indicator-active-color="#19be6b">
-        <swiper-item v-for="(item, index) in featuredList" :key="index" @click="goDetail(item)">
-          <image :src="item.coverImg" mode="aspectFill" class="banner-img"></image>
-          <view class="banner-title">{{ item.title }}</view>
-        </swiper-item>
-      </swiper>
-    </view>
-
-    <!-- 文章列表区 -->
-    <view class="article-list">
-      <view 
-        v-for="item in articleList" 
-        :key="item.id" 
-        class="article-card"
-        @click="goDetail(item)"
-      >
-        <image :src="item.coverImg" mode="aspectFill" class="article-cover"></image>
-        <view class="article-content">
-          <view class="article-title">{{ item.title }}</view>
-          <view class="article-summary">{{ item.summary }}</view>
-          <view class="article-meta">
-            <view class="meta-left">
-              <u-tag :text="getFirstTag(item.tags)" type="success" size="mini" plain></u-tag>
-              <view class="view-count">
-                <u-icon name="liulan" custom-prefix="custom-icon" size="12" color="#999"></u-icon>
-                <text>{{ formatViewCount(item.viewCount) }}</text>
-              </view>
+          <view class="article-cover-wrapper">
+            <image :src="item.coverImg" mode="aspectFill" class="article-cover"></image>
+          </view>
+          <view class="article-content">
+            <view class="tag-row">
+              <view class="article-tag" :class="getTagClass(item.tags)">{{ getFirstTag(item.tags) }}</view>
             </view>
-            <view class="meta-right">{{ formatTime(item.createTime) }}</view>
+            <view class="article-title">{{ item.title }}</view>
+            <view class="article-meta">
+              <text class="read-time">{{ getReadTime(item.content) }}分钟阅读</text>
+              <text class="publish-time">{{ formatTime(item.createTime) }}</text>
+            </view>
           </view>
         </view>
       </view>
+
+      <u-empty v-if="articleList.length === 0 && loadStatus !== 'loading'" mode="list" icon="http://cdn.uviewui.com/uview/empty/list.png">
+      </u-empty>
+
+      <u-loadmore :status="loadStatus" marginTop="30"></u-loadmore>
     </view>
-
-    <!-- 空状态 -->
-    <u-empty v-if="articleList.length === 0 && loadStatus !== 'loading'" mode="list" icon="http://cdn.uviewui.com/uview/empty/list.png">
-    </u-empty>
-
-    <!-- 加载更多 -->
-    <u-loadmore :status="loadStatus" marginTop="30"></u-loadmore>
   </view>
 </template>
 
@@ -84,7 +75,7 @@ import { getArticleList } from '@/api/article'
 
 const statusBarHeight = ref(20)
 const categoryList = ref([
-  { name: '全部', value: '' },
+  { name: '百科文章', value: '' },
   { name: '新手必读', value: '新手必读' },
   { name: '健康医疗', value: '健康医疗' },
   { name: '日常护理', value: '日常护理' },
@@ -93,7 +84,6 @@ const categoryList = ref([
 ])
 const currentCategory = ref('')
 const articleList = ref([])
-const featuredList = ref([])
 const loadStatus = ref('loadmore')
 const pageNum = ref(1)
 const pageSize = ref(10)
@@ -115,7 +105,6 @@ const loadData = async (reset = false) => {
   if (reset) {
     pageNum.value = 1
     articleList.value = []
-    featuredList.value = []
     loadStatus.value = 'loading'
   }
 
@@ -131,7 +120,6 @@ const loadData = async (reset = false) => {
     
     if (reset) {
       articleList.value = newItems
-      featuredList.value = newItems.slice(0, 3)
     } else {
       articleList.value = [...articleList.value, ...newItems]
     }
@@ -162,10 +150,28 @@ const goDetail = (item) => {
   })
 }
 
+const goBack = () => {
+  uni.navigateBack()
+}
+
 const getFirstTag = (tags) => {
-  if (!tags) return ''
+  if (!tags) return '百科'
   const tagArray = tags.split(',').map(t => t.trim()).filter(t => t)
-  return tagArray[0] || ''
+  return tagArray[0] || '百科'
+}
+
+const getTagClass = (tags) => {
+  const tag = getFirstTag(tags)
+  if (tag.includes('新手') || tag.includes('指南')) return 'tag-green'
+  if (tag.includes('猫咪') || tag.includes('行为')) return 'tag-orange'
+  if (tag.includes('健康') || tag.includes('饮食')) return 'tag-blue'
+  return 'tag-default'
+}
+
+const getReadTime = (content) => {
+  if (!content) return 3
+  const wordCount = content.replace(/<[^>]+>/g, '').length
+  return Math.max(1, Math.ceil(wordCount / 500))
 }
 
 const formatViewCount = (count) => {
@@ -185,7 +191,7 @@ const formatTime = (time) => {
   if (diff === 0) {
     return '今天'
   } else if (diff === 1) {
-    return '1天前'
+    return '昨天'
   } else if (diff < 7) {
     return diff + '天前'
   } else {
@@ -197,7 +203,7 @@ const formatTime = (time) => {
 <style lang="scss" scoped>
 .wiki-container {
   min-height: 100vh;
-  background: linear-gradient(to bottom, #e6f2e6, #f5f5f5);
+  background-color: #F9FAFB;
 }
 
 .nav-bar {
@@ -205,8 +211,9 @@ const formatTime = (time) => {
   top: 0;
   left: 0;
   right: 0;
-  background: #e6f2e6;
+  background: #fff;
   z-index: 100;
+  border-bottom: 1rpx solid #f0f0f0;
   
   .nav-content {
     height: 44px;
@@ -227,7 +234,7 @@ const formatTime = (time) => {
   .nav-title {
     font-size: 34rpx;
     font-weight: bold;
-    color: #333;
+    color: #1F2937;
   }
   
   .placeholder {
@@ -235,122 +242,140 @@ const formatTime = (time) => {
   }
 }
 
-/* 搜索栏 */
-.search-bar {
-  position: sticky;
-  top: 0;
-  z-index: 99;
-  background: #e6f2e6;
+.header-section {
+  background: #fff;
   padding: 20rpx 30rpx;
+  border-bottom: 1rpx solid #f0f0f0;
+}
 
-  .search-box {
-    height: 64rpx;
-    background: #fff;
-    border-radius: 32rpx;
-    display: flex;
-    align-items: center;
-    padding: 0 24rpx;
+.search-bar {
+  height: 72rpx;
+  background: #F3F4F6;
+  border-radius: 16rpx;
+  display: flex;
+  align-items: center;
+  padding: 0 24rpx;
+  margin-bottom: 20rpx;
 
-    .placeholder {
-      font-size: 26rpx;
-      color: #999;
-      margin-left: 10rpx;
-    }
+  .placeholder {
+    font-size: 28rpx;
+    color: #9CA3AF;
+    margin-left: 12rpx;
   }
 }
 
-/* 分类标签 */
 .category-tabs {
-  background: #e6f2e6;
-  padding: 20rpx 0;
-  border-bottom: 1rpx solid #d9e6d9;
+  margin-top: 10rpx;
 
   .tabs-scroll {
     white-space: nowrap;
-    padding: 0 30rpx;
 
     .tab-item {
       display: inline-block;
-      padding: 12rpx 24rpx;
-      margin-right: 20rpx;
+      padding: 16rpx 28rpx;
+      margin-right: 16rpx;
       font-size: 28rpx;
-      color: #333;
-      border-radius: 32rpx;
-      background: rgba(255,255,255,0.6);
+      color: #6B7280;
+      border-radius: 24rpx;
+      background: transparent;
       transition: all 0.3s;
+      font-weight: 500;
 
       &.active {
-        color: #fff;
-        background: #19be6b;
+        color: #2E7D32;
+        background: #E8F5E9;
         font-weight: bold;
       }
     }
   }
 }
 
-/* 轮播图 */
-.banner-section {
-  padding: 20rpx 30rpx;
-  background: transparent;
-  margin-bottom: 20rpx;
+.content-section {
+  padding: 24rpx;
+}
 
-  .banner-swiper {
-    height: 320rpx;
-    border-radius: 32rpx;
-    overflow: hidden;
-    position: relative;
-
-    .banner-img {
-      width: 100%;
-      height: 100%;
-    }
-
-    .banner-title {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      padding: 40rpx 30rpx 20rpx;
-      background: linear-gradient(transparent, rgba(0, 0, 0, 0.7));
-      color: #fff;
-      font-size: 32rpx;
-      font-weight: bold;
-      text-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.3);
-    }
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24rpx;
+  
+  .section-title {
+    font-size: 32rpx;
+    font-weight: bold;
+    color: #1F2937;
+  }
+  
+  .view-all {
+    font-size: 24rpx;
+    color: #2E7D32;
+    font-weight: 600;
   }
 }
 
-/* 文章列表 */
 .article-list {
-  padding: 0 30rpx;
-
   .article-card {
     display: flex;
-    background: rgba(255, 255, 255, 0.8);
-    border-radius: 32rpx;
-    padding: 20rpx;
+    background: #fff;
+    border-radius: 20rpx;
+    overflow: hidden;
     margin-bottom: 20rpx;
-    box-shadow: 0 8rpx 16rpx rgba(0,0,0,0.05);
-    backdrop-filter: blur(10px);
+    box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.04);
 
-    .article-cover {
+    .article-cover-wrapper {
       width: 200rpx;
-      height: 150rpx;
-      border-radius: 16rpx;
+      height: 180rpx;
       flex-shrink: 0;
+
+      .article-cover {
+        width: 100%;
+        height: 100%;
+      }
     }
 
     .article-content {
       flex: 1;
-      margin-left: 20rpx;
+      padding: 20rpx;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
 
-      .article-title {
-        font-size: 30rpx;
+      .tag-row {
+        margin-bottom: 8rpx;
+      }
+
+      .article-tag {
+        display: inline-block;
+        padding: 4rpx 12rpx;
+        border-radius: 8rpx;
+        font-size: 20rpx;
         font-weight: bold;
-        color: #333;
+        
+        &.tag-green {
+          background: #E8F5E9;
+          color: #2E7D32;
+        }
+        
+        &.tag-orange {
+          background: #FFF3E0;
+          color: #E65100;
+        }
+        
+        &.tag-blue {
+          background: #E3F2FD;
+          color: #1565C0;
+        }
+        
+        &.tag-default {
+          background: #F3F4F6;
+          color: #6B7280;
+        }
+      }
+
+      .article-title {
+        font-size: 28rpx;
+        font-weight: bold;
+        color: #1F2937;
         line-height: 1.4;
         display: -webkit-box;
         -webkit-box-orient: vertical;
@@ -358,42 +383,15 @@ const formatTime = (time) => {
         overflow: hidden;
       }
 
-      .article-summary {
-        font-size: 24rpx;
-        color: #666;
-        line-height: 1.4;
-        display: -webkit-box;
-        -webkit-box-orient: vertical;
-        -webkit-line-clamp: 1;
-        overflow: hidden;
-        margin: 8rpx 0;
-      }
-
       .article-meta {
         display: flex;
         justify-content: space-between;
         align-items: center;
+        margin-top: 12rpx;
 
-        .meta-left {
-          display: flex;
-          align-items: center;
-          gap: 16rpx;
-
-          .view-count {
-            display: flex;
-            align-items: center;
-            font-size: 22rpx;
-            color: #999;
-
-            text {
-              margin-left: 4rpx;
-            }
-          }
-        }
-
-        .meta-right {
+        .read-time, .publish-time {
           font-size: 22rpx;
-          color: #999;
+          color: #9CA3AF;
         }
       }
     }

@@ -1,11 +1,11 @@
 <template>
   <view class="ai-page">
-    <view class="page-header">
+    <view class="page-header" :style="{ paddingTop: headerPaddingTop + 'px' }">
       <text class="page-title">🤖 AI助手</text>
       <view class="add-btn" @click="handleNewChat">
-        <text class="plus-icon">+</text>
+        <uni-icons type="plus" size="16" color="#fff"></uni-icons>
         <text>新对话</text>
-  </view>
+      </view>
     </view>
     
     <scroll-view scroll-y class="content" refresher-enabled @refresherrefresh="onRefresh" :refresher-triggered="isRefreshing">
@@ -51,9 +51,16 @@ import { checkLogin } from '@/utils/auth'
 
 const sessionList = ref([])
 const isRefreshing = ref(false)
+const headerPaddingTop = ref(44)
 
 onShow(() => {
   uni.hideTabBar()
+  
+  const systemInfo = uni.getSystemInfoSync()
+  const menuButtonInfo = uni.getMenuButtonBoundingClientRect()
+  
+  headerPaddingTop.value = (menuButtonInfo.top + menuButtonInfo.height + 10) || (systemInfo.statusBarHeight + 44)
+  
   if (checkLogin('/pages/ai/ai')) {
     loadSessionList()
   }
@@ -112,7 +119,7 @@ const formatTime = (time) => {
 }
 
 .page-header {
-  padding: 44px 20px 20px; // 适配状态栏
+  padding: 20rpx 30rpx 30rpx;
   background: #fff;
   display: flex;
   justify-content: space-between;
@@ -121,7 +128,7 @@ const formatTime = (time) => {
 }
 
 .page-title {
-  font-size: 40rpx;
+  font-size: 48rpx;
   font-weight: 700;
   color: #333;
 }
@@ -129,23 +136,18 @@ const formatTime = (time) => {
 .add-btn {
   background: #2E7D32;
   color: #fff;
-  padding: 12rpx 24rpx;
+  padding: 16rpx 28rpx;
   border-radius: 40rpx;
   display: flex;
   align-items: center;
   gap: 8rpx;
-  font-size: 26rpx;
+  font-size: 28rpx;
   font-weight: 500;
   box-shadow: 0 4rpx 12rpx rgba(46, 125, 50, 0.3);
   
   &:active {
     transform: scale(0.96);
   }
-}
-
-.plus-icon {
-  font-size: 32rpx;
-  font-weight: bold;
 }
 
 .content {

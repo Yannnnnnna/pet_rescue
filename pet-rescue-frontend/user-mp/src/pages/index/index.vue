@@ -899,7 +899,7 @@ const submitRecommend = async () => {
 .ai-float-btn {
   position: fixed;
   right: 32rpx;
-  bottom: 180rpx; // 调整以适应自定义tabbar
+  bottom: 180rpx;
   width: 120rpx;
   height: 120rpx;
   background: linear-gradient(135deg, #4CAF50, #2E7D32);
@@ -909,9 +909,11 @@ const submitRecommend = async () => {
   justify-content: center;
   box-shadow: 0 8rpx 20rpx rgba(46, 125, 50, 0.4);
   z-index: 100;
+  overflow: hidden;
+  
   .ai-icon {
-    width: 70rpx;
-    height: 70rpx;
+    width: 100%;
+    height: 100%;
   }
 }
 

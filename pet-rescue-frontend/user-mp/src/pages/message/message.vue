@@ -20,27 +20,29 @@
     <!-- 消息列表 -->
     <main class="main-content">
       <scroll-view scroll-y class="list-container" v-if="dataList.length > 0">
-        <view 
-          v-for="(item, index) in dataList" 
-          :key="index" 
-          class="session-item"
-          @click="handleSessionClick(item)"
-        >
-          <view class="avatar-box">
-            <image :src="item.avatar || '/static/logo.png'" class="avatar" mode="aspectFill"></image>
-            <view v-if="item.unreadCount > 0" class="unread-dot"></view>
-          </view>
-          
-          <view class="info-box">
-            <view class="top-row">
-              <view class="title-wrapper">
-                <text class="title">{{ item.title || '未知用户' }}</text>
-                <text v-if="item.statusText" class="status-tag">{{ item.statusText }}</text>
-              </view>
-              <text class="time">{{ formatTime(item.lastTime) }}</text>
+        <view class="list-inner">
+          <view 
+            v-for="(item, index) in dataList" 
+            :key="index" 
+            class="session-item"
+            @click="handleSessionClick(item)"
+          >
+            <view class="avatar-box">
+              <image :src="item.avatar || '/static/logo.png'" class="avatar" mode="aspectFill"></image>
+              <view v-if="item.unreadCount > 0" class="unread-dot"></view>
             </view>
-            <view class="bottom-row">
-              <text class="message">{{ item.lastMessage || '暂无消息' }}</text>
+            
+            <view class="info-box">
+              <view class="top-row">
+                <view class="title-wrapper">
+                  <text class="title">{{ item.title || '未知用户' }}</text>
+                  <text v-if="item.statusText" class="status-tag">{{ item.statusText }}</text>
+                </view>
+                <text class="time">{{ formatTime(item.lastTime) }}</text>
+              </view>
+              <view class="bottom-row">
+                <text class="message">{{ item.lastMessage || '暂无消息' }}</text>
+              </view>
             </view>
           </view>
         </view>
@@ -134,18 +136,21 @@ const formatTime = (time) => {
   flex-direction: column;
   height: 100vh;
   background-color: #f8f8f8;
+  overflow: hidden;
+  width: 100%;
 }
 
 .header {
   background-color: #fff;
-  padding: 20rpx 30rpx 30rpx;
+  padding: 40rpx 30rpx 30rpx;
+  padding-top: calc(40rpx + var(--status-bar-height));
   border-bottom-left-radius: 30rpx;
   border-bottom-right-radius: 30rpx;
 
   .title {
     font-size: 48rpx;
     font-weight: bold;
-    color: #333;
+    color: #1F2937;
     margin-bottom: 30rpx;
     text-align: left;
   }
@@ -185,11 +190,19 @@ const formatTime = (time) => {
 .main-content {
   flex: 1;
   overflow: hidden;
+  width: 100%;
 }
 
 .list-container {
   height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+.list-inner {
   padding: 30rpx;
+  box-sizing: border-box;
+  width: 100%;
 }
 
 .session-item {
@@ -200,6 +213,8 @@ const formatTime = (time) => {
   border-radius: 24rpx;
   margin-bottom: 24rpx;
   transition: background-color 0.2s;
+  overflow: hidden;
+  box-sizing: border-box;
 
   &:active {
     background-color: #fafafa;
@@ -209,6 +224,7 @@ const formatTime = (time) => {
 .avatar-box {
   position: relative;
   margin-right: 24rpx;
+  flex-shrink: 0;
 
   .avatar {
     width: 100rpx;
@@ -223,7 +239,7 @@ const formatTime = (time) => {
     right: 0;
     width: 20rpx;
     height: 20rpx;
-    background-color: #FFD700; // Sunflower Yellow for notification
+    background-color: #FFD700;
     border-radius: 50%;
     border: 4rpx solid #fff;
   }
@@ -232,53 +248,72 @@ const formatTime = (time) => {
 .info-box {
   flex: 1;
   min-width: 0;
+  overflow: hidden;
 
   .top-row {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 8rpx;
+    gap: 12rpx;
+    overflow: hidden;
 
     .title-wrapper {
       display: flex;
       align-items: center;
       gap: 12rpx;
+      flex: 1;
+      min-width: 0;
+      overflow: hidden;
     }
 
     .title {
       font-size: 32rpx;
       font-weight: bold;
-      color: #333;
+      color: #1F2937;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+      flex-shrink: 1;
+      min-width: 0;
+      max-width: 100%;
     }
 
     .status-tag {
-      background-color: #e6eee9; // primary-light
-      color: #005339; // primary
+      background-color: #E8F5E9;
+      color: #2E7D32;
       font-size: 20rpx;
       font-weight: bold;
       padding: 4rpx 12rpx;
       border-radius: 8rpx;
       flex-shrink: 0;
+      max-width: 100rpx;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
 
     .time {
       font-size: 24rpx;
-      color: #999;
+      color: #9CA3AF;
       flex-shrink: 0;
-      margin-left: 10rpx;
+      max-width: 120rpx;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
   }
 
   .bottom-row {
+    overflow: hidden;
+    
     .message {
       font-size: 28rpx;
-      color: #666;
+      color: #6B7280;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+      display: block;
     }
   }
 }

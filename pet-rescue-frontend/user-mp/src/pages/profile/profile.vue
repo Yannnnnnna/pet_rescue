@@ -265,6 +265,7 @@ import { onShow } from '@dcloudio/uni-app'
 import { getMyInfo, updateUserInfo, updatePassword, uploadImage } from '@/api/user'
 import { sendSmsCode, logout } from '@/api/auth'
 import { checkLogin } from '@/utils/auth'
+import { getMyPublishedPets, getMyAdoptedPets } from '@/api/pet'
 
 const userInfo = ref({
   nickname: '',
@@ -372,6 +373,30 @@ const loadUserInfo = async () => {
     }
   } catch (error) {
     console.error('获取用户信息失败:', error)
+  }
+}
+
+const loadPublishedCount = async () => {
+  try {
+    const res = await getMyPublishedPets()
+    if (res.data) {
+      publishedCount.value = res.data.length || 0
+    }
+  } catch (error) {
+    console.error('获取发布数量失败:', error)
+    publishedCount.value = 0
+  }
+}
+
+const loadAdoptedCount = async () => {
+  try {
+    const res = await getMyAdoptedPets()
+    if (res.data) {
+      adoptedCount.value = res.data.length || 0
+    }
+  } catch (error) {
+    console.error('获取领养数量失败:', error)
+    adoptedCount.value = 0
   }
 }
 
@@ -556,10 +581,16 @@ const handleAbout = () => uni.showToast({ title: '关于我们开发中...', ico
 onMounted(() => {
   if (!checkLogin('/pages/profile/profile')) return
   loadUserInfo()
+  loadPublishedCount()
+  loadAdoptedCount()
 })
 
 onShow(() => {
   uni.hideTabBar()
+  if (uni.getStorageSync('token')) {
+    loadPublishedCount()
+    loadAdoptedCount()
+  }
 })
 
 onUnmounted(() => {

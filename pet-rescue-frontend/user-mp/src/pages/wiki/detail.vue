@@ -24,43 +24,37 @@
       </view>
     </view>
 
-    <!-- 正文区域 -->
     <view class="article-content">
       <u-parse :content="articleDetail.content" :tag-style="tagStyle"></u-parse>
     </view>
 
-    <!-- 底部占位，防止内容被操作栏遮挡 -->
     <view class="bottom-placeholder"></view>
 
-    <!-- 底部悬浮操作栏 -->
     <view class="action-bar">
       <view class="action-item" @click="handleFavorite">
-        <u-icon 
-          :name="isFavorited ? 'shoucang-fill' : 'shoucang'" 
-          custom-prefix="custom-icon"
-          :color="isFavorited ? '#ff9500' : '#999'" 
-          size="24"
-        ></u-icon>
+        <uni-icons 
+          :type="isFavorited ? 'star-filled' : 'star'" 
+          size="22"
+          :color="isFavorited ? '#FFC107' : '#9CA3AF'"
+        ></uni-icons>
         <text :class="{ active: isFavorited }">收藏</text>
       </view>
       <view class="action-item" @click="handleLike">
-        <u-icon 
-          :name="articleDetail.isLiked ? 'dianzan-fill' : 'dianzan'" 
-          custom-prefix="custom-icon"
-          :color="articleDetail.isLiked ? '#19be6b' : '#999'" 
-          size="24"
-        ></u-icon>
+        <uni-icons 
+          :type="articleDetail.isLiked ? 'hand-up-filled' : 'hand-up'" 
+          size="22"
+          :color="articleDetail.isLiked ? '#2E7D32' : '#9CA3AF'"
+        ></uni-icons>
         <text :class="{ active: articleDetail.isLiked }">{{ articleDetail.likeCount }}</text>
       </view>
       <view class="action-item">
         <button open-type="share" class="share-btn">
-          <u-icon name="fenxiang" custom-prefix="custom-icon" color="#999" size="24"></u-icon>
+          <uni-icons type="redo" size="22" color="#9CA3AF"></uni-icons>
           <text>分享</text>
         </button>
       </view>
     </view>
 
-    <!-- AI 辅助浮窗 -->
     <view class="ai-float-dialog" @click="handleAISummary">
       <view class="dialog-content">
         <text class="dialog-text">AI 帮我总结</text>
@@ -71,17 +65,16 @@
       </view>
     </view>
 
-    <!-- AI 总结弹窗 -->
     <u-popup :show="showAISummary" mode="center" round="16" :closeable="true" @close="showAISummary = false" :customStyle="{width: '600rpx'}">
       <view class="ai-summary-popup">
         <view class="popup-title">
-          <u-icon name="jiqiren" custom-prefix="custom-icon" color="#19be6b" size="24" style="margin-right: 10rpx;"></u-icon>
+          <uni-icons type="fire" size="24" color="#2E7D32" style="margin-right: 10rpx;"></uni-icons>
           AI 智能总结
         </view>
         
         <view class="popup-content">
           <view v-if="aiLoading" class="loading-state">
-            <u-loading-icon mode="circle" size="36" color="#19be6b"></u-loading-icon>
+            <u-loading-icon mode="circle" size="36" color="#2E7D32"></u-loading-icon>
             <text class="loading-text">正在阅读文章并生成总结...</text>
           </view>
           
@@ -92,7 +85,7 @@
         
         <view class="popup-footer" v-if="!aiLoading">
           <button class="regenerate-btn" @click="handleRegenerateSummary">
-            <u-icon name="shuaxin" custom-prefix="custom-icon" color="#666" size="16"></u-icon>
+            <uni-icons type="refresh" size="16" color="#6B7280"></uni-icons>
             <text>重新生成</text>
           </button>
         </view>
@@ -139,8 +132,8 @@ const aiLoading = ref(false)
 const aiSummary = ref('')
 
 const tagStyle = {
-  h2: 'font-size: 36rpx; font-weight: bold; color: #333; margin: 40rpx 0 20rpx; line-height: 1.4;',
-  p: 'font-size: 28rpx; color: #666; line-height: 1.8; margin: 20rpx 0; text-align: justify;',
+  h2: 'font-size: 36rpx; font-weight: bold; color: #1F2937; margin: 40rpx 0 20rpx; line-height: 1.4;',
+  p: 'font-size: 28rpx; color: #4B5563; line-height: 1.8; margin: 20rpx 0; text-align: justify;',
   img: 'width: 100%; height: auto; margin: 20rpx 0; border-radius: 12rpx;'
 }
 
@@ -241,7 +234,6 @@ const handleLike = async () => {
 
 const handleAISummary = () => {
   showAISummary.value = true
-  // 如果没有总结过，则自动开始总结
   if (!aiSummary.value) {
     generateSummary()
   }
@@ -256,14 +248,8 @@ const generateSummary = async (refresh = false) => {
   try {
     const res = await getArticleSummary(articleId.value, refresh)
     if (res.code === 200 || res.code === 0) {
-      // 解析 JSON 字符串 (假设返回的是类似推荐接口的结构，或者是纯文本)
-      // 如果后端直接返回文本，则直接使用
-      // 这里根据示例响应 "data": ""，如果内容在data里
-      // 假设 data 可能是 json 字符串或者直接是内容字符串
-      
       let summaryContent = res.data
       
-      // 尝试解析 JSON (以防万一后端包装了)
       try {
         const json = JSON.parse(res.data)
         if (json.summary) {
@@ -272,7 +258,6 @@ const generateSummary = async (refresh = false) => {
             summaryContent = json
         }
       } catch (e) {
-        // 不是 JSON，直接使用字符串
       }
       
       aiSummary.value = summaryContent
@@ -316,7 +301,7 @@ const formatTime = (time) => {
 <style lang="scss" scoped>
 .detail-container {
   min-height: 100vh;
-  background: linear-gradient(to bottom, #e6f2e6, #f5f5f5);
+  background-color: #F9FAFB;
   padding-bottom: constant(safe-area-inset-bottom);
   padding-bottom: env(safe-area-inset-bottom);
 }
@@ -326,8 +311,9 @@ const formatTime = (time) => {
   top: 0;
   left: 0;
   right: 0;
-  background: #e6f2e6;
+  background: #fff;
   z-index: 100;
+  border-bottom: 1rpx solid #f0f0f0;
   
   .nav-content {
     height: 44px;
@@ -348,7 +334,7 @@ const formatTime = (time) => {
   .nav-title {
     font-size: 34rpx;
     font-weight: bold;
-    color: #333;
+    color: #1F2937;
   }
   
   .placeholder {
@@ -356,61 +342,56 @@ const formatTime = (time) => {
   }
 }
 
-/* 文章头部 */
 .article-header {
-  background: #e6f2e6;
+  background: #fff;
   padding: 40rpx 30rpx 30rpx;
-  margin-bottom: 0;
+  margin-bottom: 20rpx;
 }
 
-  .article-title {
-    font-size: 40rpx;
-    font-weight: bold;
-    color: #333;
-    line-height: 1.4;
-    margin-bottom: 30rpx;
-  }
+.article-title {
+  font-size: 40rpx;
+  font-weight: bold;
+  color: #1F2937;
+  line-height: 1.4;
+  margin-bottom: 30rpx;
+}
 
-  .author-info {
-    display: flex;
-    align-items: center;
+.author-info {
+  display: flex;
+  align-items: center;
 
-    .author-meta {
-      flex: 1;
+  .author-meta {
+    flex: 1;
 
-      .author-name {
-        font-size: 28rpx;
-        font-weight: bold;
-        color: #333;
-        margin-bottom: 8rpx;
-      }
+    .author-name {
+      font-size: 28rpx;
+      font-weight: bold;
+      color: #1F2937;
+      margin-bottom: 8rpx;
+    }
 
-      .publish-info {
-        font-size: 24rpx;
-        color: #666;
+    .publish-info {
+      font-size: 24rpx;
+      color: #6B7280;
 
-        .separator {
-          margin: 0 8rpx;
-        }
+      .separator {
+        margin: 0 8rpx;
       }
     }
   }
+}
 
-
-/* 正文区域 */
 .article-content {
-  background: #f5f5f5;
+  background: #fff;
   padding: 40rpx 30rpx;
   margin-bottom: 20rpx;
   line-height: 1.8;
 }
 
-/* 底部占位 */
 .bottom-placeholder {
   height: 120rpx;
 }
 
-/* 底部操作栏 */
 .action-bar {
   position: fixed;
   bottom: 0;
@@ -450,30 +431,29 @@ const formatTime = (time) => {
 
     text {
       font-size: 22rpx;
-      color: #999;
+      color: #9CA3AF;
 
       &.active {
-        color: #19be6b;
+        color: #2E7D32;
       }
     }
   }
 }
 
-/* AI 悬浮对话框 */
 .ai-float-dialog {
   position: fixed;
   right: 30rpx;
-  bottom: 200rpx; // 高于底部操作栏
+  bottom: 200rpx;
   z-index: 999;
   display: flex;
   flex-direction: column;
   align-items: flex-end;
   
   .dialog-content {
-    background: linear-gradient(135deg, #19be6b, #28d07e);
+    background: linear-gradient(135deg, #2E7D32, #43A047);
     padding: 12rpx 24rpx;
     border-radius: 32rpx 32rpx 4rpx 32rpx;
-    box-shadow: 0 4rpx 16rpx rgba(25, 190, 107, 0.3);
+    box-shadow: 0 4rpx 16rpx rgba(46, 125, 50, 0.3);
     margin-bottom: 10rpx;
     position: relative;
     animation: float 3s ease-in-out infinite;
@@ -492,7 +472,7 @@ const formatTime = (time) => {
       height: 0;
       border-left: 10rpx solid transparent;
       border-right: 10rpx solid transparent;
-      border-top: 12rpx solid #28d07e;
+      border-top: 12rpx solid #43A047;
     }
   }
   
@@ -520,7 +500,6 @@ const formatTime = (time) => {
   }
 }
 
-/* AI 总结弹窗 */
 .ai-summary-popup {
   padding: 30rpx;
   background: #fff;
@@ -529,7 +508,7 @@ const formatTime = (time) => {
   .popup-title {
     font-size: 32rpx;
     font-weight: bold;
-    color: #333;
+    color: #1F2937;
     text-align: center;
     margin-bottom: 30rpx;
     display: flex;
@@ -552,13 +531,13 @@ const formatTime = (time) => {
       .loading-text {
         margin-top: 20rpx;
         font-size: 28rpx;
-        color: #666;
+        color: #6B7280;
       }
     }
     
     .summary-text {
       font-size: 28rpx;
-      color: #333;
+      color: #1F2937;
       line-height: 1.8;
       text-align: justify;
     }
@@ -573,8 +552,8 @@ const formatTime = (time) => {
       display: flex;
       align-items: center;
       gap: 10rpx;
-      background: #f5f5f5;
-      color: #666;
+      background: #F3F4F6;
+      color: #6B7280;
       font-size: 26rpx;
       padding: 10rpx 30rpx;
       border-radius: 30rpx;
@@ -585,7 +564,7 @@ const formatTime = (time) => {
       }
       
       &:active {
-        background: #eee;
+        background: #E5E7EB;
       }
     }
   }
