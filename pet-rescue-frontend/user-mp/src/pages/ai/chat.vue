@@ -1,12 +1,12 @@
 
 <template>
   <view class="chat-page">
-    <view class="nav-bar" :style="{ paddingTop: statusBarHeight + 'px' }">
+    <view class="nav-bar" :class="{ 'scrolled': isScrolled }" :style="{ paddingTop: statusBarHeight + 'px' }">
       <view class="nav-content">
-        <view class="back-btn" @click="goBack">
-          <uni-icons type="left" size="20" color="#333"></uni-icons>
+        <view class="back-btn" :class="{ 'transparent': isScrolled }" @click="goBack">
+          <uni-icons type="left" size="20" :color="isScrolled ? '#fff' : '#333'"></uni-icons>
         </view>
-        <text class="nav-title">AI助手</text>
+        <text class="nav-title" :class="{ 'hidden': isScrolled }">{{ pageTitle }}</text>
         <view class="placeholder"></view>
       </view>
     </view>
@@ -17,6 +17,7 @@
       :scroll-top="scrollTop" 
       :scroll-into-view="scrollIntoView"
       @scrolltoupper="loadMoreHistory"
+      @scroll="handleScroll"
       :style="{ marginTop: statusBarHeight + 44 + 'px' }"
     >
       <view class="msg-item" v-for="(msg, index) in msgList" :key="msg.id || index" :id="'msg-' + index">
@@ -133,6 +134,7 @@ const md = new MarkdownIt({
 })
 
 const sessionId = ref('')
+const sessionTitle = ref('')
 const msgList = ref([])
 const inputContent = ref('')
 const isGenerating = ref(false)
@@ -144,6 +146,17 @@ const selectedPet = ref(null)
 const myPets = ref([])
 const showPetPickerFlag = ref(false)
 const statusBarHeight = ref(20)
+const isScrolled = ref(false)
+
+const pageTitle = computed(() => {
+  if (sessionId.value && sessionTitle.value) {
+    return sessionTitle.value
+  }
+  if (sessionId.value) {
+    return '对话'
+  }
+  return '新对话'
+})
 
 const renderMarkdown = (text) => {
   return text ? md.render(text) : ''
@@ -151,6 +164,10 @@ const renderMarkdown = (text) => {
 
 const goBack = () => {
   uni.navigateBack()
+}
+
+const handleScroll = (e) => {
+  isScrolled.value = e.detail.scrollTop > 50
 }
 
 onLoad(async (options) => {
@@ -162,9 +179,7 @@ onLoad(async (options) => {
   }
   
   if (options.title) {
-    uni.setNavigationBarTitle({
-      title: decodeURIComponent(options.title)
-    })
+    sessionTitle.value = decodeURIComponent(options.title)
   }
 
   loadUserInfo()
@@ -234,9 +249,6 @@ const loadHistory = async () => {
   try {
     const res = await getAiMessageList(sessionId.value)
     if ((res.code === 200 || res.code === 0) && res.data) {
-      // 这里的列表通常是倒序还是正序需要确认，假设是时间正序
-      // 如果后端返回的是倒序，需要 .reverse()
-      // 假设后端返回按时间正序
       msgList.value = res.data
       scrollToBottom()
     }
@@ -249,13 +261,10 @@ const loadHistory = async () => {
 
 const scrollToBottom = () => {
   nextTick(() => {
-    scrollIntoView.value = 'bottom-anchor'
-    // 为了确保滚动到底部，有时需要手动设置 scrollTop
-    // 这里简单用 scrollIntoView
-    // 如果不生效，可以延时重试
+    scrollTop.value = scrollTop.value === 99999 ? 99998 : 99999
     setTimeout(() => {
-        scrollIntoView.value = 'bottom-anchor'
-    }, 100)
+      scrollTop.value = scrollTop.value === 99999 ? 99998 : 99999
+    }, 50)
   })
 }
 
@@ -292,8 +301,7 @@ const handleSend = () => {
   }
 
   let fullText = ''
-  const baseURL = import.meta.env.VITE_APP_BASE_URL || 'http://192.168.10.135:8080'
-  const url = baseURL + '/ai/chat'
+  const url = '/ai/chat'
 
   requestTask.value = streamRequest(
     url,
@@ -338,6 +346,12 @@ $uni-text-color-placeholder: #999; // 占位文字颜色
   background: #fff;
   z-index: 100;
   border-bottom: 1rpx solid #f0f0f0;
+  transition: all 0.3s;
+  
+  &.scrolled {
+    background: transparent;
+    border-bottom: none;
+  }
   
   .nav-content {
     height: 44px;
@@ -353,12 +367,26 @@ $uni-text-color-placeholder: #999; // 占位文字颜色
     display: flex;
     align-items: center;
     justify-content: center;
+    transition: all 0.3s;
+    
+    &.transparent {
+      width: 64rpx;
+      height: 64rpx;
+      border-radius: 50%;
+      background: rgba(0, 0, 0, 0.3);
+      backdrop-filter: blur(10px);
+    }
   }
   
   .nav-title {
     font-size: 34rpx;
     font-weight: bold;
     color: #1F2937;
+    transition: all 0.3s;
+    
+    &.hidden {
+      opacity: 0;
+    }
   }
   
   .placeholder {

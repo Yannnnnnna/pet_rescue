@@ -54,6 +54,7 @@ public class AiController {
     @PostMapping(value = "/chat", produces = MediaType.TEXT_EVENT_STREAM_VALUE + ";charset=UTF-8")
     public SseEmitter chat(@RequestBody AiChatRequestDTO req) {
         // 如果没登录，StpUtil.getLoginIdAsLong() 会抛出异常，Sa-Token 会自动拦截
+        log.info("AI对话接口=================================");
         return aiService.chat(req);
     }
 

@@ -19,11 +19,9 @@ public class PetDTO {
     private Long id;
 
     @Schema(description = "宠物昵称", requiredMode = Schema.RequiredMode.REQUIRED, example = "大黄")
-    @NotBlank(message = "宠物昵称不能为空")
     private String name;
 
     @Schema(description = "类型: 0-猫 1-狗 2-鸟 3-异宠 4-其他", example = "0")
-    @NotNull(message = "宠物类型不能为空")
     private Integer type;
 
     @Schema(description = "品种", example = "中华田园猫")
@@ -39,7 +37,6 @@ public class PetDTO {
     private Integer status;
 
     @Schema(description = "封面图URL", example = "https://oss.../1.jpg")
-    @NotBlank(message = "封面图不能为空")
     private String coverImg;
 
     @Schema(description = "详情图列表(数组)", example = "[\"url1\", \"url2\"]")

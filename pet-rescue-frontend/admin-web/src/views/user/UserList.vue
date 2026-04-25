@@ -63,9 +63,9 @@
             <span>{{ scope.row.phone || '-' }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="score" label="积分" width="100" align="center" sortable>
+        <el-table-column prop="coin" label="小鱼干数" width="100" align="center" sortable>
           <template #default="scope">
-            <span class="score-value">{{ scope.row.score || 0 }}</span>
+            <span class="score-value">{{ scope.row.coin || 0 }}</span>
           </template>
         </el-table-column>
         <el-table-column prop="createTime" label="注册时间" align="center" width="180">

@@ -1,11 +1,21 @@
 <template>
   <view class="container">
+    <view class="nav-bar" :class="{ 'scrolled': isScrolled }" :style="{ paddingTop: statusBarHeight + 'px' }">
+      <view class="nav-content">
+        <view class="back-btn" :class="{ 'transparent': isScrolled }" @click="goBack">
+          <uni-icons type="left" size="20" :color="isScrolled ? '#fff' : '#333'"></uni-icons>
+        </view>
+        <text class="nav-title" :class="{ 'hidden': isScrolled }">领养协议</text>
+        <view class="placeholder"></view>
+      </view>
+    </view>
     <scroll-view 
       scroll-y 
       class="agreement-scroll" 
       :scroll-top="scrollTop"
       :scroll-with-animation="false"
       @scroll="onScroll"
+      :style="{ marginTop: statusBarHeight + 44 + 'px' }"
     >
       <view class="paper-wrapper">
         <view class="paper">
@@ -211,7 +221,7 @@
         </view>
       </view>
       
-      <view class="scroll-placeholder"></view>
+      <view class="scroll-placeholder" v-if="!isViewMode"></view>
     </scroll-view>
     
     <view class="footer-bar" v-if="!isViewMode">
@@ -256,6 +266,8 @@ const signatureImg = ref('')
 const submitting = ref(false)
 const scrollTop = ref(0)
 const currentScrollTop = ref(0)
+const statusBarHeight = ref(20)
+const isScrolled = ref(false)
 
 let ctx = null
 let isDrawing = false
@@ -264,6 +276,9 @@ let startY = 0
 let hasSignature = ref(false)
 
 onLoad((options) => {
+  const sysInfo = uni.getSystemInfoSync()
+  statusBarHeight.value = sysInfo.statusBarHeight || 20
+  
   if (options.applicationId) {
     applicationId.value = options.applicationId
   }
@@ -356,6 +371,11 @@ const initCanvas = () => {
 
 const onScroll = (e) => {
   currentScrollTop.value = e.detail.scrollTop
+  isScrolled.value = e.detail.scrollTop > 50
+}
+
+const goBack = () => {
+  uni.navigateBack()
 }
 
 const touchStart = (e) => {
@@ -535,6 +555,60 @@ const saveSignatureImage = async () => {
   background: linear-gradient(135deg, #f5f0e8 0%, #e8e0d5 100%);
   display: flex;
   flex-direction: column;
+}
+
+.nav-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  background: linear-gradient(135deg, #f5f0e8 0%, #e8e0d5 100%);
+  transition: all 0.3s;
+  
+  &.scrolled {
+    background: transparent;
+  }
+  
+  .nav-content {
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 30rpx;
+  }
+  
+  .back-btn {
+    width: 60rpx;
+    height: 60rpx;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s;
+    
+    &.transparent {
+      width: 64rpx;
+      height: 64rpx;
+      border-radius: 50%;
+      background: rgba(0, 0, 0, 0.3);
+      backdrop-filter: blur(10px);
+    }
+  }
+  
+  .nav-title {
+    font-size: 34rpx;
+    font-weight: bold;
+    color: #333;
+    transition: all 0.3s;
+    
+    &.hidden {
+      opacity: 0;
+    }
+  }
+  
+  .placeholder {
+    width: 60rpx;
+  }
 }
 
 .agreement-scroll {
@@ -983,6 +1057,15 @@ const saveSignatureImage = async () => {
   box-sizing: border-box;
   padding-bottom: constant(safe-area-inset-bottom);
   padding-bottom: env(safe-area-inset-bottom);
+}
+
+
+.footer-bar.view-footer {
+  position: relative;
+  background: #fff;
+  box-shadow: none;
+  margin-top: 40rpx;
+  padding-bottom: 20rpx; /* Adjusted padding as it's not fixed anymore */
 }
 
 .footer-tips {

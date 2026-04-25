@@ -176,7 +176,7 @@ public class PetInfoServiceImpl extends ServiceImpl<PetInfoMapper, PetInfo> impl
      */
     @Override
     public List<AdoptPetsDTO> getAdoptedPets(Long id) {
-        // 1. 查询“我”名下状态为“1-已通过”的领养记录
+        // 1. 查询“我”名下状态为“4-已通过”的领养记录
         // 注意：这里查的是 pet_adoption 表
         List<PetAdoption> adoptions = petAdoptionService.lambdaQuery()
                 .eq(PetAdoption::getUserId, id)

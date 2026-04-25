@@ -1,79 +1,89 @@
 <template>
   <view class="wiki-container">
-    <view class="nav-bar" :style="{ paddingTop: statusBarHeight + 'px' }">
+    <view class="nav-bar" :class="{ 'scrolled': isScrolled }" :style="{ paddingTop: statusBarHeight + 'px' }">
       <view class="nav-content">
-        <view class="back-btn" @click="goBack">
-          <uni-icons type="left" size="20" color="#333"></uni-icons>
+        <view class="back-btn" :class="{ 'transparent': isScrolled }" @click="goBack">
+          <uni-icons type="left" size="20" :color="isScrolled ? '#fff' : '#333'"></uni-icons>
         </view>
-        <text class="nav-title">宠物百科</text>
+        <text class="nav-title" :class="{ 'hidden': isScrolled }">宠物百科</text>
         <view class="placeholder"></view>
       </view>
     </view>
 
-    <view class="header-section" :style="{ marginTop: statusBarHeight + 44 + 'px' }">
-      <view class="search-bar" @click="handleSearch">
-        <uni-icons type="search" size="18" color="#2E7D32"></uni-icons>
-        <text class="placeholder">搜索文章、活动或公告...</text>
-      </view>
+    <scroll-view 
+      scroll-y 
+      class="scroll-container" 
+      :style="{ marginTop: statusBarHeight + 44 + 'px' }"
+      @scroll="handleScroll"
+      :scroll-top="scrollTop"
+    >
+      <view class="header-section">
+        <view class="search-bar" @click="handleSearch">
+          <uni-icons type="search" size="18" color="#2E7D32"></uni-icons>
+          <text class="placeholder">搜索文章、活动或公告...</text>
+        </view>
 
-      <view class="category-tabs">
-        <scroll-view scroll-x class="tabs-scroll" show-scrollbar="false">
-          <view 
-            v-for="(item, index) in categoryList" 
-            :key="index"
-            class="tab-item"
-            :class="{ active: currentCategory === item.value }"
-            @click="handleCategoryChange(item)"
-          >
-            {{ item.name }}
-          </view>
-        </scroll-view>
-      </view>
-    </view>
-
-    <view class="content-section">
-      <view class="section-header">
-        <text class="section-title">推荐阅读</text>
-        <text class="view-all">查看全部</text>
-      </view>
-
-      <view class="article-list">
-        <view 
-          v-for="item in articleList" 
-          :key="item.id" 
-          class="article-card"
-          @click="goDetail(item)"
-        >
-          <view class="article-cover-wrapper">
-            <image :src="item.coverImg" mode="aspectFill" class="article-cover"></image>
-          </view>
-          <view class="article-content">
-            <view class="tag-row">
-              <view class="article-tag" :class="getTagClass(item.tags)">{{ getFirstTag(item.tags) }}</view>
+        <view class="category-tabs">
+          <scroll-view scroll-x class="tabs-scroll" show-scrollbar="false">
+            <view 
+              v-for="(item, index) in categoryList" 
+              :key="index"
+              class="tab-item"
+              :class="{ active: currentCategory === item.value }"
+              @click="handleCategoryChange(item)"
+            >
+              {{ item.name }}
             </view>
-            <view class="article-title">{{ item.title }}</view>
-            <view class="article-meta">
-              <text class="read-time">{{ getReadTime(item.content) }}分钟阅读</text>
-              <text class="publish-time">{{ formatTime(item.createTime) }}</text>
-            </view>
-          </view>
+          </scroll-view>
         </view>
       </view>
 
-      <u-empty v-if="articleList.length === 0 && loadStatus !== 'loading'" mode="list" icon="http://cdn.uviewui.com/uview/empty/list.png">
-      </u-empty>
+      <view class="content-section">
+        <view class="section-header">
+          <text class="section-title">推荐阅读</text>
+          <text class="view-all">查看全部</text>
+        </view>
 
-      <u-loadmore :status="loadStatus" marginTop="30"></u-loadmore>
-    </view>
+        <view class="article-list">
+          <view 
+            v-for="item in articleList" 
+            :key="item.id" 
+            class="article-card"
+            @click="goDetail(item)"
+          >
+            <view class="article-cover-wrapper">
+              <image :src="item.coverImg" mode="aspectFill" class="article-cover"></image>
+            </view>
+            <view class="article-content">
+              <view class="tag-row">
+                <view class="article-tag" :class="getTagClass(item.tags)">{{ getFirstTag(item.tags) }}</view>
+              </view>
+              <view class="article-title">{{ item.title }}</view>
+              <view class="article-meta">
+                <text class="read-time">{{ getReadTime(item.content) }}分钟阅读</text>
+                <text class="publish-time">{{ formatTime(item.createTime) }}</text>
+              </view>
+            </view>
+          </view>
+        </view>
+
+        <u-empty v-if="articleList.length === 0 && loadStatus !== 'loading'" mode="list" icon="http://cdn.uviewui.com/uview/empty/list.png">
+        </u-empty>
+
+        <u-loadmore :status="loadStatus" marginTop="30"></u-loadmore>
+      </view>
+    </scroll-view>
   </view>
 </template>
 
 <script setup>
 import { ref } from 'vue'
-import { onLoad, onReachBottom } from '@dcloudio/uni-app'
+import { onLoad, onReachBottom, onPageScroll } from '@dcloudio/uni-app'
 import { getArticleList } from '@/api/article'
 
 const statusBarHeight = ref(20)
+const isScrolled = ref(false)
+const scrollTop = ref(0)
 const categoryList = ref([
   { name: '百科文章', value: '' },
   { name: '新手必读', value: '新手必读' },
@@ -100,6 +110,11 @@ onReachBottom(() => {
   pageNum.value++
   loadData()
 })
+
+const handleScroll = (e) => {
+  const scrollY = e.detail.scrollTop
+  isScrolled.value = scrollY > 50
+}
 
 const loadData = async (reset = false) => {
   if (reset) {
@@ -204,6 +219,13 @@ const formatTime = (time) => {
 .wiki-container {
   min-height: 100vh;
   background-color: #F9FAFB;
+  display: flex;
+  flex-direction: column;
+}
+
+.scroll-container {
+  flex: 1;
+  height: 0;
 }
 
 .nav-bar {
@@ -214,6 +236,12 @@ const formatTime = (time) => {
   background: #fff;
   z-index: 100;
   border-bottom: 1rpx solid #f0f0f0;
+  transition: all 0.3s;
+  
+  &.scrolled {
+    background: transparent;
+    border-bottom: none;
+  }
   
   .nav-content {
     height: 44px;
@@ -229,12 +257,26 @@ const formatTime = (time) => {
     display: flex;
     align-items: center;
     justify-content: center;
+    transition: all 0.3s;
+    
+    &.transparent {
+      width: 64rpx;
+      height: 64rpx;
+      border-radius: 50%;
+      background: rgba(0, 0, 0, 0.3);
+      backdrop-filter: blur(10px);
+    }
   }
   
   .nav-title {
     font-size: 34rpx;
     font-weight: bold;
     color: #1F2937;
+    transition: all 0.3s;
+    
+    &.hidden {
+      opacity: 0;
+    }
   }
   
   .placeholder {

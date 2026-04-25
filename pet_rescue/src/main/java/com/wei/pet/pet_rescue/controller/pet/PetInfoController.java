@@ -61,6 +61,8 @@ public class PetInfoController {
             return Result.error("ID不能为空");
         }
         boolean success = petInfoService.updatePet(petForm);
+        //删除缓存
+
         return success ? Result.success(true) : Result.error("修改失败");
     }
 
@@ -129,21 +131,13 @@ public class PetInfoController {
         List<PetInfo> pets = petInfoService.getMyChattedPets(id);
         return Result.success(pets);
     }
-    private static final String  MY_ADOPTED_PETS_CACHE = "my:adopted:pets";
+    private static final String  MY_ADOPTED_PETS_CACHE_PREFIX = "my:adopted:pets:";
     @Operation(summary = "我领养的宠物")
     @GetMapping("/my-adopted-pets")
     public Result<List<AdoptPetsDTO>> getAdoptPets(){
-        System.out.println("🚀 获取我领养的宠物");
-        List<AdoptPetsDTO> cachePets = (List<AdoptPetsDTO>) redisTemplate.opsForValue().get(MY_ADOPTED_PETS_CACHE);
-        if (cachePets != null) {
-            System.out.println("🚀 走了 Redis 缓存，速度飞快！");
-            return Result.success(cachePets);
-        }
-        System.out.println("🐢 走数据库查询，请稍等...");
         Long id = StpUtil.getLoginIdAsLong();
+        log.info("🚀 获取我领养的宠物,userID:{}",id);
         List<AdoptPetsDTO> pets = petInfoService.getAdoptedPets(id);
-        System.out.println("🚀 缓存我领养的宠物");
-        redisTemplate.opsForValue().set(MY_ADOPTED_PETS_CACHE, pets, 30, TimeUnit.MINUTES);
         return Result.success(pets);
     }
 

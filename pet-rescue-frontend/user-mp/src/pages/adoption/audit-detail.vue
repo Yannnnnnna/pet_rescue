@@ -1,5 +1,18 @@
 <template>
-  <view class="container" v-if="detail">
+  <view class="page-container">
+    <view class="header-bg"></view>
+    
+    <view class="nav-bar" :style="{ paddingTop: statusBarHeight + 'px' }">
+      <view class="nav-content">
+        <view class="back-btn" @click="goBack">
+          <uni-icons type="left" size="20" color="#fff"></uni-icons>
+        </view>
+        <text class="nav-title">申请详情</text>
+        <view class="placeholder"></view>
+      </view>
+    </view>
+
+    <view class="container" v-if="detail" :style="{ paddingTop: (statusBarHeight + 44) + 'px' }">
     <!-- 状态栏 -->
     <view class="status-card" :class="'status-' + detail.status">
       <view class="status-text">{{ getStatusText(detail.status) }}</view>
@@ -157,6 +170,7 @@
     </u-popup>
     
   </view>
+</view>
 </template>
 
 <script setup>
@@ -172,14 +186,16 @@ const detail = ref(null)
 const currentUserId = ref(null)
 const showRejectPopup = ref(false)
 const remark = ref('')
+const statusBarHeight = ref(20)
 
-// AI 匹配相关
 const showMatchPopup = ref(false)
 const matchLoading = ref(false)
 const matchResult = ref(null)
 const currentStyle = ref('gentle')
 
 onLoad((options) => {
+    const systemInfo = uni.getSystemInfoSync()
+    statusBarHeight.value = systemInfo.statusBarHeight || 20
     if (options.id) {
         id.value = options.id
         fetchDetail()
@@ -230,6 +246,10 @@ const getScoreClass = (score) => {
     if (score >= 80) return 'score-high'
     if (score >= 60) return 'score-medium'
     return 'score-low'
+}
+
+const goBack = () => {
+  uni.navigateBack()
 }
 
 onMounted(() => {
@@ -327,11 +347,62 @@ const submitAudit = async (pass, r = '') => {
 </script>
 
 <style lang="scss" scoped>
+.page-container {
+  min-height: 100vh;
+  background-color: #f5f5f5;
+  position: relative;
+}
+
+.header-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 400rpx;
+  background: linear-gradient(180deg, #2E7D32 0%, #388E3C 50%, rgba(46, 125, 50, 0) 100%);
+  z-index: 0;
+}
+
+.nav-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: transparent;
+  z-index: 100;
+  
+  .nav-content {
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 30rpx;
+  }
+  
+  .back-btn {
+    width: 60rpx;
+    height: 60rpx;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .nav-title {
+    font-size: 36rpx;
+    font-weight: 600;
+    color: #fff;
+  }
+  
+  .placeholder {
+    width: 60rpx;
+  }
+}
+
 .container {
     padding: 20rpx;
-    background-color: #f5f5f5;
-    min-height: 100vh;
     padding-bottom: 40rpx;
+    position: relative;
+    z-index: 1;
 }
 
 .status-card {

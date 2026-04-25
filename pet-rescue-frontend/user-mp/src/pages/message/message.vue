@@ -1,5 +1,6 @@
 <template>
   <view class="message-page">
+    <view class="header-bg"></view>
     <!-- 头部 -->
     <header class="header">
       <h1 class="title">消息中心</h1>
@@ -138,26 +139,39 @@ const formatTime = (time) => {
   background-color: #f8f8f8;
   overflow: hidden;
   width: 100%;
+  position: relative;
+}
+
+.header-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 400rpx;
+  background: linear-gradient(180deg, #2E7D32 0%, #388E3C 50%, rgba(46, 125, 50, 0) 100%);
+  z-index: 0;
 }
 
 .header {
-  background-color: #fff;
+  position: relative;
+  z-index: 1;
+  background-color: transparent;
   padding: 40rpx 30rpx 30rpx;
   padding-top: calc(40rpx + var(--status-bar-height));
-  border-bottom-left-radius: 30rpx;
-  border-bottom-right-radius: 30rpx;
+  /* border-bottom-left-radius: 30rpx; */
+  /* border-bottom-right-radius: 30rpx; */
 
   .title {
     font-size: 48rpx;
     font-weight: bold;
-    color: #1F2937;
+    color: #fff;
     margin-bottom: 30rpx;
     text-align: left;
   }
 
   .tabs {
     display: flex;
-    background-color: #f0f0f0;
+    background-color: rgba(255, 255, 255, 0.2);
     border-radius: 99px;
     padding: 8rpx;
 
@@ -168,7 +182,7 @@ const formatTime = (time) => {
       padding: 16rpx 0;
       font-size: 28rpx;
       font-weight: 500;
-      color: #666;
+      color: #f0f0f0;
       border-radius: 99px;
       transition: all 0.3s ease;
       line-height: 1;
@@ -191,6 +205,8 @@ const formatTime = (time) => {
   flex: 1;
   overflow: hidden;
   width: 100%;
+  position: relative;
+  z-index: 1;
 }
 
 .list-container {

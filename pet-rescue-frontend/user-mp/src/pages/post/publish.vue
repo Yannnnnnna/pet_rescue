@@ -159,9 +159,11 @@ const chooseImage = () => {
   })
 }
 
+import http from '@/utils/request';
+
 const uploadFile = (filePath) => {
   return new Promise((resolve, reject) => {
-    const baseURL = import.meta.env.VITE_APP_BASE_URL || 'http://localhost:8080'
+    const baseURL = http.defaults.baseURL;
     uni.uploadFile({
       url: baseURL + '/file/upload',
       filePath: filePath,

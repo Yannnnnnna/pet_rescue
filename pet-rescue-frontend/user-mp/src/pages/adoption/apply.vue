@@ -1,6 +1,9 @@
 <template>
   <view class="container">
-    <view class="page-title">领养申请</view>
+    <view class="page-header">
+      <u-icon name="arrow-left" size="20" @click="goBack"></u-icon>
+      <view class="page-title">领养申请</view>
+    </view>
     
     <view class="card">
       <view class="pet-info" v-if="petInfo">
@@ -79,6 +82,10 @@ const handleExperienceChange = (e) => {
   form.experience = e.detail.value
 }
 
+const goBack = () => {
+  uni.navigateBack()
+}
+
 onLoad((options) => {
   if (options.petId) {
     petId.value = options.petId
@@ -139,12 +146,17 @@ const submit = async () => {
   box-sizing: border-box;
 }
 
+.page-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 30rpx;
+}
+
 .page-title {
   font-size: 36rpx;
   font-weight: bold;
   color: #333;
-  margin-bottom: 30rpx;
-  padding-left: 10rpx;
+  padding-left: 20rpx;
 }
 
 .card {

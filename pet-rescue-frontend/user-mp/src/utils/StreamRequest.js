@@ -1,4 +1,6 @@
 
+import http from './request';
+
 /** 
  * 微信小程序流式请求封装 (解决中文乱码问题) 
  * @param {String} url 接口地址 
@@ -6,8 +8,11 @@
  * @param {Function} onMessage 收到消息回调 (text, isDone) 
  */ 
 export const streamRequest = (url, data, onMessage) => { 
+    const baseURL = http.defaults.baseURL;
+    const fullUrl = url.startsWith('http') ? url : baseURL + url;
+
     const requestTask = uni.request({ 
-        url: url, 
+        url: fullUrl, 
         method: 'POST', 
         data: data, 
         enableChunked: true, // 🔥 关键：开启分块接收 

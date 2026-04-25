@@ -98,6 +98,10 @@
                     <uni-icons type="list" size="20" color="#2E7D32"></uni-icons>
                     <text>成长记录</text>
                   </view>
+                  <view class="action-btn edit" @click="handleEditPet(pet)">
+                    <uni-icons type="gear" size="20" color="#FFC107"></uni-icons>
+                    <text>修改信息</text>
+                  </view>
                 </view>
 
                 <view class="guardian-section">
@@ -180,6 +184,12 @@ const handlePublish = (pet) => {
 const handleViewHistory = (pet) => {
   uni.navigateTo({
     url: `/pages/pet/diary-list?petId=${pet.id}`
+  })
+}
+
+const handleEditPet = (pet) => {
+  uni.navigateTo({
+    url: `/pages/pet/edit-adopted?id=${pet.id}`
   })
 }
 
@@ -531,7 +541,7 @@ const viewAgreement = (pet) => {
   
   .action-row {
     display: flex;
-    gap: 20rpx;
+    gap: 16rpx;
     margin-bottom: 24rpx;
     
     .action-btn {
@@ -542,7 +552,7 @@ const viewAgreement = (pet) => {
       align-items: center;
       justify-content: center;
       gap: 10rpx;
-      font-size: 28rpx;
+      font-size: 26rpx;
       font-weight: 600;
       
       &.publish {
@@ -555,6 +565,12 @@ const viewAgreement = (pet) => {
         background: #fff;
         color: #2E7D32;
         border: 2rpx solid #2E7D32;
+      }
+      
+      &.edit {
+        background: rgba(46, 125, 50, 0.1);
+        color: #2E7D32;
+        border: 2rpx solid rgba(46, 125, 50, 0.3);
       }
     }
   }

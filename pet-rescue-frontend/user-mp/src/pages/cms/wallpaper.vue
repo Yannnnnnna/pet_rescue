@@ -1,63 +1,81 @@
 <template>
-  <view class="wallpaper-container">
+  <view class="wallpaper-page">
+    <view class="header-bg"></view>
+    
     <view class="nav-bar" :style="{ paddingTop: statusBarHeight + 'px' }">
       <view class="nav-content">
         <view class="back-btn" @click="goBack">
-          <uni-icons type="left" size="20" color="#333"></uni-icons>
+          <uni-icons type="left" size="20" color="#fff"></uni-icons>
         </view>
         <text class="nav-title">萌宠壁纸</text>
         <view class="placeholder"></view>
       </view>
     </view>
 
-    <view class="waterfall-list" :style="{ paddingTop: (statusBarHeight + 44) + 'px' }">
-      <view class="left-col">
-        <view 
-          v-for="item in leftList" 
-          :key="item.id" 
-          class="wallpaper-card"
-          @click="previewImage(item)"
-        >
-          <view class="img-wrapper">
-            <image :src="item.coverImg" mode="aspectFill" class="cover"></image>
-            <view class="download-btn" @click.stop="downloadImage(item)">
-              <uni-icons type="download" size="18" color="#fff"></uni-icons>
+    <view class="content-area" :style="{ paddingTop: (statusBarHeight + 44) + 'px' }">
+      <view class="waterfall-list">
+        <view class="waterfall-column left-column">
+          <view 
+            v-for="item in leftList" 
+            :key="item.id" 
+            class="wallpaper-card"
+            @click="goDetail(item.id)"
+          >
+            <view class="card-image-box">
+              <image :src="item.coverImg" mode="aspectFill" class="card-img"></image>
+              <view class="download-badge">
+                <uni-icons type="download" size="12" color="#fff"></uni-icons>
+              </view>
+            </view>
+            <view class="card-content">
+              <text class="card-title">{{ item.title }}</text>
+              <view class="card-footer">
+                <view class="view-info">
+                  <uni-icons type="eye" size="12" color="#9CA3AF"></uni-icons>
+                  <text class="view-count">{{ formatViewCount(item.viewCount) }}</text>
+                </view>
+                <view class="like-info">
+                  <uni-icons type="heart-filled" size="12" :color="item.isLiked ? '#ff4d4f' : '#ccc'"></uni-icons>
+                  <text class="like-count">{{ item.likeCount || 0 }}</text>
+                </view>
+              </view>
             </view>
           </view>
-          <view class="info">
-            <view class="title">{{ item.title }}</view>
-            <view class="view-count">
-              <uni-icons type="eye" size="12" color="#9CA3AF"></uni-icons>
-              <text>{{ formatViewCount(item.viewCount) }}</text>
+        </view>
+        
+        <view class="waterfall-column right-column">
+          <view 
+            v-for="item in rightList" 
+            :key="item.id" 
+            class="wallpaper-card"
+            @click="goDetail(item.id)"
+          >
+            <view class="card-image-box">
+              <image :src="item.coverImg" mode="aspectFill" class="card-img"></image>
+              <view class="download-badge">
+                <uni-icons type="download" size="12" color="#fff"></uni-icons>
+              </view>
+            </view>
+            <view class="card-content">
+              <text class="card-title">{{ item.title }}</text>
+              <view class="card-footer">
+                <view class="view-info">
+                  <uni-icons type="eye" size="12" color="#9CA3AF"></uni-icons>
+                  <text class="view-count">{{ formatViewCount(item.viewCount) }}</text>
+                </view>
+                <view class="like-info">
+                  <uni-icons type="heart-filled" size="12" :color="item.isLiked ? '#ff4d4f' : '#ccc'"></uni-icons>
+                  <text class="like-count">{{ item.likeCount || 0 }}</text>
+                </view>
+              </view>
             </view>
           </view>
         </view>
       </view>
-      <view class="right-col">
-        <view 
-          v-for="item in rightList" 
-          :key="item.id" 
-          class="wallpaper-card"
-          @click="previewImage(item)"
-        >
-          <view class="img-wrapper">
-            <image :src="item.coverImg" mode="aspectFill" class="cover"></image>
-            <view class="download-btn" @click.stop="downloadImage(item)">
-              <uni-icons type="download" size="18" color="#fff"></uni-icons>
-            </view>
-          </view>
-          <view class="info">
-            <view class="title">{{ item.title }}</view>
-            <view class="view-count">
-              <uni-icons type="eye" size="12" color="#9CA3AF"></uni-icons>
-              <text>{{ formatViewCount(item.viewCount) }}</text>
-            </view>
-          </view>
-        </view>
-      </view>
-    </view>
 
-    <u-loadmore :status="loadStatus" marginTop="30"></u-loadmore>
+      <u-empty v-if="wallpaperList.length === 0 && !loading" mode="list" text="暂无壁纸"></u-empty>
+      <u-loadmore :status="loadStatus" marginTop="30"></u-loadmore>
+    </view>
   </view>
 </template>
 
@@ -71,6 +89,7 @@ const wallpaperList = ref([])
 const leftList = ref([])
 const rightList = ref([])
 const loadStatus = ref('loadmore')
+const loading = ref(false)
 const pageNum = ref(1)
 const pageSize = ref(10)
 
@@ -94,6 +113,7 @@ const loadData = async (reset = false) => {
     leftList.value = []
     rightList.value = []
     loadStatus.value = 'loading'
+    loading.value = true
   }
 
   try {
@@ -122,6 +142,8 @@ const loadData = async (reset = false) => {
   } catch (error) {
     console.error('加载壁纸列表失败', error)
     loadStatus.value = 'loadmore'
+  } finally {
+    loading.value = false
   }
 }
 
@@ -129,65 +151,9 @@ const goBack = () => {
   uni.navigateBack()
 }
 
-const previewImage = (item) => {
-  const imageUrl = item.wallpaperUrl || item.coverImg
-  if (!imageUrl) {
-    uni.showToast({
-      title: '图片地址不存在',
-      icon: 'none'
-    })
-    return
-  }
-  uni.previewImage({
-    urls: [imageUrl],
-    current: 0
-  })
-}
-
-const downloadImage = (item) => {
-  const imageUrl = item.wallpaperUrl || item.coverImg
-  if (!imageUrl) {
-    uni.showToast({
-      title: '图片地址不存在',
-      icon: 'none'
-    })
-    return
-  }
-  
-  uni.showLoading({
-    title: '保存中...'
-  })
-  
-  uni.downloadFile({
-    url: imageUrl,
-    success: (res) => {
-      if (res.statusCode === 200) {
-        uni.saveImageToPhotosAlbum({
-          filePath: res.tempFilePath,
-          success: () => {
-            uni.hideLoading()
-            uni.showToast({
-              title: '保存成功',
-              icon: 'success'
-            })
-          },
-          fail: () => {
-            uni.hideLoading()
-            uni.showToast({
-              title: '保存失败',
-              icon: 'none'
-            })
-          }
-        })
-      }
-    },
-    fail: () => {
-      uni.hideLoading()
-      uni.showToast({
-        title: '下载失败',
-        icon: 'none'
-      })
-    }
+const goDetail = (id) => {
+  uni.navigateTo({
+    url: `/pages/cms/wallpaper-detail?id=${id}`
   })
 }
 
@@ -201,9 +167,20 @@ const formatViewCount = (count) => {
 </script>
 
 <style lang="scss" scoped>
-.wallpaper-container {
+.wallpaper-page {
   min-height: 100vh;
-  background-color: #F9FAFB;
+  background: #f8f9fa;
+  position: relative;
+}
+
+.header-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 400rpx;
+  background: linear-gradient(180deg, #2E7D32 0%, #388E3C 50%, rgba(46, 125, 50, 0) 100%);
+  z-index: 0;
 }
 
 .nav-bar {
@@ -211,9 +188,8 @@ const formatViewCount = (count) => {
   top: 0;
   left: 0;
   right: 0;
-  background: #fff;
+  background: transparent;
   z-index: 100;
-  border-bottom: 1rpx solid #f0f0f0;
   
   .nav-content {
     height: 44px;
@@ -232,9 +208,9 @@ const formatViewCount = (count) => {
   }
   
   .nav-title {
-    font-size: 34rpx;
-    font-weight: bold;
-    color: #1F2937;
+    font-size: 36rpx;
+    font-weight: 600;
+    color: #fff;
   }
   
   .placeholder {
@@ -242,80 +218,85 @@ const formatViewCount = (count) => {
   }
 }
 
+.content-area {
+  position: relative;
+  z-index: 1;
+  padding: 24rpx;
+  padding-bottom: 40rpx;
+}
+
 .waterfall-list {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  padding: 24rpx;
-  padding-bottom: 40rpx;
+}
 
-  .left-col, .right-col {
-    width: 48%;
-    display: flex;
-    flex-direction: column;
-  }
+.waterfall-column {
+  width: 48%;
+  display: flex;
+  flex-direction: column;
+}
 
-  .wallpaper-card {
-    background: #fff;
-    border-radius: 20rpx;
-    overflow: hidden;
-    margin-bottom: 20rpx;
-    box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.04);
-
-    .img-wrapper {
-      position: relative;
+.wallpaper-card {
+  background: #fff;
+  border-radius: 20rpx;
+  overflow: hidden;
+  margin-bottom: 20rpx;
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.04);
+  
+  .card-image-box {
+    position: relative;
+    width: 100%;
+    
+    .card-img {
       width: 100%;
-      
-      .cover {
-        width: 100%;
-        height: 400rpx;
-        display: block;
-      }
-      
-      .download-btn {
-        position: absolute;
-        bottom: 16rpx;
-        right: 16rpx;
-        width: 56rpx;
-        height: 56rpx;
-        border-radius: 50%;
-        background: rgba(46, 125, 50, 0.9);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        opacity: 0;
-        transition: opacity 0.3s;
-      }
+      height: 400rpx;
+      display: block;
     }
     
-    &:active .download-btn {
-      opacity: 1;
+    .download-badge {
+      position: absolute;
+      bottom: 16rpx;
+      right: 16rpx;
+      width: 48rpx;
+      height: 48rpx;
+      border-radius: 50%;
+      background: rgba(0, 0, 0, 0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
-
-    .info {
-      padding: 16rpx 20rpx;
-
-      .title {
-        font-size: 26rpx;
-        font-weight: bold;
-        color: #1F2937;
-        margin-bottom: 8rpx;
-        line-height: 1.4;
-        display: -webkit-box;
-        -webkit-box-orient: vertical;
-        -webkit-line-clamp: 2;
-        overflow: hidden;
-      }
-
-      .view-count {
+  }
+  
+  .card-content {
+    padding: 20rpx;
+    
+    .card-title {
+      font-size: 28rpx;
+      font-weight: 500;
+      color: #333;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      line-height: 1.4;
+      margin-bottom: 16rpx;
+    }
+    
+    .card-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      
+      .view-info, .like-info {
         display: flex;
         align-items: center;
         gap: 6rpx;
-        
-        text {
-          font-size: 22rpx;
-          color: #9CA3AF;
-        }
+      }
+      
+      .view-count, .like-count {
+        font-size: 24rpx;
+        color: #9CA3AF;
       }
     }
   }

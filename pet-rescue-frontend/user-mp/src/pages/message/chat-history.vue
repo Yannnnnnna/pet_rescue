@@ -1,12 +1,14 @@
 <template>
   <view class="chat-page">
     <!-- 顶部导航 -->
-    <view class="chat-header">
-      <view class="back-btn" @click="navigateBack">
-        <u-icon name="arrow-left" size="22" color="#333"></u-icon>
+    <view class="nav-bar" :class="{ 'scrolled': isScrolled }" :style="{ paddingTop: statusBarHeight + 'px' }">
+      <view class="nav-content">
+        <view class="back-btn" :class="{ 'transparent': isScrolled }" @click="navigateBack">
+          <uni-icons type="left" size="20" :color="isScrolled ? '#fff' : '#333'"></uni-icons>
+        </view>
+        <text class="nav-title" :class="{ 'hidden': isScrolled }">{{ chatTitle }}</text>
+        <view class="placeholder"></view>
       </view>
-      <text class="nickname">{{ chatTitle }}</text>
-      <view class="placeholder"></view> <!-- 占位，使标题居中 -->
     </view>
 
     <!-- 聊天内容 -->
@@ -14,7 +16,8 @@
       scroll-y 
       class="msg-list"
       :scroll-top="scrollTop"
-      :style="{ paddingBottom: footerHeight + 'px' }"
+      :style="{ paddingBottom: footerHeight + 'px', marginTop: statusBarHeight + 44 + 'px' }"
+      @scroll="handleScroll"
     >
       <view v-for="(msg, index) in msgList" :key="index" class="msg-group">
         <view class="time-header" v-if="shouldShowTime(msg, index)">{{ formatTime(msg.time) }}</view>
@@ -65,12 +68,15 @@
 import { ref, onMounted, nextTick, computed } from 'vue'
 import { onLoad, onUnload } from '@dcloudio/uni-app'
 import { getConsultationHistory, askConsultation, replyConsultation, sendReturnVisit } from '@/api/consultation'
-import { getMyInfo, getUserDetail, uploadImage } from '@/api/user' // 引入 getUserDetail
+import { getMyInfo, getUserDetail, uploadImage } from '@/api/user'
+import { getPetDetail } from '@/api/pet'
 import dayjs from 'dayjs'
 
 const petId = ref(null)
 const applicantId = ref(null)
 const currentUserId = ref(null)
+const petInfo = ref(null)
+const otherUserInfo = ref(null)
 
 const msgList = ref([])
 const rawPairList = ref([]) 
@@ -85,9 +91,14 @@ const inputText = ref('')
 const tempImage = ref('')
 
 const chatType = ref('')
-const chatTitle = ref('聊天') // 新增：聊天窗口标题
+const chatTitle = ref('聊天')
+const statusBarHeight = ref(20)
+const isScrolled = ref(false)
 
 onLoad((options) => {
+  const sysInfo = uni.getSystemInfoSync()
+  statusBarHeight.value = sysInfo.statusBarHeight || 20
+  
   if (options.petId) {
     petId.value = options.petId
   }
@@ -118,6 +129,10 @@ const navigateBack = () => {
   uni.navigateBack()
 }
 
+const handleScroll = (e) => {
+  isScrolled.value = e.detail.scrollTop > 50
+}
+
 // 新增：判断是否显示时间
 const shouldShowTime = (message, index) => {
   if (index === 0) return true
@@ -141,24 +156,73 @@ const onBlur = () => {
 
 onMounted(async () => {
   await fetchUserInfo()
-  // 如果没有传入 applicantId，说明可能是发起新的咨询，默认为当前用户
-  // 但如果是回访模式，applicantId 应该是对方的ID，不能默认为自己
   if (!applicantId.value && chatType.value !== 'return_visit') {
     applicantId.value = currentUserId.value
   }
   
-  // 再次检查，确保 applicantId 有效才请求
+  if (petId.value) {
+    await fetchPetInfo()
+  }
+  
   if (petId.value && applicantId.value) {
     await fetchHistory()
+    await fetchOtherUserInfo()
+    updateChatTitle()
   } else {
     console.warn('缺少必要参数: petId 或 applicantId')
   }
 })
 
-// 计算当前角色是否为发起人
 const isApplicant = computed(() => {
   return String(currentUserId.value) === String(applicantId.value)
 })
+
+const fetchPetInfo = async () => {
+  try {
+    const res = await getPetDetail(petId.value)
+    if (res.data) {
+      petInfo.value = res.data
+    }
+  } catch (e) {
+    console.error('获取宠物信息失败', e)
+  }
+}
+
+const fetchOtherUserInfo = async () => {
+  if (!applicantId.value) return
+  
+  try {
+    const res = await getUserDetail(applicantId.value)
+    if (res.data) {
+      otherUserInfo.value = res.data
+    }
+  } catch (e) {
+    console.error('获取对方用户信息失败', e)
+  }
+}
+
+const updateChatTitle = () => {
+  if (isApplicant.value) {
+    if (petInfo.value && petInfo.value.name) {
+      chatTitle.value = `正在咨询${petInfo.value.name}`
+    } else {
+      chatTitle.value = '咨询中'
+    }
+  } else {
+    if (otherUserInfo.value && otherUserInfo.value.nickname) {
+      chatTitle.value = otherUserInfo.value.nickname
+    } else if (rawPairList.value.length > 0) {
+      const firstMsg = rawPairList.value[0]
+      if (firstMsg.askUserNickname) {
+        chatTitle.value = firstMsg.askUserNickname
+      } else {
+        chatTitle.value = '咨询'
+      }
+    } else {
+      chatTitle.value = '咨询'
+    }
+  }
+}
 
 // 根据消息类型和角色判断是否是我发的消息
 const isMsgMe = (msg) => {
@@ -464,26 +528,59 @@ const scrollToBottom = () => {
   background-color: #F8FAF8;
 }
 
-.chat-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 20rpx 30rpx;
-  padding-top: var(--status-bar-height);
-  background-color: #fff;
-  border-bottom: 1rpx solid #f0f0f0;
-  position: sticky;
+.nav-bar {
+  position: fixed;
   top: 0;
-  z-index: 10;
-
-  .back-btn, .placeholder {
-    width: 60rpx;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  background: #fff;
+  border-bottom: 1rpx solid #f0f0f0;
+  transition: all 0.3s;
+  
+  &.scrolled {
+    background: transparent;
+    border-bottom: none;
   }
-
-  .nickname {
+  
+  .nav-content {
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 30rpx;
+  }
+  
+  .back-btn {
+    width: 60rpx;
+    height: 60rpx;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s;
+    
+    &.transparent {
+      width: 64rpx;
+      height: 64rpx;
+      border-radius: 50%;
+      background: rgba(0, 0, 0, 0.3);
+      backdrop-filter: blur(10px);
+    }
+  }
+  
+  .nav-title {
     font-size: 34rpx;
     font-weight: bold;
     color: #1F2937;
+    transition: all 0.3s;
+    
+    &.hidden {
+      opacity: 0;
+    }
+  }
+  
+  .placeholder {
+    width: 60rpx;
   }
 }
 

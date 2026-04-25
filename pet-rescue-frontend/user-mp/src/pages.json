@@ -110,6 +110,12 @@
 			}
 		},
 		{
+			"path": "pages/pet/edit-adopted",
+			"style": {
+				
+			}
+		},
+		{
 			"path": "pages/message/chat-history",
 			"style": {
 				
@@ -165,6 +171,12 @@
 		},
 		{
 			"path": "pages/cms/wallpaper",
+			"style": {
+				
+			}
+		},
+		{
+			"path": "pages/cms/wallpaper-detail",
 			"style": {
 				
 			}
